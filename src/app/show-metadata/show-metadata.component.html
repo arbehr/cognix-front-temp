@@ -1,16 +1,16 @@
 <div>
 
     <p class="paragraph">Idioma: <span style="font-weight:normal">{{simple.language}}</span></p><br>
-    <p class="paragraph">Descrição:<span style="font-weight:normal">{{simple.description}}</span></p><br>
+    <p class="paragraph">Descrição: <span style="font-weight:normal">{{simple.description}}</span></p><br>
     <p class="paragraph">Palavras-chave: <span style="font-weight:normal">{{simple.keywords}}</span></p><br>
-    <p class="paragraph">Etapa da educação:
-        <span *ngFor="let public of simple.age" style="font-weight:normal"> {{public}};</span></p><br>
-    <p class="paragraph">Tipos de recurso:
-        <span *ngFor="let public of simple.resources" style="font-weight:normal"> {{public}};</span></p><br>
-    <p class="paragraph">Estilo de conteúdo:
+    <p class="paragraph">Etapa da educação: <span style="font-weight:normal">{{simple.age}}</span></p><br>
+        <!-- <span *ngFor="let public of simple.age" style="font-weight:normal"> {{public}};</span></p><br> -->
+    <p class="paragraph">Tipos de recurso: <span style="font-weight:normal">{{simple.resources}}</span></p><br>
+        <!-- <span *ngFor="let public of simple.resources" style="font-weight:normal"> {{public}};</span></p><br> -->
+    <p class="paragraph">Estilo de conteúdo: 
         <span *ngFor="let public of simple.kind" style="font-weight:normal"> {{public}};</span></p><br>
-    <p class="paragraph">Público alvo:
-        <span *ngFor="let public of simple.target" style="font-weight:normal"> {{public}};</span></p><br>
+    <p class="paragraph">Público alvo: <span style="font-weight:normal">{{simple.target}}</span></p><br>
+        <!-- <span *ngFor="let public of simple.target" style="font-weight:normal"> {{public}};</span></p><br> -->
     <p class="paragraph">BNCC: <span style="font-weight:normal">{{simple.bncc}}</span></p><br>
     <p class="paragraph">Nível de interação: <span style="font-weight:normal">{{simple.interaction}}</span></p><br>
     <p class="paragraph">É gratuito? - <span style="font-weight:normal">{{simple.free}}</span></p><br>
@@ -18,7 +18,7 @@
     <p class="paragraph">É permitido adaptações? - <span style="font-weight:normal">{{simple.alterations}}</span></p><br>
     <p class="paragraph">Uso comercial permitido? - <span style="font-weight:normal">{{simple.comercialUse}}</span></p><br>
     <p class="paragraph">Licença: <span style="font-weight:normal">{{simple.licence}}</span></p><br>
-    <p class="paragraph">Contribuintes:
+    <p class="paragraph">Contribuintes: 
         <div *ngFor="let author of simple.author" style="margin-left:13px; font-weight:normal">{{author.name}} -
             {{author.role}}</div><br>
 

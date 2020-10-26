@@ -100,13 +100,14 @@ export class SearchComponent implements OnInit {
     console.log(this.searchText);
     this.documents = [];
 
-    var finalString = "q=name:\""+ this.searchText + "\"+AND+bncc:\"" + this.finalSearch + "\"";
+    // var finalString = "q=name:\""+ this.searchText + "\"+AND+bncc:\"" + this.finalSearch + "\"";
+    var finalString = "q=name:\""+ this.searchText + "\"";
     this.rest.querySOLR(finalString).subscribe((data: any) => {
       var rec = data.response.docs;
       console.log(rec);
       for (var x in rec){
         console.log(x);
-        this.documents.push({id:rec[x].id, title:rec[x].name[0]});
+        this.documents.push({id:rec[x].id, title:rec[x].name});
       }
       console.log(this.documents);
     });

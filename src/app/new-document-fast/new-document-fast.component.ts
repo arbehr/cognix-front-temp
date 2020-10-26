@@ -35,7 +35,7 @@ export class NewDocumentFastComponent implements OnInit {
 
 
   OBAA: OBAACreator;
-  public uploader: FileUploader = new FileUploader({url: endpoint + "/files/uploadFile", itemAlias: "thumbnail"});
+  public uploader: FileUploader = new FileUploader({url: endpoint + "/files/uploadFile", itemAlias: "file"});
   public uploader2: FileUploader = new FileUploader({url: endpoint + "/files/uploadFile", itemAlias: 'file'});
   
 
@@ -46,7 +46,7 @@ export class NewDocumentFastComponent implements OnInit {
       //console.log(this.OBAA);
       this.uploader.onBuildItemForm = (item, form) => {
         form.append("docId", this.OBAA.id);
-        form.append("filename", "thumbnail");
+        form.append("filename", "Thumbnail");
       };
 
       this.uploader2.onBuildItemForm = (item, form) => {
@@ -231,8 +231,9 @@ export class NewDocumentFastComponent implements OnInit {
      
 
      this.uploader2.onCompleteItem = (item: any, response: any, status: any, headers: any) => {
-      if(this.uploader.queue.length > 0)
+      if(this.uploader.queue.length > 0) {
         this.uploader.uploadAll();
+      }
       else {
         this.router.navigate(['/']);
         document.body.style.cursor="initial";

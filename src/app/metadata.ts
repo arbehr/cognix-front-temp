@@ -21,6 +21,7 @@ export class Metadata {
     versao: String;
     estado: String;
     contribuinte: Contribuinte[];
+    papel: String;
     custo: String;
     direitos: String;
     condicoes: String;

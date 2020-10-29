@@ -35,7 +35,7 @@ import { ProfileComponent } from './profile/profile.component';
 import { NewDocumentFastComponent } from './new-document-fast/new-document-fast.component';
 import { HttpClientModule } from '@angular/common/http';
 
-import { FileSelectDirective } from 'ng2-file-upload';
+import { FileUploadModule } from 'ng2-file-upload';
 import { SearchComponent } from './search/search.component';
 import { ShowMetadataComponent } from './show-metadata/show-metadata.component';
 import { LoginComponent } from './login/login.component';
@@ -54,7 +54,6 @@ import { LoginComponent } from './login/login.component';
     RegisterComponent,
     ProfileComponent,
     NewDocumentFastComponent,
-    FileSelectDirective,
     SearchComponent,
     ShowMetadataComponent,
     LoginComponent
@@ -69,7 +68,7 @@ import { LoginComponent } from './login/login.component';
     MatPaginatorModule,
     HttpClientModule,
     ReactiveFormsModule, 
-    
+    FileUploadModule,
     
   ],
   providers: [LoginService],

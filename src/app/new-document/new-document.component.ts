@@ -19,5 +19,21 @@ export class NewDocumentComponent implements OnInit {
     let json = JSON.stringify(this.metadata);
   }
 
-
+  formatLabel(value:number | null){
+    switch(value){
+      case 1:
+        return "Nula";
+        break;
+      case 2:
+        return "Baixa";
+        break;
+      case 3:
+        return "Média";
+        break;
+      case 4:
+        return "Alta";
+        break;
+    
+      }
+  }
 }

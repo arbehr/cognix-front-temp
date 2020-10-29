@@ -11,9 +11,7 @@ import { endpoint } from '../rest.service';
 })
 export class DocumentsComponent implements OnInit {
 @Input() document: {id: any, title:string};
-private thumb: String
-
-
+  thumb: String;
   isLogged: boolean;
   ngOnInit() {
     this.isLogged = true;

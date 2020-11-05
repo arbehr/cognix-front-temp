@@ -276,7 +276,7 @@ export class NewDocumentFastComponent implements OnInit {
     this.OBAA.metadata.general.descriptions[0] = this.simple.description;
     this.OBAA.metadata.general.keywords[0] = this.simple.keywords;
     this.OBAA.metadata.general.titles[0] = this.simple.name;
-    this.OBAA.metadata.educational.typicalLearningTime = this.simple.typicalLearningTime;
+    //this.OBAA.metadata.educational.typicalLearningTime[0] = this.simple.typicalLearningTime;
 
     this.updateSimple();
     this.addAuthor();

@@ -147,6 +147,9 @@ export const emptyMockOBAA: OBAA =
                     ".xmls"
                 ]
             },
+            educational: {
+                typicalLearningTime: "PT1H30M",
+            },
             metametadata: {
                 identifier: [
                     {
@@ -204,6 +207,9 @@ export const emptyMockOBAA: OBAA =
                // platformSpecificFeatures: [],
                //service: [],
                 formats: ["s"]
+            },
+            educational: {
+                typicalLearningTime: "s",
             },
             //relations: [],
           //annotations: [],

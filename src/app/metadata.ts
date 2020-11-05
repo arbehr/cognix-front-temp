@@ -78,6 +78,9 @@ export class Metadata {
                 //"service": [],
                 formats: String[]
             },
+            educational: {
+                typicalLearningTime: String
+            },
             metametadata: {
                 identifier: 
                     {
@@ -128,6 +131,9 @@ export class Metadata {
             //platformSpecificFeatures: [],
             //service: [],
             formats: String[];
+        },
+        educational: {
+            typicalLearningTime: String; 
         },
         //relations: [],
         //annotations: [],

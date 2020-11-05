@@ -28,7 +28,7 @@
       </mat-select>
     </mat-form-field> <br><br>
 
-    <p class="paragraph">Como você descreveria este objeto de aprendizado?</p>
+    <p class="paragraph">Como você descreveria este objeto de aprendizagem?</p>
     <mat-form-field style="width:50%">
       <input matInput [(ngModel)]="simple.description" name="description" placeholder="Sua resposta">
     </mat-form-field>
@@ -47,26 +47,22 @@
       <tr *ngFor="let list of resources">
         <th *ngFor="let item of list">
           <p style="margin-bottom: 0em;font-weight: normal;">
-            <mat-checkbox (change)="item.isValid = ! item.isValid">{{item.name}}</mat-checkbox>
+            <mat-checkbox (change)="item.isValid = ! item.isValid;addOtherResource(item.name,item.isValid)">{{item.name}}</mat-checkbox>
           </p>
+        </th>
+      </tr>
+    </table>
+    <table>
+      <tr>
+        <th>
+          <mat-form-field style="width:100%;display:none" id="otherResourceForm">
+            <input matInput [(ngModel)]="otherResource" name="otherResource" placeholder="Sua resposta">
+          </mat-form-field>
         </th>
       </tr>
     </table>
 
     <br><br>
-
-
-    <p class="paragraph">O usuário pode interagir com este objeto?</p> <br>
-    <mat-radio-group [(ngModel)]="simple.interactive" name="interactive" id="interactive">
-      <p class="paragraph" style="font-weight: normal;">
-        <mat-radio-button value="Sim">Sim</mat-radio-button>
-      </p>
-      <p class="paragraph" style="font-weight: normal;">
-        <mat-radio-button value="Não">Não</mat-radio-button>
-      </p>
-    </mat-radio-group>
-    <br><br>
-
   </form>
 </div>
 
@@ -75,16 +71,24 @@
   <h1 style="text-align: center;"><strong>Interatividade</strong></h1> <br><br>
   <form>
     <p class="paragraph">Qual o nível dessa interação?</p><br><br>
-    <mat-slider thumbLabel [(ngModel)]="simple.interactionNumber" name="interactivityNumber" [displayWith]="formatLabel"
+    <mat-slider thumbLabel class="cdk-focused" style="pointer-events:none;" [(ngModel)]="simple.interactionNumber" id="interactivityNumber" name="interactivityNumber" [displayWith]="formatLabel"
       min="1" max="4" step="1" value="1"></mat-slider>
     <br><br>
 
-    <p class="paragraph">Quais correspondem ao objeto de aprendizagem em questão?</p> <br>
-    <div *ngFor="let item of kind">
-      <p style="font-weight: normal">
-        <mat-checkbox (change)="item.isValid = ! item.isValid">É {{item.name.toLowerCase()}}</mat-checkbox>
+    <mat-radio-group [(ngModel)]="interactivitySelection" name="interactivitySelection">
+      <p style="font-weight: normal" style="font-weight: normal;">
+        <mat-radio-button value="1" (change)="radioInteractivityChange($event)">Nenhuma</mat-radio-button>
       </p>
-    </div>
+      <p style="font-weight: normal" style="font-weight: normal;">
+        <mat-radio-button value="2" (change)="radioInteractivityChange($event)">Apenas texto, vídeo</mat-radio-button>
+      </p>
+      <p style="font-weight: normal" style="font-weight: normal;">
+        <mat-radio-button value="3" (change)="radioInteractivityChange($event)">Vídeo com perguntas, página web</mat-radio-button>
+      </p>
+      <p style="font-weight: normal" style="font-weight: normal;">
+        <mat-radio-button value="4" (change)="radioInteractivityChange($event)">Jogo, simulações interativas</mat-radio-button>
+      </p>
+    </mat-radio-group> <br>
   </form>
 </div>
 
@@ -108,8 +112,14 @@
     </div>
     <br>
     <p class="paragraph">Para qual área do conhecimento foi feito esse objeto?</p>
-
-    <div>
+    <br>
+    <div *ngFor="let item of knowledgeArea">
+      <p style="font-weight: normal">
+        <mat-checkbox (change)="item.isValid = ! item.isValid">{{item.name}}</mat-checkbox>
+      </p>
+    </div>
+    <br>
+    <!-- <div>
       <div class="search-buttons">
         <div style="float:left;" class="search-title search-options">
           <mat-chip-list>
@@ -126,8 +136,12 @@
           </mat-chip-list>
         </div>
       </div>
-    </div>
-
+    </div> -->
+    <p class="paragraph">Qual o tempo necessário para aprendizagem?</p>
+    <mat-form-field style="width:50%">
+      <input matInput [(ngModel)]="simple.typicalLearningTime" name="typicalLearningTime" placeholder="Sua resposta">
+    </mat-form-field>
+    <br>
 
   </form>
 
@@ -136,66 +150,15 @@
 <div class="center-div-step2" id="step5" style="display:none">
   <h1 style="text-align: center;"><strong>Direitos</strong></h1> <br><br>
   <form>
-    <p class="paragraph">Este objeto é gratuito?</p> <br>
-    <mat-radio-group [(ngModel)]="simple.free" name="free" id="free">
+    <p class="paragraph">Qual a licença?</p><br>
+    <mat-radio-group [(ngModel)]="simple.licence" name="licence" id="licence">
       <p style="font-weight: normal" style="font-weight: normal;">
-        <mat-radio-button value="Sim">Sim</mat-radio-button>
-      </p>
-      <p style="font-weight: normal" style="font-weight: normal;">
-        <mat-radio-button value="Não">Não</mat-radio-button>
+        <mat-radio-button value="CC BY-SA">CC BY-SA: Livremente com fins comerciais</mat-radio-button>
       </p>
       <p style="font-weight: normal" style="font-weight: normal;">
-        <mat-radio-button value="Não sei">Não sei</mat-radio-button>
+        <mat-radio-button value="CC BY-NC-SA">CC BY-NC-SA: Livremente sem fins comerciais</mat-radio-button>
       </p>
     </mat-radio-group> <br>
-
-    <p class="paragraph">Se alguém for compartilhar este objeto, precisa citar o autor?</p> <br>
-    <mat-radio-group [(ngModel)]="simple.citeAuthor" name="citeAuthor" id="rights">
-      <p style="font-weight: normal;">
-        <mat-radio-button value="Sim">Sim</mat-radio-button>
-      </p>
-      <p style="font-weight: normal;">
-        <mat-radio-button value="Não">Não</mat-radio-button>
-      </p>
-      <p style="font-weight: normal;">
-        <mat-radio-button value="Não sei">Não sei</mat-radio-button>
-      </p>
-    </mat-radio-group> <br>
-
-    <p class="paragraph">Qual a licença?</p>
-    <mat-form-field style="width:50%">
-      <input matInput [(ngModel)]="simple.licence" name="licence" placeholder="Sua resposta">
-    </mat-form-field> <br>
-
-    <p class="paragraph">É permitido que façam adaptações neste objeto?</p> <br>
-    <mat-radio-group [(ngModel)]="simple.alterations" name="alterations" id="alterations">
-      <p style="font-weight: normal;">
-        <mat-radio-button value="Sim">Sim</mat-radio-button>
-      </p>
-      <p style="font-weight: normal;">
-        <mat-radio-button value="Sim, desde que também o compartilhe">Sim, desde que também o compartilhe</mat-radio-button>
-      </p>
-      <p style="font-weight: normal;">
-        <mat-radio-button value="Não">Não</mat-radio-button>
-      </p>
-      <p style="font-weight: normal;">
-        <mat-radio-button value="Não sei">Não sei</mat-radio-button>
-      </p>
-    </mat-radio-group> <br>
-
-    <p class="paragraph">É permitido que se faça uso comercial deste objeto?</p> <br>
-    <mat-radio-group [(ngModel)]="simple.comercialUse" name="comercialUse" id="comercialUse">
-      <p style="font-weight: normal;">
-        <mat-radio-button value="Sim">Sim</mat-radio-button>
-      </p>
-      <p style="font-weight: normal;">
-        <mat-radio-button value="Não">Não</mat-radio-button>
-      </p>
-      <p style="font-weight: normal;">
-        <mat-radio-button value="Não sei">Não sei</mat-radio-button>
-      </p>
-    </mat-radio-group> <br>
-
   </form>
 </div>
 <div class="center-div-step2" id="step6" style="display:none">
@@ -210,12 +173,32 @@
     </mat-form-field>
     <br>
 
+    <p class="paragraph">Instituição:</p>
+    <mat-form-field style="width:50%">
+      <input matInput [(ngModel)]="author.institution" name="institution" placeholder="Sua resposta">
+    </mat-form-field>
+    <br>
+
     <p class="paragraph">De que forma?</p>
     <mat-form-field>
       <mat-select [(ngModel)]="author.role" name="role" placeholder="Escolher">
-        <mat-option value=Aluno>Aluno</mat-option>
+        <!-- <mat-option value=Aluno>Aluno</mat-option>
         <mat-option value=Professor>Professor</mat-option>
-        <mat-option value=Gestor>Gestor</mat-option>
+        <mat-option value=Gestor>Gestor</mat-option> -->
+
+        <mat-option value="Autor"> Autor </mat-option>
+        <mat-option value="Desconhecida"> Desconhecida </mat-option>
+        <mat-option value="Designer Gráfico"> Designer Gráfico</mat-option>
+        <mat-option value="Editor"> Editor </mat-option>
+        <mat-option value="Eliminador"> Eliminador </mat-option>
+        <mat-option value="Especialista na área"> Especialista na área </mat-option>
+        <mat-option value="Iniciador"> Iniciador </mat-option>
+        <mat-option value="Programador"> Programador </mat-option>
+        <mat-option value="Publicador"> Publicador </mat-option>
+        <mat-option value="Roteirista"> Roteirista </mat-option>
+        <mat-option value="Validador"> Validador </mat-option>
+        <mat-option value="Validador Educacional"> Validador Educacional </mat-option>
+        <mat-option value="Validador Técnico"> Validador Técnico </mat-option>
       </mat-select>
     </mat-form-field> <br><br>
 
@@ -224,7 +207,7 @@
   <button style="margin-left:30px" mat-raised-button (click)="removeAuthor()">Remover contribuinte</button>
   <br><br><br><br>
 
-  <p class="paragraph">Adicione uma capa para seu objeto:</p><br>
+  <p class="paragraph">Adicione uma imagem de rosto para seu objeto:</p><br>
   <input style="height: 30px" type="file" name="photo" id="photoUpload" (click)="uploader.clearQueue()" ng2FileSelect [uploader]="uploader" />
   <br>
 

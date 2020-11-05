@@ -7,6 +7,7 @@ import {  FileUploader, FileSelectDirective } from 'ng2-file-upload/ng2-file-upl
 import {Router} from "@angular/router"
 import { parameters } from '../search/searchParameters';
 import {MatStepperModule} from '@angular/material/stepper'; 
+import { MatRadioChange } from '@angular/material';
 
 @Component({
   selector: 'app-new-document-fast',
@@ -21,13 +22,13 @@ export class NewDocumentFastComponent implements OnInit {
   finished:boolean;
   depth:number;
   path:number[];
-
-
-  kind:any;
+  interactivitySelection:number;
+  otherResource:"";
   target:any;
   age:any;
   resources:any;
-
+  knowledgeArea:any;
+  
   simple: any;
 
   currentPage: number;
@@ -67,25 +68,18 @@ export class NewDocumentFastComponent implements OnInit {
       interactionNumber:"",
       author:[{
         name: "",
+        institution: "",
         role:"",
       }],
-      interactive:"",
+      typicalLearningTime: "",
       licence:"",
-      kind: [],
       target: [],
       age: [],
+      knowledgeArea: [],
       resources: [],
-      bncc: "",
       owner:"admin",
       favorites:"admin",
-      free:"",
-      citeAuthor:"",
-      alterations:"",
-      comercialUse:"",
-
-
-
-
+      free:"Sim",
       id:0
     };
   }
@@ -95,27 +89,7 @@ export class NewDocumentFastComponent implements OnInit {
     console.log(this.simple);
     this.currentPage = 1;
     this.progressBarValue = 100/7;
-    this.kind = 
-    [
-      { 
-        name: "Visual",
-        isValid: false 
-      },
-      { 
-        name: "Auditivo",
-        isValid: false 
-      },
-      { 
-        name: "Textual",
-        isValid: false 
-      },
-      { 
-        name: "Tátil",
-        isValid: false 
-      },
-      
-    ];
-
+    
     this.target = 
     [
       { 
@@ -125,98 +99,130 @@ export class NewDocumentFastComponent implements OnInit {
       { 
         name: "Professor",
         isValid: false 
-      },
-      { 
-        name: "Autor",
-        isValid: false 
-      },
-      { 
-        name: "Gestor",
-        isValid: false 
-      },
-      
+      },    
     ];
 
     this.age = 
     [
       { 
-        name: "Educação infantil",
+        name: "Ensino pré-escolar",
         isValid: false 
       },
       { 
-        name: "Ensino fundamental - anos iniciais",
+        name: "Básico 1º ciclo",
         isValid: false 
       },
       { 
-        name: "Ensino fundamental - anos finais",
+        name: "Básico 2º ciclo",
         isValid: false 
       },
       { 
-        name: "Ensino médio",
+        name: "Básico 3º ciclo",
+        isValid: false 
+      },
+      { 
+        name: "Ensino secundário",
         isValid: false 
       },
       { 
         name: "Ensino superior",
         isValid: false 
       },
-      
+    ];
 
-
+    this.knowledgeArea = 
+    [
+      { 
+        name: "Ciências exatas",
+        isValid: false 
+      },
+      { 
+        name: "Ciências humanas",
+        isValid: false 
+      }, 
+      { 
+        name: "Ciências naturais",
+        isValid: false 
+      },      
     ];
     
     this.resources = [
       [ { 
-        name: "Exercício",
+        name: "Questionário",
         isValid: false 
       },
       { 
-        name: "Tabela",
-        isValid: false 
-      },
-      { 
-        name: "Diagrama",
-        isValid: false 
-      },
-      { 
-        name: "Experimento",
-        isValid: false 
-      }  ],
-      
-      [{ 
-        name: "Simulação",
-        isValid: false 
-      },
-      { 
-        name: "Aula",
-        isValid: false 
-      },
-      { 
-        name: "Figura",
+        name: "Problema",
         isValid: false 
       },
       { 
         name: "Prova",
         isValid: false 
-      }],
-      
-      [{ 
-        name: "Questionário",
-        isValid: false 
-      },
-      { 
-        name: "Texto narrativo",
-        isValid: false 
-      },
-      { 
-        name: "Gráfico",
-        isValid: false 
       },
       { 
         name: "Enunciado de questão",
         isValid: false 
-      }]
+      }  ],
       
-    ]
+      [{ 
+        name: "Plano de aula",
+        isValid: false 
+      },
+      { 
+        name: "Saída de campo",
+        isValid: false 
+      },
+      { 
+        name: "Aula gravada",
+        isValid: false 
+      },
+      { 
+        name: "Experiência laboratoriais",
+        isValid: false 
+      },
+      { 
+        name: "Guião",
+        isValid: false 
+      }],
+      
+      [{ 
+        name: "Livro",
+        isValid: false 
+      },
+      { 
+        name: "Infografia",
+        isValid: false 
+      },
+      { 
+        name: "Página web",
+        isValid: false 
+      },
+      { 
+        name: "Texto representado",
+        isValid: false 
+      },
+      { 
+        name: "Texto narrado",
+        isValid: false 
+      }],
+      [
+      {
+        name: "Jogo",
+        isValid: false 
+      },
+      {
+        name: "Simulação",
+        isValid: false 
+      }
+      ],
+      [
+        {
+          name: "Outro",
+          isValid: false 
+        }
+      ]
+      
+    ];
 
 
     this.OBAA = emptyMockOBAACreator;
@@ -248,26 +254,31 @@ export class NewDocumentFastComponent implements OnInit {
   
   }
 
+  radioInteractivityChange(event: MatRadioChange) {
+    this.simple.interactionNumber = +event.value;
+  }
+
   finish(){
     
 
     for (var propt in this.simple){
       if (Object.prototype.hasOwnProperty.call(this.simple, propt)) {
-          if(this.simple[propt] == "" && !(propt == "id" || propt == "kind" || propt == "age" || propt == "target" || propt == "resources")){
-            
+          if(this.simple[propt] == "" && !(propt == "id" || propt == "age" ||
+            propt == "target" || propt == "resources" || propt == "knowledgeArea")){
             return;
           }
       }
     }
 
     document.body.style.cursor="wait";
-    console.log(this.kind);
-
+    
     this.OBAA.metadata.general.titles[0] = this.simple.name;
     this.OBAA.metadata.general.descriptions[0] = this.simple.description;
     this.OBAA.metadata.general.keywords[0] = this.simple.keywords;
     this.OBAA.metadata.general.titles[0] = this.simple.name;
-    this.updateSimple;
+    this.OBAA.metadata.educational.typicalLearningTime = this.simple.typicalLearningTime;
+
+    this.updateSimple();
     this.addAuthor();
 
     console.log(this.simple.author);
@@ -277,8 +288,7 @@ export class NewDocumentFastComponent implements OnInit {
 
 
     this.OBAA.isVersion = "1";
-
-    
+        
     this.rest.addDocument(JSON.stringify(this.OBAA), this.OBAA.id).subscribe((data: {}) => {
       console.log(data);
       
@@ -332,11 +342,8 @@ export class NewDocumentFastComponent implements OnInit {
 
   onSelectPrevious(){
     if(this.depth > 0){
-
-      
       var x:any = Object.assign({}, parameters);
       this.finalSearch ="área do conhecimento";
-
 
       this.depth--;
       for(var i = 0; i < this.depth; i++){
@@ -346,10 +353,7 @@ export class NewDocumentFastComponent implements OnInit {
       }
       this.path.pop();
       this.searchOptions = x; 
-      
-      
-      
-      
+
       this.finalparam = this.searchOptions.name;
       this.finished = false;
     }
@@ -408,33 +412,20 @@ export class NewDocumentFastComponent implements OnInit {
     switch(value){
       case 1:
         return "Nula";
-        break;
       case 2:
         return "Baixa";
-        break;
       case 3:
         return "Média";
-        break;
       case 4:
         return "Alta";
-        break;
-    
       }
   }
 
   updateSimple(){
-    this.simple.kind = [];
     this.simple.target = [];
     this.simple.resources = [];
     this.simple.age = [];
-
-    for(var i = 0; i < this.kind.length; i++){
-      if(this.kind[i].isValid){
-        this.OBAA.metadata.general.coverages.push(this.kind[i].name);
-        this.simple.kind.push(this.kind[i].name);
-
-      }
-    }
+    this.simple.knowledgeArea = [];
 
     for(var i = 0; i < this.target.length; i++){
       if(this.target[i].isValid){
@@ -450,6 +441,13 @@ export class NewDocumentFastComponent implements OnInit {
       }
     }
 
+    for(var i = 0; i < this.knowledgeArea.length; i++){
+      if(this.knowledgeArea[i].isValid){
+        this.OBAA.metadata.technical.supportedPlatforms.push(this.knowledgeArea[i].name);
+        this.simple.knowledgeArea.push(this.knowledgeArea[i].name);
+      }
+    }
+
     for(var i = 0; i < this.resources.length; i++){
       for(var recIndex = 0; recIndex < this.resources[i].length; recIndex++){
         if(this.resources[i][recIndex].isValid){
@@ -458,10 +456,13 @@ export class NewDocumentFastComponent implements OnInit {
       }
     }
 
-    
     this.simple.interaction = this.formatLabel(this.simple.interactionNumber);
-    this.simple.bncc = this.finalSearch;
     
+    if(this.otherResource!=""){
+      this.simple.resources.pop();
+      this.simple.resources.push(this.otherResource);
+    }
+
     this.check();
 
     
@@ -470,28 +471,35 @@ export class NewDocumentFastComponent implements OnInit {
   addAuthor(){
     var aut = {
       name:"",
+      institution:"",
       role:"",
     };
-
     this.simple.author.push(aut);
-
-
-
   }
 
   removeAuthor(){
-
     this.simple.author.pop();
+  }
+
+  addOtherResource(value:string, isValid:boolean){
+    if(value == "Outro" && isValid){
+      document.getElementById("otherResourceForm").style.display="";
+    } else {
+      document.getElementById("otherResourceForm").style.display="none";
+      this.otherResource="";
+    }
+    
   }
 
   check(){
     var complete = false;
     for (var propt in this.simple){
       if (Object.prototype.hasOwnProperty.call(this.simple, propt)) {
-          if(this.simple[propt] == "" && !(propt == "id" || propt == "kind" || propt == "age" || propt == "target" || propt == "resources")){
+          if(this.simple[propt] == "" && !(propt == "id" || propt == "age" 
+            || propt == "target" || propt == "resources" || propt == "knowledgeArea")){
             document.getElementById("incomplete").style.display="block";
             complete = true;
-            console.log(propt);
+            //console.log(propt);
           }
       }
     }

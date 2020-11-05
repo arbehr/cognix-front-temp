@@ -45,16 +45,16 @@ export class InfoMetadadosComponent implements OnInit {
       rights:"",
       author:[{
         name: "",
+        institution: "",
         role:"",
       }],
       keywords:"",
-      interactive:"",
       licence:"",
-      kind: [],
       target: [],
       age: [],
+      knowledgeArea: [],
+      typicalLearningTime:"",
       resources: [],
-      bncc: "",
       owner:"admin",
       favorites:"",
       id:0
@@ -83,44 +83,29 @@ export class InfoMetadadosComponent implements OnInit {
         description:this.documents[0].description,
         interaction:this.documents[0].interaction,
         interactionNumber:this.documents[0].interactionNumber,
-        interactive:this.documents[0].interactive,
         licence:this.documents[0].licence,
-        kind: this.documents[0].kind,
         target: this.documents[0].target,
         age: this.documents[0].age,
+        knowledgeArea: this.documents[0].knowledgeArea,
         resources: this.documents[0].resources[0],
-        bncc: this.documents[0].bncc,
+        typicalLearningTime:this.documents[0].typicalLearningTime,
         owner:this.documents[0].owner,
         favorites:this.documents[0].favorites, //TODO: mudar campo solr para multivalorado
         free:this.documents[0].free,
-        citeAuthor:this.documents[0].citeAuthor,
-        alterations:this.documents[0].alterations,
-        comercialUse:this.documents[0].comercialUse,
         authors:this.documents[0].author,
         author:[]
-        //context: this.documents[0].context,
-        //education:this.documents[0].education,
-        //area:this.documents[0].area,
-        //accessibility:this.documents[0].accessibility,
-        //dificulty:this.documents[0].dificulty,
-        //rights:this.documents[0].rights,
-
-        
-        
       }
-      console.log(this.simple);
+      //console.log(this.simple.authors);
       for(var i = 0; i < this.simple.authors.length -1; i++){
-         var x = this.simple.authors[i];
-         var y = x.split(",")
-         var z = y[0].split("=")[1];
-         var k = y[1].split("=")[1];
-         var l = k.substr(0, k.length - 1);
-        
-         this.simple.author.push({name:z, role:l});
-          
-         console.log("L=" + l);
-         console.log("Z=" + z);
-       }
+         var aut = this.simple.authors[i];
+         var aut_parts = aut.split(",")
+         var aut_name = aut_parts[0].split("=")[1];
+         var aut_institution = aut_parts[1].split("=")[1];
+         var aut_role = aut_parts[2].split("=")[1];
+         var aut_role_fixed = aut_role.substr(0, aut_role.length - 1);
+
+         this.simple.author.push({name:aut_name, institution:aut_institution , role:aut_role_fixed}); 
+         }
     });
 
     

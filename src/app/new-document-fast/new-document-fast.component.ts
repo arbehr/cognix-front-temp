@@ -7,7 +7,7 @@ import {  FileUploader, FileSelectDirective } from 'ng2-file-upload/ng2-file-upl
 import {Router} from "@angular/router"
 import { parameters } from '../search/searchParameters';
 import {MatStepperModule} from '@angular/material/stepper'; 
-import { MatRadioChange } from '@angular/material';
+import { MatCheckboxChange, MatRadioChange } from '@angular/material';
 
 @Component({
   selector: 'app-new-document-fast',
@@ -23,12 +23,21 @@ export class NewDocumentFastComponent implements OnInit {
   depth:number;
   path:number[];
   interactivitySelection:number;
+  typicalLearningTime:number;
+  moreThanThreeHours:boolean;
+  hours:number;
+  minutes:number;
+  seconds:number;
+  totalMinutes:number;
   otherResource:"";
   target:any;
   age:any;
   resources:any;
   knowledgeArea:any;
-  
+  contribute:{
+    role: "",
+    entities: String[],
+  }[];
   simple: any;
 
   currentPage: number;
@@ -69,7 +78,7 @@ export class NewDocumentFastComponent implements OnInit {
       author:[{
         name: "",
         institution: "",
-        role:"",
+        role:"author",
       }],
       typicalLearningTime: "",
       licence:"",
@@ -78,8 +87,8 @@ export class NewDocumentFastComponent implements OnInit {
       knowledgeArea: [],
       resources: [],
       owner:"admin",
-      favorites:"admin",
-      free:"Sim",
+      favorites:["admin"],
+      free:"yes",
       id:0
     };
   }
@@ -89,7 +98,8 @@ export class NewDocumentFastComponent implements OnInit {
     console.log(this.simple);
     this.currentPage = 1;
     this.progressBarValue = 100/7;
-    
+    this.moreThanThreeHours = false;
+    this.typicalLearningTime = 0;
     this.target = 
     [
       { 
@@ -258,13 +268,17 @@ export class NewDocumentFastComponent implements OnInit {
     this.simple.interactionNumber = +event.value;
   }
 
+  setTypicalLearningTime(event: MatCheckboxChange) {
+    this.moreThanThreeHours = event.checked;
+    this.typicalLearningTime = 0;
+  }
+
   finish(){
     
 
     for (var propt in this.simple){
       if (Object.prototype.hasOwnProperty.call(this.simple, propt)) {
-          if(this.simple[propt] == "" && !(propt == "id" || propt == "age" ||
-            propt == "target" || propt == "resources" || propt == "knowledgeArea")){
+          if(this.simple[propt] == "" && !(propt == "id" || propt == "typicalLearningTime")){
             return;
           }
       }
@@ -273,19 +287,36 @@ export class NewDocumentFastComponent implements OnInit {
     document.body.style.cursor="wait";
     
     this.OBAA.metadata.general.titles[0] = this.simple.name;
+    this.OBAA.metadata.general.languages[0] = this.simple.language;
     this.OBAA.metadata.general.descriptions[0] = this.simple.description;
     this.OBAA.metadata.general.keywords[0] = this.simple.keywords;
-    this.OBAA.metadata.general.titles[0] = this.simple.name;
-    //this.OBAA.metadata.educational.typicalLearningTime[0] = this.simple.typicalLearningTime;
 
     this.updateSimple();
     this.addAuthor();
 
-    console.log(this.simple.author);
+    for(var i = 0; i < this.contribute.length; i++){
+      this.OBAA.metadata.lifeCycle.contribute[i] = this.contribute[i];
+      console.log(this.contribute[i]);
+    }
+
+    this.OBAA.metadata.educational.learningResourceTypes = this.simple.resources;
+    this.OBAA.metadata.educational.interactivityLevel = this.simple.interaction;
+    this.OBAA.metadata.educational.intendedEndUserRoles = this.simple.target;
+    this.OBAA.metadata.educational.contexts = this.simple.age;
+    if(this.typicalLearningTime != 0){
+      this.OBAA.metadata.educational.typicalLearningTime = this.simple.typicalLearningTime;
+    }
+    this.OBAA.metadata.educational.knowledgeAreas = this.simple.knowledgeArea;
+
+    this.OBAA.metadata.rights.cost = "false";
+    this.OBAA.metadata.rights.copyright = "true";
+    this.OBAA.metadata.rights.description = this.simple.licence;
+
+    // console.log(this.simple.typicalLearningTime);
     console.log( "BEFORE");
     console.log(this.OBAA);
     console.log(this.simple);
-
+    // return;//TODO: retirar return apos testes
 
     this.OBAA.isVersion = "1";
         
@@ -425,25 +456,23 @@ export class NewDocumentFastComponent implements OnInit {
     this.simple.target = [];
     this.simple.resources = [];
     this.simple.age = [];
-    this.simple.knowledgeArea = [];
+    this.simple.knowledgeArea = []; 
+    this.contribute = [];   
 
     for(var i = 0; i < this.target.length; i++){
       if(this.target[i].isValid){
-        this.OBAA.metadata.technical.formats.push(this.target[i].name);
         this.simple.target.push(this.target[i].name);
       }
     }
 
     for(var i = 0; i < this.age.length; i++){
       if(this.age[i].isValid){
-        this.OBAA.metadata.technical.supportedPlatforms.push(this.age[i].name);
         this.simple.age.push(this.age[i].name);
       }
     }
 
     for(var i = 0; i < this.knowledgeArea.length; i++){
       if(this.knowledgeArea[i].isValid){
-        this.OBAA.metadata.technical.supportedPlatforms.push(this.knowledgeArea[i].name);
         this.simple.knowledgeArea.push(this.knowledgeArea[i].name);
       }
     }
@@ -456,8 +485,29 @@ export class NewDocumentFastComponent implements OnInit {
       }
     }
 
+    for(var i = 0; i < this.simple.author.length; i++){
+      this.contribute.push({role:this.simple.author[i].role, 
+        entities:[this.simple.author[i].name , this.simple.author[i].institution]}); 
+    }
+    
     this.simple.interaction = this.formatLabel(this.simple.interactionNumber);
     
+
+    // TypicalLearningTime must follow the rule PThHmMsS
+    if(this.typicalLearningTime != 0){
+      this.totalMinutes = this.typicalLearningTime;
+      this.hours = ((this.totalMinutes - (this.totalMinutes % 60)) / 60);
+      this.minutes = this.totalMinutes % 60;
+      this.seconds = 0;
+
+      this.simple.typicalLearningTime = "PT" + this.hours + "H" + this.minutes + "M" 
+        + this.seconds + "S";
+    }
+
+    if(this.moreThanThreeHours){
+      this.simple.typicalLearningTime = "PT3H15M0S";
+    }
+
     if(this.otherResource!=""){
       this.simple.resources.pop();
       this.simple.resources.push(this.otherResource);
@@ -472,7 +522,7 @@ export class NewDocumentFastComponent implements OnInit {
     var aut = {
       name:"",
       institution:"",
-      role:"",
+      role:"author",
     };
     this.simple.author.push(aut);
   }
@@ -495,8 +545,10 @@ export class NewDocumentFastComponent implements OnInit {
     var complete = false;
     for (var propt in this.simple){
       if (Object.prototype.hasOwnProperty.call(this.simple, propt)) {
-          if(this.simple[propt] == "" && !(propt == "id" || propt == "age" 
-            || propt == "target" || propt == "resources" || propt == "knowledgeArea")){
+          if(this.simple[propt] == "" && !(propt == "id" 
+            // || propt == "age" 
+            // || propt == "target" || propt == "resources" || propt == "knowledgeArea"
+            || propt == "typicalLearningTime")){
             document.getElementById("incomplete").style.display="block";
             complete = true;
             //console.log(propt);

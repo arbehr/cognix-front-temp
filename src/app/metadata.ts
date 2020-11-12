@@ -15,7 +15,7 @@ export class Metadata {
     catalogo: String;
     identificador: String;
     palavraChave: String[];
-    cobertura: String[];
+    // cobertura: String[];
     estrutura: String;
     agregacao: String;
     versao: String;
@@ -60,7 +60,6 @@ export class Metadata {
                 titles: String[];
                 keywords: String[];
                 descriptions: String[];
-                coverages: String[];
                 identifiers: 
                     {
                         catalog: String;
@@ -69,6 +68,13 @@ export class Metadata {
                 languages: String[];
                 //thumbnails: []
             },
+            lifeCycle: {
+                contribute:
+                    {
+                        role: String;
+                        entities:String[];
+                    }[];
+            }
             technical: {
                 location: String[];
                 size: String,
@@ -79,8 +85,18 @@ export class Metadata {
                 formats: String[]
             },
             educational: {
-                typicalLearningTime: String
+                learningResourceTypes: String[],
+                interactivityLevel: String;
+                intendedEndUserRoles: String[],
+                contexts: String[],
+                typicalLearningTime: String,
+                knowledgeAreas: String[],
             },
+            rights: {
+                cost: String,
+                copyright: String,
+                description: String,
+            }
             metametadata: {
                 identifier: 
                     {
@@ -115,7 +131,6 @@ export class Metadata {
             titles: String[];
             keywords: String[];
             descriptions: String[];
-            coverages: String[];
             identifiers: 
                 {
                     catalog: string;
@@ -124,6 +139,13 @@ export class Metadata {
             languages: String[];
             //thumbnails: []
         },
+        lifeCycle: {
+            contribute:
+            {
+                role: string;
+                entities: String[];
+            }[];
+        }
         technical: {
             location: String[];
             //requirement: [],
@@ -133,8 +155,18 @@ export class Metadata {
             formats: String[];
         },
         educational: {
+            learningResourceTypes: String[];
+            interactivityLevel: string;
+            intendedEndUserRoles: String[];
+            contexts: String[];
             typicalLearningTime: String; 
+            knowledgeAreas: String[];
         },
+        rights: {
+            cost: String;
+            copyright: String;
+            description: String;
+        }
         //relations: [],
         //annotations: [],
         //classifications: []

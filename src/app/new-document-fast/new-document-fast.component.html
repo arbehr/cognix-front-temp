@@ -80,7 +80,7 @@
         <mat-radio-button value="1" (change)="radioInteractivityChange($event)">Nenhuma</mat-radio-button>
       </p>
       <p style="font-weight: normal" style="font-weight: normal;">
-        <mat-radio-button value="2" (change)="radioInteractivityChange($event)">Apenas texto, vídeo</mat-radio-button>
+        <mat-radio-button value="2" (change)="radioInteractivityChange($event)">Apenas texto ou  vídeo</mat-radio-button>
       </p>
       <p style="font-weight: normal" style="font-weight: normal;">
         <mat-radio-button value="3" (change)="radioInteractivityChange($event)">Vídeo com perguntas, página web</mat-radio-button>
@@ -137,11 +137,14 @@
         </div>
       </div>
     </div> -->
-    <p class="paragraph">Qual o tempo necessário para aprendizagem?</p>
-    <mat-form-field style="width:50%">
-      <input matInput [(ngModel)]="simple.typicalLearningTime" name="typicalLearningTime" placeholder="Sua resposta">
-    </mat-form-field>
+    <p class="paragraph">Qual o tempo necessário (em minutos) para a realização da atividade?</p>
+    <br><br>
+    <mat-slider thumbLabel [(ngModel)]="typicalLearningTime" id="typicalLearningTime" name="typicalLearningTime" [displayWith]=""
+      min="0" max="180" step="15" value="15"></mat-slider>
     <br>
+    <section>
+      <mat-checkbox (change)="setTypicalLearningTime($event)">Mais de 3 horas</mat-checkbox>
+    </section>
 
   </form>
 
@@ -149,14 +152,42 @@
 
 <div class="center-div-step2" id="step5" style="display:none">
   <h1 style="text-align: center;"><strong>Direitos</strong></h1> <br><br>
+
   <form>
+    <p class="paragraph">É permitido compartilhar — copiar e redistribuir o material em qualquer suporte ou formato.</p><br>
+    <p class="paragraph">É permitido adaptar — remixar, transformar, e criar a partir do material.</p><br>
+    <p class="paragraph">No caso de adaptação, têm de ser mantidos os créditos reconhecendo todos os autores ou intervenientes na produção do OA.</p> <br>
+    <p class="paragraph">Quem alterar o seu OA não poderá revogar esta licença pelo que o novo OA terá de ser licenciado com a mesma licença.</p> <br>
+    <p class="paragraph">Saiba mais sobre as licenças <a rel="license" target="_blank" href="http://creativecommons.org/licenses/">aqui.</a></p><br>
     <p class="paragraph">Qual a licença?</p><br>
     <mat-radio-group [(ngModel)]="simple.licence" name="licence" id="licence">
       <p style="font-weight: normal" style="font-weight: normal;">
-        <mat-radio-button value="CC BY-SA">CC BY-SA: Livremente com fins comerciais</mat-radio-button>
+        <mat-radio-button value="CC BY-SA">
+          <table>
+            <tr>
+              <td>
+                <a rel="license" target="_blank" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Licença Creative Commons" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" /></a>
+              </td>
+              <td style="text-align:left; padding: 15px;">
+                É permitida a utilização para qualquer fim, mesmo que comercial
+              </td>
+            </tr>
+          </table>
+        </mat-radio-button>
       </p>
       <p style="font-weight: normal" style="font-weight: normal;">
-        <mat-radio-button value="CC BY-NC-SA">CC BY-NC-SA: Livremente sem fins comerciais</mat-radio-button>
+        <mat-radio-button value="CC BY-NC-SA">
+          <table>
+            <tr>
+              <td>
+                <a rel="license" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Licença Creative Commons" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a>
+              </td>
+              <td style="text-align:left; padding: 15px;">
+                Não é permitida a utilização para fins comerciais.
+              </td>
+            </tr>
+          </table>  
+        </mat-radio-button>
       </p>
     </mat-radio-group> <br>
   </form>
@@ -181,24 +212,20 @@
 
     <p class="paragraph">De que forma?</p>
     <mat-form-field>
-      <mat-select [(ngModel)]="author.role" name="role" placeholder="Escolher">
+      <mat-select [(ngModel)]="author.role" name="role">
         <!-- <mat-option value=Aluno>Aluno</mat-option>
         <mat-option value=Professor>Professor</mat-option>
         <mat-option value=Gestor>Gestor</mat-option> -->
 
-        <mat-option value="Autor"> Autor </mat-option>
-        <mat-option value="Desconhecida"> Desconhecida </mat-option>
-        <mat-option value="Designer Gráfico"> Designer Gráfico</mat-option>
-        <mat-option value="Editor"> Editor </mat-option>
-        <mat-option value="Eliminador"> Eliminador </mat-option>
-        <mat-option value="Especialista na área"> Especialista na área </mat-option>
-        <mat-option value="Iniciador"> Iniciador </mat-option>
-        <mat-option value="Programador"> Programador </mat-option>
-        <mat-option value="Publicador"> Publicador </mat-option>
-        <mat-option value="Roteirista"> Roteirista </mat-option>
-        <mat-option value="Validador"> Validador </mat-option>
-        <mat-option value="Validador Educacional"> Validador Educacional </mat-option>
-        <mat-option value="Validador Técnico"> Validador Técnico </mat-option>
+        <mat-option value="author"> Autor\a </mat-option>
+        <mat-option value="content production"> Produção de conteúdo </mat-option>
+        <mat-option value="lesson plan production"> Produção do plano de aula </mat-option>
+        <mat-option value="graphical designer"> Designer Gráfico</mat-option>
+        <mat-option value="script writer"> Guionista</mat-option>
+        <mat-option value="pedagogical reviewer"> Revisor\a pedagógico</mat-option>
+        <mat-option value="content reviewer about the sea"> Revisor\a do conteúdo sobre o mar</mat-option>
+        <mat-option value="programmer"> Programador\a </mat-option>
+        <mat-option value="other"> Outra </mat-option>
       </mat-select>
     </mat-form-field> <br><br>
 

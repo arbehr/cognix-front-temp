@@ -16,7 +16,6 @@ export const Mock: Metadata = {
     catalogo: 'URI',
     identificador: '1',
     palavraChave:  ['asdz'],
-    cobertura:  ['asss'],
     estrutura: 'Linear',
     agregacao: 'bs',
     versao: '2.0',
@@ -66,7 +65,6 @@ export const emptyMock: Metadata = {
     catalogo: '',
     identificador: '',
     palavraChave:  [''],
-    cobertura:  [''],
     estrutura: '',
     agregacao: '',
     versao: '',
@@ -109,28 +107,27 @@ export const emptyMockOBAA: OBAA =
         //files: [],
         metadata: {
             general: {
-                titles: [
-                    "aaa"
-                ],
-                keywords: [
-                    "sss"
-                ],
-                descriptions: [
-                    "xxx"
-                ],
-                coverages: [
-                    "ccc"
-                ],
+                titles: ["aaa"],
+                keywords: ["sss"],
+                descriptions: ["xxx"],
                 identifiers: [
                     {
                         catalog: "URI",
                         entry: "http://cognitivabrasil.com.br/repositorio/documents/1"
                     }
                 ],
-                languages: [
-                    "zzz"
-                ],
+                languages: ["zzz"],
                // "thumbnails": []
+            },
+            lifeCycle: {
+                contribute: [
+                    {
+                        role: "Autor",
+                        entities: [
+                            "name"
+                        ],
+                    }
+                ],
             },
             technical: {
                 location: [
@@ -148,7 +145,17 @@ export const emptyMockOBAA: OBAA =
                 ]
             },
             educational: {
+                learningResourceTypes: ["Questionário", "Jogo"],
+                interactivityLevel: "Média",
+                intendedEndUserRoles: ["Estudante"],
+                contexts: ["Ensino básico pré-escolar"],
                 typicalLearningTime: "PT1H30M",
+                knowledgeAreas: ["Ciências humanas"],
+            },
+            rights: {
+                cost: "no",
+                copyright: "yes",
+                description: "CC BY-NC-SA",
             },
             metametadata: {
                 identifier: [
@@ -190,7 +197,6 @@ export const emptyMockOBAA: OBAA =
                 titles: ["a"],
                 keywords: ["a"],
                 descriptions: ["s"],
-                coverages: ["s"],
                 identifiers: [
                     {
                         catalog: "URI",
@@ -199,6 +205,14 @@ export const emptyMockOBAA: OBAA =
                 ],
                 languages: ["s"],
                 //thumbnails: []
+            },
+            lifeCycle: {
+                contribute: [
+                    {
+                        role: "autor",
+                        entities: ["entidade"],
+                    }
+                ],
             },
             technical: {
                 location: ["s"],
@@ -209,8 +223,18 @@ export const emptyMockOBAA: OBAA =
                 formats: ["s"]
             },
             educational: {
+                learningResourceTypes: ["q", "t"],
+                interactivityLevel: "nula",
+                intendedEndUserRoles: ["e"],
+                contexts: ["ens"],
                 typicalLearningTime: "s",
+                knowledgeAreas: ["ciencia"],
             },
+            rights: {
+                cost: "no",
+                copyright: "yes",
+                description: "cc",
+            }
             //relations: [],
           //annotations: [],
         //    classifications: []

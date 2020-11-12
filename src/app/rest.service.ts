@@ -3,8 +3,6 @@ import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http
 import { Observable, of, Subject } from 'rxjs';
 import { map, catchError, tap } from 'rxjs/operators';
 
-
-
 export const endpoint = 'http://localhost:8080';
 export const endpointSOLR = 'http://localhost:8983';
 const httpOptions = {
@@ -13,11 +11,14 @@ const httpOptions = {
   })
 };
 
+
+
 @Injectable({
   providedIn: 'root'
 })
 
 export class RestService {
+
 
   @Output() logged : EventEmitter<any> = new EventEmitter();
   @Output() email : EventEmitter<any> = new EventEmitter();
@@ -30,7 +31,7 @@ export class RestService {
   }
 
   getID(): Observable<any> {
-    return this.http.post<any>(endpoint + '/documents/new', "", httpOptions).pipe(
+    return this.http.post<any>(endpoint + '/documents/new', {login : localStorage.getItem('email')}, httpOptions).pipe(
       tap(() => console.log('getID')),
       catchError(this.handleError<any>('getID'))
     );
@@ -102,6 +103,10 @@ export class RestService {
     );
   }
 
+  isLogged() {
+
+  }
+
   postLogin(body: any) {
     let emailField = body.username
 
@@ -112,6 +117,7 @@ export class RestService {
             localStorage.setItem('token', body.token);
              let tokenInfo = JSON.parse(atob(body.token.match(/\..*\./)[0].replace(/\./g, '')));
              localStorage.setItem('token_expiration', tokenInfo.exp);
+             localStorage.setItem('email', emailField);
             this.email.emit(emailField)
             this.logged.emit(true)
             return 'ok'
@@ -136,6 +142,7 @@ export class RestService {
            localStorage.setItem('token', body.token);
             let tokenInfo = JSON.parse(atob(body.token.match(/\..*\./)[0].replace(/\./g, '')));
             localStorage.setItem('token_expiration', tokenInfo.exp);
+            localStorage.setItem('email', emailField);
             this.email.emit(emailField)
             this.logged.emit(true)
            return true

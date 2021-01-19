@@ -1,0 +1,23 @@
+<mat-card class="card" > 
+    
+    <img mat-card-image class="mat-card-image" src={{thumb}} alt="Photo"> 
+    
+    
+    <mat-card-actions>
+        <h5 style="text-align: center"><strong>{{documentsTiny.title}}</strong></h5>
+
+    </mat-card-actions>
+    
+    <a class="card-footers theme-orange" [routerLink]="['/documents/' + documentsTiny.id]" routerLinkActive="router-link-active" target="_blank">
+        <strong>+ Info</strong>
+    </a>
+    <br>
+    <br> 
+    <mat-checkbox [(ngModel)]="documentsTiny.selected">
+    </mat-checkbox>
+            
+</mat-card>
+        
+
+              
+                  

@@ -1,0 +1,27 @@
+<div class="grey-division">
+    <div class="grey-division-text"><strong>Contato</strong></div>
+</div>
+<br>
+<br>
+<div class="center-div"><p class="paragraph">Envie formulário em caso de dúvidas, sugestões e/ou comentários.</p></div>
+
+<div class="center-div">
+<form fxFlex [formGroup] = "emailForm">
+
+  <mat-form-field class="input-size">
+    <input formControlName='name' required matInput placeholder="Nome">
+  </mat-form-field><br><br>
+  <mat-form-field class="input-size">
+      <input type="email" required email="true" formControlName='email' matInput placeholder="E-mail">
+  </mat-form-field><br><br>
+  <mat-form-field class="input-size">
+    <textarea  type='text' required formControlName='message' matInput placeholder="Mensagem"></textarea>
+  </mat-form-field><br><br>
+
+  </form>
+    <div class="orange-button">
+    <button class="orange-button" mat-raised-button (click)="processEmail()">Enviar</button>
+  </div>
+
+
+</div>

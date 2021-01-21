@@ -11,6 +11,8 @@ import { RestService } from '../rest.service';
 export class LoginComponent implements OnInit {
 
   public loginForm: FormGroup;
+  hide = true;
+  
   constructor(private formBuilder: FormBuilder, private router: Router, private restApi: RestService) {
     this.loginForm = this.formBuilder.group({
       username: ['', Validators.required],
@@ -27,7 +29,7 @@ export class LoginComponent implements OnInit {
   doLogin(){
     if (this.loginForm.valid) {
       let seq = this.restApi.postLogin(this.loginForm.value);
-
+      // console.log(this.loginForm.value);
       seq.subscribe((response) => {
         console.log(response)
           if (response == 'ok') {
@@ -41,6 +43,6 @@ export class LoginComponent implements OnInit {
           console.error('ERROR', err);
     
         });
-  }
+    }
   }
 }

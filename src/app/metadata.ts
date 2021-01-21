@@ -112,7 +112,16 @@ export class Metadata {
                 metadataSchema: String[];
                 language: String;
             },
-            //"relations": [],
+            relations: {
+                kind: String;
+                resource: {
+                    identifier: 
+                    {
+                        catalog: String;
+                        entry: String;
+                    }[];
+                }
+            }[],
             //"annotations": [],
             //"classifications": []
         }
@@ -167,7 +176,16 @@ export class Metadata {
             copyright: String;
             description: String;
         }
-        //relations: [],
+        relations: {
+            kind: String;
+            resource: {
+                identifier: 
+                {
+                    catalog: string;
+                    entry:  string;
+                }[];
+            }
+        }[],
         //annotations: [],
         //classifications: []
     }

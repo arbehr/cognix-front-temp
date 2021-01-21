@@ -180,7 +180,17 @@ export const emptyMockOBAA: OBAA =
                 ],
                 language: "Português"
             },
-            //"relations": [],
+            "relations": [{
+                kind: "isbasedon",
+                resource: {
+                    identifier: [
+                        {
+                            catalog: "URI",
+                            entry: "http://edumar.uac.pt/documments/1"
+                        }
+                    ],
+                }
+            }],
             //"annotations": [],
             //"classifications": []
         }
@@ -234,8 +244,18 @@ export const emptyMockOBAA: OBAA =
                 cost: "no",
                 copyright: "yes",
                 description: "cc",
-            }
-            //relations: [],
+            },
+            relations: [{
+                kind: "k",
+                resource: {
+                    identifier: [
+                        {
+                            catalog: "URI",
+                            entry: "http://edumar.uac.pt/doccuments"
+                        }
+                    ],
+                }
+            }],
           //annotations: [],
         //    classifications: []
         }

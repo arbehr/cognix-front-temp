@@ -9,8 +9,11 @@
     line-height: 5em; 
 }
 
-.center-paragraph{
+.center-paragraph {
     margin-left:17%;
     margin-right: 17%;
+}
 
+.center-paragraph p{
+    font-size: 16px;
 }

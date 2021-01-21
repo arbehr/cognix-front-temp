@@ -6,17 +6,20 @@
   <form fxFlex [formGroup]="loginForm">
 
     <mat-form-field class="input-size">
-      <input formControlName='username' matInput placeholder="E-mail">
+      <input formControlName='username' required matInput placeholder="E-mail">
     </mat-form-field><br><br>
     <mat-form-field class="input-size">
-      <input type='password' formControlName='password' matInput placeholder="Senha">
+      <input [type]="hide ? 'password' : 'text'" required formControlName='password' matInput placeholder="Senha">
+      <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
+        <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+      </button>
     </mat-form-field><br><br>
 
   </form>
-  <div class="orange-button">
-    <button class="orange-button" mat-raised-button (click)="doLogin()">Entrar</button>
+  <div>
+    <button class="login-button" mat-raised-button (click)="doLogin()">Entrar</button>
   </div>
-  
-  <p><li> Não tem uma conta?<a class = "orange-letter" routerLink = "/register">Faça seu cadastro</a></li> </p>
+  <br><br>
+  <p><li> Não tem uma conta?<a class = "orange-letter" routerLink = "/register"> Faça seu registo</a></li> </p>
 
 </div>

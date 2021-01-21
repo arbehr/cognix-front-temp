@@ -13,7 +13,7 @@
       <a style="cursor:pointer" (click)="search()">
         <div class="dot">
 
-          <mat-icon style="color:white; margin-right:0.5em; margin-top:0.2em; font-size: 2em" aria-hidden="false"
+          <mat-icon style="color:#2b82b8; margin-right:0.5em; margin-top:0.2em; font-size: 2em" aria-hidden="false"
             aria-label="search">search</mat-icon>
 
 
@@ -23,7 +23,7 @@
     </div>
 
 
-    <div>
+    <!--<div>
       <div class="search-buttons">
         <div style="float:left;" class="search-title">
           <mat-chip-list>
@@ -41,7 +41,7 @@
 
         </div>
       </div>
-    </div>
+    </div>-->
 
 
   </div>
@@ -75,12 +75,13 @@
 <div class="grey-division-text"><strong>Todos</strong></div>
 
 
-<div style="margin-left: 4em; font-size:1.5em; margin-top: 1.5em; width:90%">
-  <mat-grid-list cols=4 rowHeight=15em>
+<div style="margin-left: 2em; font-size:1.5em; margin-top: 1.5em; width:90%">
+  <mat-grid-list [cols]="breakpoint" rowHeight="15em" (window:resize)="onResize($event)">
 
       <mat-grid-tile *ngFor="let document of documents">
 
           <app-documents [document]="document"></app-documents>
+
       </mat-grid-tile>
 
 

@@ -12,17 +12,19 @@ export class RegisterComponent implements OnInit {
 
     public signUpForm: FormGroup;
 
+    hide = true;
+
     constructor(private formBuilder: FormBuilder, private router: Router, private restApi: RestService) {
         this.signUpForm = this.formBuilder.group({
+            name: ['', Validators.required],
             username: ['', Validators.required],
-            //email: ['', Validators.required],
             password: ['', Validators.required],
-            //confirmPassword: ['', Validators.required]
         });
     }
 
     ngOnInit() {
     }
+    
     onSignUp() {
         if (this.signUpForm.valid) {
             let seq = this.restApi.postSignup(this.signUpForm.value);

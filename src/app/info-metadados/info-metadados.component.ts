@@ -90,7 +90,7 @@ export class InfoMetadadosComponent implements OnInit {
         resources: this.documents[0].resources[0],
         typicalLearningTime:this.documents[0].typicalLearningTime,
         owner:this.documents[0].owner,
-        favorites:this.documents[0].favorites, //TODO: mudar campo solr para multivalorado
+        favorites:this.documents[0].favorites,
         free:this.documents[0].free,
         authors:this.documents[0].author,
         author:[]
@@ -105,7 +105,7 @@ export class InfoMetadadosComponent implements OnInit {
          var aut_role_fixed = aut_role.substr(0, aut_role.length - 1);
 
          this.simple.author.push({name:aut_name, institution:aut_institution , role:aut_role_fixed}); 
-         }
+      }
     });
 
     

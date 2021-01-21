@@ -1,22 +1,20 @@
-<div class="main-image-div">
+<div>
     <div class="inside-image">
-        <div class="image-text editable"> Adicione seus objetos de aprendizagem, busque, compartilhe</div>
+        <div class="image-text editable"> Adicione os seus objetos de aprendizagem, pesquise, partilhe</div>
 
         <div class="search-box center-div">
 
             <span>
-
                 <mat-form-field floatLabel="never" class="search-bar">
                     <input matInput [(ngModel)]="searchText" name="searchTexts"
                         placeholder="Pesquisar objetos de aprendizagem">
-
                 </mat-form-field>
             </span>
 
             <a style="cursor:pointer" [routerLink]="['/search/'+searchText]  " routerLinkActive="router-link-active">
                 <div class="dot">
 
-                    <mat-icon style="color:white; margin-right:0.5em; margin-top:0.2em; font-size: 2em"
+                    <mat-icon style="color:#2b82b8; margin-right:0.2em; margin-top:0.2em; font-size: 2em"
                         aria-hidden="false" aria-label="search">search</mat-icon>
 
 
@@ -24,12 +22,8 @@
             </a>
 
         </div>
-
-
-
-        <div> <a [routerLink]="['/register']" class="register">FAÇA SEU CADASTRO</a> </div>
-
-
-
+        <br>
+        <br>
+        <div> <a [routerLink]="['/register']" class="register">FAÇA SEU REGISTO</a> </div>
     </div>
 </div>

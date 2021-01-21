@@ -25,13 +25,11 @@
     margin-top: 2em;
 }
 
-.orange-button{
-    background-color: #FF6F40;
+.create-button{
+    text-align: center;
+    width: 5em;
+    border-radius: 3em;
+    margin-top: 3em;
+    background-color: #a3b3bb;
     color: white;
-    width: 6em;
-    height: 2em;
-    line-height: 2em;
-    border-radius: 0.6em;
-    font-size: 1em;
-    display: inline-block;
 }

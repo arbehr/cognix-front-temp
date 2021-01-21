@@ -1,9 +1,10 @@
 
   <div class="cognix-header">
     <div class="link-spacing">
-      <a  routerLink="/" routerLinkActive="active" class="link-text">home</a>
-      <a routerLink="/about" routerLinkActive="active" class="link-text" style="margin-left:2%">sobre</a>
-      <a *ngIf = "isLogged" routerLink="/documents/add" class="link-text" style="margin-left:2%">adicionar objeto</a>
+      <a routerLink="/" routerLinkActive="active" class="link-text">Home</a>
+      <a routerLink="/contact" routerLinkActive="active" class="link-text" style="margin-left:2%">Contato</a>
+      <a routerLink="/about" routerLinkActive="active" class="link-text" style="margin-left:2%">Sobre</a>
+      <a *ngIf = "isLogged" routerLink="/documents/add" class="link-text" style="margin-left:2%">Adicionar objeto</a>
       <span style="float: right; margin-right:3%">
           <a *ngIf = "!isLogged" [routerLink]="['/singin']"  routerLinkActive="active" class="link-text" style="text-align: right">  <mat-icon aria-hidden="false" aria-label="User" style="vertical-align: bottom">person</mat-icon>Login</a>
       </span>
@@ -18,7 +19,7 @@
     <div class= "center">
 
       <a href="/" >
-        <img src="../assets/images/logo.jpg" alt="logo"  style="width:20em"/>
+        <img src="../assets/images/Logo_EduMar.png" alt="logo"  style="width:20em"/>
       </a>
 
     </div>

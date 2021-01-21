@@ -8,15 +8,15 @@ import { ActivatedRoute } from "@angular/router";
   styleUrls: ['./search.component.css']
 })
 export class SearchComponent implements OnInit {
-  searchOptions: any;
-  finalSearch: string;
-  finalparam: string;
-  finished:boolean;
-  depth:number;
-  path:number[];
+  searchOptions : any;
+  finalSearch : string;
+  finalparam : string;
+  finished : boolean;
+  depth : number;
+  path : number[];
   searchText = "";
-  initSearch= "";
-
+  initSearch = "";
+  breakpoint : number;
   documents = [];
 
   constructor(private route: ActivatedRoute, public rest:RestService) { 
@@ -37,7 +37,27 @@ export class SearchComponent implements OnInit {
       this.search();
       
     }
-    
+    if (window.innerWidth >= 1500) {
+      this.breakpoint = 4
+    } else {
+      if(window.innerWidth >= 1200) {
+        this.breakpoint = 3
+      } else {
+        this.breakpoint = (window.innerWidth <= 900) ? 1 : 2;
+      }
+    } 
+  }
+
+  onResize(event) {
+    if (window.innerWidth >= 1500) {
+      this.breakpoint = 4
+    } else {
+      if(window.innerWidth >= 1200) {
+        this.breakpoint = 3
+      } else {
+        this.breakpoint = (window.innerWidth <= 900) ? 1 : 2;
+      }
+    } 
   }
 
   onSelect(index:number, selected:string){
@@ -99,9 +119,14 @@ export class SearchComponent implements OnInit {
   search(){
     console.log(this.searchText);
     this.documents = [];
+    var finalString = "q=*:*&fq=status:REVIEWED"
 
-    // var finalString = "q=name:\""+ this.searchText + "\"+AND+bncc:\"" + this.finalSearch + "\"";
-    var finalString = "q=name:\""+ this.searchText + "\"";
+    if(this.searchText != ""){
+      finalString = "q=name:\""+ this.searchText + "\"" + 
+        " OR keywords:\"" + this.searchText + "\"" + 
+        "&fq=status:REVIEWED";
+    }
+
     this.rest.querySOLR(finalString).subscribe((data: any) => {
       var rec = data.response.docs;
       console.log(rec);

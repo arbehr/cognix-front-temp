@@ -1,19 +1,30 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Inject } from '@angular/core';
 import { OBAA, OBAACreator } from '../metadata';
 import { emptyMockOBAA, emptyMockOBAACreator } from '../mock-data';
 
 import { RestService, endpoint } from '../rest.service';
 import {  FileUploader, FileSelectDirective } from 'ng2-file-upload/ng2-file-upload';
-import {Router} from "@angular/router"
+import { ActivatedRoute, Router } from "@angular/router"
 import { parameters } from '../search/searchParameters';
 import {MatStepperModule} from '@angular/material/stepper'; 
-import { MatCheckboxChange, MatRadioChange } from '@angular/material';
+import { MatCheckboxChange, MatRadioButton, MatRadioChange,  } from '@angular/material';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { ThrowStmt } from '@angular/compiler';
+import { toJSDate } from '@ng-bootstrap/ng-bootstrap/datepicker/ngb-calendar';
+import {FormControl} from '@angular/forms';
+import {Observable} from 'rxjs';
+import {map, startWith} from 'rxjs/operators';
+
+export interface DialogData {
+  documentsTiny: string;
+}
 
 @Component({
   selector: 'app-new-document-fast',
   templateUrl: './new-document-fast.component.html',
   styleUrls: ['./new-document-fast.component.css']
 })
+
 export class NewDocumentFastComponent implements OnInit {
 
   searchOptions: any;
@@ -22,7 +33,7 @@ export class NewDocumentFastComponent implements OnInit {
   finished:boolean;
   depth:number;
   path:number[];
-  interactivitySelection:number;
+  interactionNumber:number;
   typicalLearningTime:number;
   moreThanThreeHours:boolean;
   hours:number;
@@ -38,20 +49,42 @@ export class NewDocumentFastComponent implements OnInit {
     role: "",
     entities: String[],
   }[];
+  relation:{
+    kind: "",
+    resource: {identifier: {catalog: string, entry: any}[]}
+  }[];
+  keywords: any;
+  keywords_predefined: any;
   simple: any;
-
+  edit: string;
   currentPage: number;
   progressBarValue: number;
+  numPages: number;
+  documentsTiny: any;
+  name: string;
+
+  fileId: string;
+  fileThumb: string;
+  existRelation: boolean;
 
 
   OBAA: OBAACreator;
-  public uploader: FileUploader = new FileUploader({url: endpoint + "/files/uploadFile", itemAlias: "file"});
-  public uploader2: FileUploader = new FileUploader({url: endpoint + "/files/uploadFile", itemAlias: 'file'});
+  public uploader: FileUploader = new FileUploader({url: endpoint + "/files/uploadFile", authToken: localStorage.getItem('token'), itemAlias: "file"});
+  public uploader2: FileUploader = new FileUploader({url: endpoint + "/files/uploadFile", authToken: localStorage.getItem('token'), itemAlias: 'file'});
   
+  control = new FormControl();
+  keywords_suggestions: string[] = ['Algas', 'Alterações climáticas', 'Amostragens', 'Áreas protegidas', 'Artes', 'Aves',
+    'Baixa profundidade /Subtidal', 'Biotecnologia marinha', 'Circulação oceânica', 'Correntes',
+    'Ecossistemas marinhos', 'Embarcações', 'Energia', 'Entre marés /Interdital', 'Equipamentos marítimos',
+    'Espécies não indigenas /invasoras', 'Fontes hidrotermais', 'Invertebrados', 'Mamíferos marinhos', 'Marés',
+    'Microorganismos e marés vermelhas', 'Ondas', 'Peixes', 'Plancton', 'Plantas costeiras', 'Plataforma continental',
+    'Praias arenosas', 'Produtividade', 'Química da água do mar', 'Sustentabilidade', 'Tartarugas', 'Teias tróficas',
+    'Tubarões', 'Turismo, Desporto, Lazer', 'Zona costeira', 'Recursos marinhos /Pescas'];
+  filteredKeywords: Observable<string[]>;
 
-  constructor(public rest:RestService, private router:Router) { 
+  constructor(public rest:RestService, private router:Router, 
+    private route: ActivatedRoute, private dialog: MatDialog) { 
     this.rest.getID().subscribe((data: {}) => {
-      //console.log(data)
       Object.assign(this.OBAA,data);
       //console.log(this.OBAA);
       this.uploader.onBuildItemForm = (item, form) => {
@@ -63,15 +96,24 @@ export class NewDocumentFastComponent implements OnInit {
         form.append("docId", this.OBAA.id);
         form.append("filename", "Material");
       };
+   
 
-    
-
+    },
+    (error) => {                              
+      document.body.style.cursor="initial";
+      alert("Erro ao criar novo documento, token inválido. Recarregue a página novamente.");
+      window.location.reload();
     });
-    
+
+    this.fileId = "";
+    this.fileThumb = "";
+    this.existRelation = false;
+    this.edit = "";
+
     this.simple = {
       name:"",
       language:"",
-      keywords:"",
+      keywords: [],
       description:"",
       interaction:"",
       interactionNumber:"",
@@ -80,36 +122,50 @@ export class NewDocumentFastComponent implements OnInit {
         institution: "",
         role:"author",
       }],
+      relationWith:[{
+        kind: "",
+        entry: "",
+      }],
       typicalLearningTime: "",
       licence:"",
       target: [],
       age: [],
       knowledgeArea: [],
       resources: [],
-      owner:"admin",
+      owner: localStorage.getItem('email'),
       favorites:["admin"],
       free:"yes",
+      status:"NEEDS_TECH_REVIEW",
       id:0
     };
   }
 
 
   ngOnInit() {
-    console.log(this.simple);
+    this.documentsTiny = [];
     this.currentPage = 1;
-    this.progressBarValue = 100/7;
+    this.numPages = 8;
+    this.progressBarValue = 100/this.numPages;
     this.moreThanThreeHours = false;
     this.typicalLearningTime = 0;
-    this.target = 
-    [
+    this.keywords = [];
+    this.target = [ 
+      [{ 
+        name: "Professores\\as",
+        isValid: false 
+      },
       { 
+        name: "Formadores\\as",
+        isValid: false 
+      }],
+      [{ 
         name: "Estudante",
         isValid: false 
       },
       { 
-        name: "Professor",
+        name: "Outros",
         isValid: false 
-      },    
+      }] 
     ];
 
     this.age = 
@@ -138,6 +194,10 @@ export class NewDocumentFastComponent implements OnInit {
         name: "Ensino superior",
         isValid: false 
       },
+      { 
+        name: "Ensino profissional",
+        isValid: false 
+      },
     ];
 
     this.knowledgeArea = 
@@ -153,7 +213,50 @@ export class NewDocumentFastComponent implements OnInit {
       { 
         name: "Ciências naturais",
         isValid: false 
+      },
+      { 
+        name: "Ciências tecnológicas",
+        isValid: false 
       },      
+    ];
+
+    this.keywords_predefined = [
+      [{
+        name: "Biodiversidade", 
+        isValid: false
+      },
+      {
+        name: "Ecologia marinha",
+        isValid: false  
+      },
+      {
+        name: "Economia do mar",
+        isValid: false
+      }],
+      [{
+        name: "Geografia",
+        isValid: false
+      },
+      {
+        name: "Geologia/Fundos/Sedimentos",
+        isValid: false
+      },
+      {
+        name: "Mar profundo",
+        isValid: false
+      }],
+      [{
+        name: "Oceanografia",
+        isValid: false
+      },
+      {
+        name: "Património/Arqueologia subaquáticos",
+        isValid: false
+      },
+      {
+        name: "Poluição/Lixo/Ruído",
+        isValid: false
+      }]
     ];
     
     this.resources = [
@@ -187,7 +290,7 @@ export class NewDocumentFastComponent implements OnInit {
         isValid: false 
       },
       { 
-        name: "Experiência laboratoriais",
+        name: "Experiência laboratorial",
         isValid: false 
       },
       { 
@@ -215,8 +318,20 @@ export class NewDocumentFastComponent implements OnInit {
         name: "Texto narrado",
         isValid: false 
       }],
-      [
+      [{
+        name: "Documentário em vídeo",
+        isValid: false
+      },
       {
+        name: "Demonstração filmada",
+        isValid: false
+      },
+      {
+        name: "Aula gravada ou filmada",
+        isValid: false
+      }
+      ],
+      [{
         name: "Jogo",
         isValid: false 
       },
@@ -233,8 +348,8 @@ export class NewDocumentFastComponent implements OnInit {
       ]
       
     ];
-
-
+    this.getDocument(this.route.snapshot.paramMap.get('id'));
+    
     this.OBAA = emptyMockOBAACreator;
 
     this.uploader.onAfterAddingFile = (file) => { file.withCredentials = false; };
@@ -249,8 +364,7 @@ export class NewDocumentFastComponent implements OnInit {
      this.uploader2.onCompleteItem = (item: any, response: any, status: any, headers: any) => {
       if(this.uploader.queue.length > 0) {
         this.uploader.uploadAll();
-      }
-      else {
+      }else {
         this.router.navigate(['/']);
         document.body.style.cursor="initial";
         }
@@ -261,11 +375,201 @@ export class NewDocumentFastComponent implements OnInit {
      this.finished = false;
      this.depth = 0;
      this.path = [];
+
+     this.filteredKeywords = this.control.valueChanges.pipe(
+      startWith(''),
+      map(value => this._filter(value))
+    );
   
+  }
+
+  private _filter(value: string): string[] {
+    const filterValue = this._normalizeValue(value);
+    return this.keywords_suggestions.filter(sug_key => this._normalizeValue(sug_key).includes(filterValue));
+  }
+
+  private _normalizeValue(value: string): string {
+    return value.toLowerCase().replace(/\s/g, '');
+  }
+
+  getDocument(id): void {
+    if(id != null) {
+
+      this.fileId = endpoint  + "/files/" + id;
+      this.fileThumb = endpoint  + "/files/" + id + "/thumbnail";
+      
+      document.getElementById("uploadFileDiv").style.display = "none";
+      document.getElementById("uploadPhotoDiv").style.display = "none";
+
+      this.rest.querySOLR("q=id:" + id).subscribe((data: any) => {
+        var documents = data.response.docs;
+        console.log(documents)
+        
+        this.otherResource = "";
+        this.updateCheckBoxes(documents[0].resources, this.resources, "resources");
+        this.updateCheckBoxes(documents[0].target, this.target, "target");
+        this.updateCheckBoxes(documents[0].keywords, this.keywords_predefined, "keywords");
+        this.updateCheckBoxes(documents[0].age, this.age, "age");
+        this.updateCheckBoxes(documents[0].knowledgeArea, this.knowledgeArea, "knowledgeArea");
+        
+        this.updateTypicalLearningTime(documents[0].typicalLearningTime);
+
+        this.simple = {
+          name: documents[0].name,
+          language: documents[0].language,
+          // keywords: documents[0].keywords,
+          description: documents[0].description,
+          interaction: documents[0].interaction,
+          interactionNumber: documents[0].interactionNumber,
+          licence: documents[0].licence,
+          // target:  documents[0].target,
+          // age:  documents[0].age,
+          // knowledgeArea:  documents[0].knowledgeArea,
+          // resources:  documents[0].resources[0],
+          // typicalLearningTime: documents[0].typicalLearningTime,
+          owner: documents[0].owner,
+          favorites: documents[0].favorites, 
+          free: documents[0].free,
+          relationWith: this.updateRelations(documents[0].relationWith),
+          //authors: documents[0].author,
+          author: this.updateAuthors(documents[0].author),
+          status: this.getStatusScope(localStorage.getItem("roles"))[2],
+          reviewer: localStorage.getItem("email")
+        }
+      });
+    }
+  }
+
+  // TODO: repeated function, refactor. Same as in profile
+  getStatusScope(role) {
+    switch(role) {
+      case "tech_reviewer": return ["NEEDS_TECH_REVIEW", "UNDER_TECH_REVIEW", "NEEDS_PEDAG_REVIEW"];
+      case "pedag_reviewer": return ["NEEDS_PEDAG_REVIEW", "UNDER_PEDAG_REVIEW", "REVIEWED"];
+      default: return [];
+    }
+  }
+
+  updateRelations(associatedRelations){
+    // console.log(associatedRelations);
+    let relation_ret = [];
+    if(associatedRelations.length > 1) {
+      // document.getElementById("relationDiv").style.display = "block";
+      for(var i = 0; i < associatedRelations.length-1; i++) {
+        let relations = associatedRelations[i];
+        let rel_parts = relations.split(",")
+        let rel_entry = rel_parts[0].split("=")[1];
+        let rel_kind = rel_parts[1].split("=")[1];
+        let rel_kind_fixed = rel_kind.substr(0, rel_kind.length - 1);
+        if(rel_kind_fixed.trim() != ""){
+          relation_ret.push({kind: rel_kind_fixed, entry: rel_entry});
+          this.documentsTiny[i] = rel_entry;
+          this.existRelation = true;
+        } else {
+          relation_ret.push({kind: "", entry: ""});
+              this.documentsTiny[i] = "";
+        }
+      }
+    } 
+    return relation_ret;
+  }
+
+  updateTypicalLearningTime(durationTime){
+    if(durationTime == "PT3H15M0S") {
+      this.moreThanThreeHours = true;
+      this.typicalLearningTime = 0;
+    } else {
+      this.moreThanThreeHours = false;
+      let time = durationTime.split("H");
+      let hours = time[0].replace("PT","") * 60;
+      let minutes = time[1].replace("M0S","") * 1;  
+      this.typicalLearningTime = hours + minutes;
+    }
+  }
+
+  updateAuthors(authors_list){
+    let contributors = [];
+    for(var i = 0; i < authors_list.length-1; i++) {
+        let aut = authors_list[i];
+        let aut_parts = aut.split(",")
+        let aut_name = aut_parts[0].split("=")[1];
+        let aut_institution = aut_parts[1].split("=")[1];
+        let aut_role = aut_parts[2].split("=")[1];
+        let aut_role_fixed = aut_role.substr(0, aut_role.length - 1);
+        contributors.push({name: aut_name, institution: aut_institution, role:aut_role_fixed}); 
+    }
+    return contributors;
+  }
+
+  updateCheckBoxes(fields, fieldsList, varName) {
+    var checkedFields = 0;
+    for(var i = 0; i < fields.length; i++){
+      for(var j = 0; j < fieldsList.length; j++){
+        if(fieldsList[j].length > 0) {
+          for(var k = 0; k < fieldsList[j].length; k++){
+            if(fields[i] == fieldsList[j][k].name){
+              fieldsList[j][k].isValid = true;
+              checkedFields++;
+            }
+          }
+        } else {
+          if(fields[i] == fieldsList[j].name){
+            fieldsList[j].isValid = true;
+            checkedFields++;
+          }
+        }
+      }
+    }
+    
+    if(checkedFields != fields.length) {
+      switch(varName) {
+        case "keywords":
+          for(var i = checkedFields; i < fields.length; i++){
+            this.keywords.push(fields[i]);
+          }
+          break;
+        case "resources":
+          fieldsList[fieldsList.length-1][0].isValid = true;
+          this.otherResource = fields[fields.length-1];
+          document.getElementById("otherResourceForm").style.display = "block";
+          break;
+      }      
+    }
+  }
+
+  // clearRelationSelection(): void {
+  //   this.documentsTiny = [];
+  // }
+
+  openRelationDialog(index: number): void {
+    let dialogRef = this.dialog.open(DialogOverviewExampleDialog, {
+      width: '800px',  height: '600px',
+      data: {documentsTiny: this.documentsTiny}
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      var filteredResult = [];
+      if(result){
+        for(var i = 0; i < result.length; i++){
+          if(result[i].selected) {
+            filteredResult.push(result[i].id);
+          }
+        }
+        this.documentsTiny[index] = filteredResult;
+        // console.log(this.documentsTiny);
+      } 
+    });
   }
 
   radioInteractivityChange(event: MatRadioChange) {
     this.simple.interactionNumber = +event.value;
+  }
+
+  showRelationDiv(event: MatRadioChange) {
+    if(+event.value) {
+      document.getElementById("relationDiv").style.display = "block";
+    } else {
+      document.getElementById("relationDiv").style.display = "none";
+    }
   }
 
   setTypicalLearningTime(event: MatCheckboxChange) {
@@ -274,29 +578,36 @@ export class NewDocumentFastComponent implements OnInit {
   }
 
   finish(){
-    
-
     for (var propt in this.simple){
       if (Object.prototype.hasOwnProperty.call(this.simple, propt)) {
-          if(this.simple[propt] == "" && !(propt == "id" || propt == "typicalLearningTime")){
-            return;
+          if(this.simple[propt] == "" && !(propt == "id" || propt == "typicalLearningTime" ||
+            propt == "relation")){
+              alert('Preencha todos os campos necessários antes do envio.');
+              return;
           }
       }
     }
 
     document.body.style.cursor="wait";
+
+    if(this.route.snapshot.paramMap.get('id') != null) {
+      this.OBAA.id = parseInt(this.route.snapshot.paramMap.get('id'));
+      console.log(this.route.snapshot.paramMap.get('id'))
+      this.edit = "/edit";
+    }
     
     this.OBAA.metadata.general.titles[0] = this.simple.name;
     this.OBAA.metadata.general.languages[0] = this.simple.language;
     this.OBAA.metadata.general.descriptions[0] = this.simple.description;
-    this.OBAA.metadata.general.keywords[0] = this.simple.keywords;
+    this.OBAA.metadata.general.keywords[0] = this.simple.keywords.toString();
 
     this.updateSimple();
-    this.addAuthor();
+ 
+    this.addAuthor("","","author"); 
+    this.addRelation();
 
     for(var i = 0; i < this.contribute.length; i++){
       this.OBAA.metadata.lifeCycle.contribute[i] = this.contribute[i];
-      console.log(this.contribute[i]);
     }
 
     this.OBAA.metadata.educational.learningResourceTypes = this.simple.resources;
@@ -311,32 +622,35 @@ export class NewDocumentFastComponent implements OnInit {
     this.OBAA.metadata.rights.cost = "false";
     this.OBAA.metadata.rights.copyright = "true";
     this.OBAA.metadata.rights.description = this.simple.licence;
-
-    // console.log(this.simple.typicalLearningTime);
+    
+    for(var i = 0; i < this.relation.length; i++){
+      this.OBAA.metadata.relations.push(this.relation[i]);
+    }
+    
+    
+    this.OBAA.isVersion = "1";
+    
+    this.simple.id = this.OBAA.id;  
+    
     console.log( "BEFORE");
     console.log(this.OBAA);
     console.log(this.simple);
-    // return;//TODO: retirar return apos testes
-
-    this.OBAA.isVersion = "1";
-        
-    this.rest.addDocument(JSON.stringify(this.OBAA), this.OBAA.id).subscribe((data: {}) => {
+ 
+    this.rest.addDocument(JSON.stringify(this.OBAA), this.OBAA.id, this.edit).subscribe((data: {}) => {
       console.log(data);
-      
-
-      this.simple.id = this.OBAA.id;
       console.log(this.simple);
+      
       this.rest.addDocumentSOLR(JSON.stringify([this.simple])).subscribe((data: {}) => {
         console.log(data);
         
 
         this.uploader2.uploadAll();
       });
-
+      alert("Documento adicionado com sucesso! Aguarde pela revisão!");
     });
 
-
-
+    this.router.navigate(['/']);
+    document.body.style.cursor="initial";
     
   }
 
@@ -401,25 +715,23 @@ export class NewDocumentFastComponent implements OnInit {
     document.getElementById(currentPageString).style.fontWeight = "normal";
     document.getElementById(currentPageStep).style.display = "none";
 
-    
-
     var newPageString = "page" + page;
     var newStepString = "step" + page;
     document.getElementById(newPageString).style.fontWeight = "bold";
     document.getElementById(newStepString).style.display = "block";
     
     this.currentPage = page;
-    this.progressBarValue = (100/7) * page;
+    this.progressBarValue = (100/this.numPages) * page;
 
-    if(page == 7)
+    if(page == this.numPages)
       this.updateSimple();
-
+    
     window.scrollTo(0,0);
 
   }
 
   resetPagesBoldness(){
-    for (var i = 1; i <= 7; i++){
+    for (var i = 1; i <= this.numPages; i++){
       var pageString = "page" + i;
       document.getElementById(pageString).style.fontWeight = "normal";
 
@@ -428,7 +740,7 @@ export class NewDocumentFastComponent implements OnInit {
 
   nextPage(){
       console.log(this.currentPage);
-    if (this.currentPage != 7){
+    if (this.currentPage != this.numPages){
       this.page(this.currentPage + 1);
     }
   }
@@ -457,11 +769,27 @@ export class NewDocumentFastComponent implements OnInit {
     this.simple.resources = [];
     this.simple.age = [];
     this.simple.knowledgeArea = []; 
+    this.simple.keywords = [];
     this.contribute = [];   
+    this.relation = [];
+
+    for(var i = 0; i < this.keywords_predefined.length; i++){
+      for(var recIndex = 0; recIndex < this.keywords_predefined[i].length; recIndex++){
+        if(this.keywords_predefined[i][recIndex].isValid){
+          this.simple.keywords.push(this.keywords_predefined[i][recIndex].name);
+        }
+      }
+    }
+
+    for(var i = 0; i < this.keywords.length; i++){      
+        this.simple.keywords.push(this.keywords[i]);
+    }
 
     for(var i = 0; i < this.target.length; i++){
-      if(this.target[i].isValid){
-        this.simple.target.push(this.target[i].name);
+      for(var recIndex = 0; recIndex < this.target[i].length; recIndex++){
+        if(this.target[i][recIndex].isValid){
+          this.simple.target.push(this.target[i][recIndex].name);
+        }
       }
     }
 
@@ -477,6 +805,7 @@ export class NewDocumentFastComponent implements OnInit {
       }
     }
 
+    
     for(var i = 0; i < this.resources.length; i++){
       for(var recIndex = 0; recIndex < this.resources[i].length; recIndex++){
         if(this.resources[i][recIndex].isValid){
@@ -490,8 +819,20 @@ export class NewDocumentFastComponent implements OnInit {
         entities:[this.simple.author[i].name , this.simple.author[i].institution]}); 
     }
     
-    this.simple.interaction = this.formatLabel(this.simple.interactionNumber);
+    for(var i = 0; i < this.simple.relationWith.length; i++){
+      if (this.documentsTiny.length > 0){
+        var entries = this.documentsTiny[i].toString().split(',');
+        for(var k = 0; k < entries.length; k++){
+          this.relation.push({kind:this.simple.relationWith[i].kind, 
+            resource:{identifier:[{catalog: "URI" , 
+            entry: entries[k]}]}});
+          this.simple.relationWith[i].entry = entries[k];
+      }
+      //TODO: group identifiers to the same kind
+      }
+    }
     
+    this.simple.interaction = this.formatLabel(this.simple.interactionNumber);
 
     // TypicalLearningTime must follow the rule PThHmMsS
     if(this.typicalLearningTime != 0){
@@ -507,7 +848,7 @@ export class NewDocumentFastComponent implements OnInit {
     if(this.moreThanThreeHours){
       this.simple.typicalLearningTime = "PT3H15M0S";
     }
-
+    
     if(this.otherResource!=""){
       this.simple.resources.pop();
       this.simple.resources.push(this.otherResource);
@@ -518,17 +859,42 @@ export class NewDocumentFastComponent implements OnInit {
     
   }
 
-  addAuthor(){
+  addKeyword(){
+    // var key = {
+    //   name: this.control.value,
+    //   isValid: true,
+    // }
+    this.keywords.push(this.control.value);
+  }
+
+  removeKeyord(i: number){
+    this.keywords.splice(i,1);
+  }
+
+  addAuthor(newName:string, newInsitution:string, newRole:string){
     var aut = {
-      name:"",
-      institution:"",
-      role:"author",
+      name: newName,
+      institution:newInsitution,
+      role:newRole,
     };
     this.simple.author.push(aut);
   }
 
   removeAuthor(){
     this.simple.author.pop();
+  }
+
+  addRelation(){
+    var rel = {
+      kind:"",
+      entry:"",
+    };
+    this.simple.relationWith.push(rel);
+  }
+
+  removeRelation(){
+    this.documentsTiny.pop();
+    this.simple.relationWith.pop();
   }
 
   addOtherResource(value:string, isValid:boolean){
@@ -548,7 +914,7 @@ export class NewDocumentFastComponent implements OnInit {
           if(this.simple[propt] == "" && !(propt == "id" 
             // || propt == "age" 
             // || propt == "target" || propt == "resources" || propt == "knowledgeArea"
-            || propt == "typicalLearningTime")){
+            || propt == "typicalLearningTime" || propt == "relation")){
             document.getElementById("incomplete").style.display="block";
             complete = true;
             //console.log(propt);
@@ -559,17 +925,54 @@ export class NewDocumentFastComponent implements OnInit {
     if(!complete)
       document.getElementById("incomplete").style.display="none";
     
-    if(this.uploader2.queue.length == 0){
+    if(this.uploader2.queue.length == 0 && this.edit == ""){
       document.getElementById("uploadEmpty").style.display="block";
       return;
     }
 
     document.getElementById("uploadEmpty").style.display="none";
+  }
+}
 
-    
+@Component({
+  selector: 'dialog-overview-example-dialog',
+  templateUrl: 'dialog-overview-example-dialog.html',
+})
+export class DialogOverviewExampleDialog {
+  documentsTiny = [];
+  searchText = "";
+  
+  constructor(
+    public dialogRef: MatDialogRef<DialogOverviewExampleDialog>,
+    public rest: RestService,
+    @Inject(MAT_DIALOG_DATA) public data: DialogData) {}
 
+  onCancelClick(): void {
+    this.dialogRef.close();
+  }
+
+  ngOnInit() {
+    this.search();
   }
   
+  search(){
+    this.documentsTiny = [];
+    var finalString = "q=*:*"
 
+    if(this.searchText != ""){
+      finalString = "q=name:\""+ this.searchText + "\"";
+    }
+    
+    this.rest.querySOLR(finalString).subscribe((data: any) => {
+      var rec = data.response.docs;
+      console.log(rec);
+      for (var x in rec){
+        console.log(x);
+        this.documentsTiny.push({id:rec[x].id, title:rec[x].name, selected:false});
+      }
+      console.log(this.documentsTiny);
+    });
+
+  }
 
 }

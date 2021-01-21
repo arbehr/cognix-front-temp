@@ -1,11 +1,25 @@
 <mat-progress-bar id="progress" class="orange-progress" [value]="progressBarValue"></mat-progress-bar>
 
 <div class="center-div" id="step1">
-  <p>Você pode adicionar seu objeto através de um arquivo em seu computador</p>
-
-  <input style="height: 30px" type="file" name="file" id="uploadFile" (click)="uploader2.clearQueue()" ng2FileSelect [uploader]="uploader2" />
+  <h1 style="text-align: center;"><strong>Arquivo(s)</strong></h1> <br><br>
+  <div id="uploadFileDiv">
+    <p class="paragraph">Adicione o arquivo do seu OA \ recurso</p><br>
+    
+    <input style="height: 30px" type="file" name="file" id="uploadFile" (click)="uploader2.clearQueue()" ng2FileSelect [uploader]="uploader2" />
+  </div>
+  <br><br>
+  <p *ngIf="fileId" class="paragraph">Objeto de aprendizagem:</p>
   <br>
-
+  <a *ngIf="fileId" href="{{fileId}}">Arquivo enviado</a>
+  <br><br>
+  <div id="uploadPhotoDiv">
+    <p class="paragraph">Adicione uma imagem de rosto para o seu OA \ recurso</p><br>
+    <input style="height: 30px" type="file" name="photo" id="photoUpload" (click)="uploader.clearQueue()" ng2FileSelect [uploader]="uploader" />
+  </div>
+  <br>
+  <p *ngIf="fileThumb" class="paragraph">Imagem de rosto:</p>
+  <br>
+  <a *ngIf="fileThumb" href="{{fileThumb}}">Arquivo enviado</a>
 
 </div>
 
@@ -14,54 +28,89 @@
 
   <form>
 
-    <p class="paragraph">Qual é o título?</p>
+    <p class="paragraph">Título:</p>
     <mat-form-field style="width:50%">
-      <input matInput matInput [(ngModel)]="simple.name" name="title" placeholder="Sua resposta">
+      <input required matInput [(ngModel)]="simple.name" name="title" placeholder="ex.: O mar é a nossa casa">
     </mat-form-field>
     <br><br>
-    <p class="paragraph">Qual é o idioma?</p>
+    <p class="paragraph">Idioma:</p>
     <mat-form-field>
-      <mat-select [(ngModel)]="simple.language" name="languages" placeholder="Escolher">
+      <mat-select required [(ngModel)]="simple.language" name="languages" placeholder="Escolher">
         <mat-option value=Português>Português</mat-option>
         <mat-option value=Inglês>Inglês</mat-option>
         <mat-option value=Espanhol>Espanhol</mat-option>
       </mat-select>
     </mat-form-field> <br><br>
 
-    <p class="paragraph">Como você descreveria este objeto de aprendizagem?</p>
+    <p class="paragraph">Descrição:</p>
     <mat-form-field style="width:50%">
-      <input matInput [(ngModel)]="simple.description" name="description" placeholder="Sua resposta">
+      <input required matInput [(ngModel)]="simple.description" name="description" placeholder="ex.: Livro eletrónico com uma aventura no mar">
     </mat-form-field>
     <br><br>
 
-    <p class="paragraph">Quais palavras-chave você usaria para descrever este objeto?</p>
-    <mat-form-field style="width:50%">
-      <input matInput [(ngModel)]="simple.keywords" name="keyword" placeholder="Sua resposta">
-    </mat-form-field>
-    <br><br>
-
-    <p class="paragraph">Quais destes tipos de recurso são os mais adequados para definir este objeto de aprendizagem?
-    </p>
+    <p class="paragraph">Palavras-chave: *</p>
     <br>
+    <div class="table-responsive">
     <table cellpadding="10">
-      <tr *ngFor="let list of resources">
+      <tr *ngFor="let list of keywords_predefined">
         <th *ngFor="let item of list">
           <p style="margin-bottom: 0em;font-weight: normal;">
-            <mat-checkbox (change)="item.isValid = ! item.isValid;addOtherResource(item.name,item.isValid)">{{item.name}}</mat-checkbox>
+            <mat-checkbox [checked]="item.isValid" (change)="item.isValid = ! item.isValid;">{{item.name}}</mat-checkbox>
           </p>
         </th>
       </tr>
     </table>
+  </div>
+    <mat-form-field style="width:45%">
+      <input matInput
+          placeholder="Adicione outra palavra-chave"
+          [formControl]="control"
+          [matAutocomplete]="auto">
+    <mat-autocomplete #auto="matAutocomplete">
+      <mat-option *ngFor="let key of filteredKeywords | async" [value]="key">
+        {{key}}
+      </mat-option>
+    </mat-autocomplete>
+  </mat-form-field>
+    <!-- <mat-form-field style="width:45%">
+      <input matInput [(ngModel)]="keywords" name="keyword" placeholder="Adicione outra palavra-chave">
+    </mat-form-field> -->
+    <button mat-raised-button (click)="addKeyword();">Adicione</button>
+    <br>
+    <div *ngFor="let item of keywords; let i = index">
+      <p style="font-weight: normal">
+        <span>{{item}}</span>
+        <button mat-icon-button (click)="removeKeyord(i)">
+          <mat-icon class="mat-24">delete</mat-icon>
+        </button>
+      </p>
+    </div>
+    <br>
+    <br>
+    <p class="paragraph">Tipo(s) de OA \ recurso de aprendizagem: (pode selecionar vários) *
+    </p>
+    <br>
+    <div class="table-responsive">
+    <table cellpadding="10">
+      <tr *ngFor="let list of resources">
+        <th *ngFor="let item of list">
+          <p style="margin-bottom: 0em;font-weight: normal;">
+            <mat-checkbox [checked]="item.isValid" (change)="item.isValid = ! item.isValid;addOtherResource(item.name,item.isValid)">{{item.name}}</mat-checkbox>
+          </p>
+        </th>
+      </tr>
+    </table>
+  
     <table>
       <tr>
         <th>
           <mat-form-field style="width:100%;display:none" id="otherResourceForm">
-            <input matInput [(ngModel)]="otherResource" name="otherResource" placeholder="Sua resposta">
+            <input matInput [(ngModel)]="otherResource" name="otherResource" placeholder="Resposta">
           </mat-form-field>
         </th>
       </tr>
     </table>
-
+    </div>
     <br><br>
   </form>
 </div>
@@ -70,23 +119,23 @@
 <div class="center-div-step2" id="step3" style="display:none">
   <h1 style="text-align: center;"><strong>Interatividade</strong></h1> <br><br>
   <form>
-    <p class="paragraph">Qual o nível dessa interação?</p><br><br>
+    <p class="paragraph">Nível de interação: *</p><br><br>
     <mat-slider thumbLabel class="cdk-focused" style="pointer-events:none;" [(ngModel)]="simple.interactionNumber" id="interactivityNumber" name="interactivityNumber" [displayWith]="formatLabel"
       min="1" max="4" step="1" value="1"></mat-slider>
     <br><br>
 
-    <mat-radio-group [(ngModel)]="interactivitySelection" name="interactivitySelection">
+    <mat-radio-group [(ngModel)]="interactivitySelection" name="interactivitySelection" id="interactivitySelection">
       <p style="font-weight: normal" style="font-weight: normal;">
-        <mat-radio-button value="1" (change)="radioInteractivityChange($event)">Nenhuma</mat-radio-button>
+        <mat-radio-button [checked]="simple.interactionNumber == 1" value="1" (change)="radioInteractivityChange($event)">Nenhuma</mat-radio-button>
       </p>
       <p style="font-weight: normal" style="font-weight: normal;">
-        <mat-radio-button value="2" (change)="radioInteractivityChange($event)">Apenas texto ou  vídeo</mat-radio-button>
+        <mat-radio-button [checked]="simple.interactionNumber == 2" value="2" (change)="radioInteractivityChange($event)">Apenas texto ou  vídeo</mat-radio-button>
       </p>
       <p style="font-weight: normal" style="font-weight: normal;">
-        <mat-radio-button value="3" (change)="radioInteractivityChange($event)">Vídeo com perguntas, página web</mat-radio-button>
+        <mat-radio-button [checked]="simple.interactionNumber == 3" value="3" (change)="radioInteractivityChange($event)">Vídeo com perguntas, página web</mat-radio-button>
       </p>
       <p style="font-weight: normal" style="font-weight: normal;">
-        <mat-radio-button value="4" (change)="radioInteractivityChange($event)">Jogo, simulações interativas</mat-radio-button>
+        <mat-radio-button [checked]="simple.interactionNumber == 4" value="4" (change)="radioInteractivityChange($event)">Jogo, simulações interativas</mat-radio-button>
       </p>
     </mat-radio-group> <br>
   </form>
@@ -96,54 +145,40 @@
   <h1 style="text-align: center;"><strong>Público Alvo</strong></h1> <br><br>
   <form>
 
-    <p class="paragraph">Para quem foi feito este objeto de aprendizagem?</p> <br>
-    <div *ngFor="let item of target">
-      <p style="font-weight: normal">
-        <mat-checkbox (change)="item.isValid = ! item.isValid">{{item.name}}</mat-checkbox>
-      </p>
-    </div>
+    <p class="paragraph">Utilizadores finais: *</p> <br>
+    <table cellpadding="10">
+      <tr *ngFor="let list of target">
+        <th *ngFor="let item of list">
+          <p style="margin-bottom: 0em;font-weight: normal;">
+            <mat-checkbox [checked]="item.isValid" (change)="item.isValid = ! item.isValid;">{{item.name}}</mat-checkbox>
+          </p>
+        </th>
+      </tr>
+    </table>
     <br>
 
-    <p class="paragraph">Para qual etapa da educação foi feito este projeto?</p> <br>
+    <p class="paragraph">Etapa(s) da educação: *</p> <br>
     <div *ngFor="let item of age">
       <p style="font-weight: normal">
-        <mat-checkbox (change)="item.isValid = ! item.isValid">{{item.name}}</mat-checkbox>
+        <mat-checkbox [checked]="item.isValid" (change)="item.isValid = ! item.isValid">{{item.name}}</mat-checkbox>
       </p>
     </div>
     <br>
-    <p class="paragraph">Para qual área do conhecimento foi feito esse objeto?</p>
+    <p class="paragraph">Área(s) do conhecimento: *</p>
     <br>
     <div *ngFor="let item of knowledgeArea">
       <p style="font-weight: normal">
-        <mat-checkbox (change)="item.isValid = ! item.isValid">{{item.name}}</mat-checkbox>
+        <mat-checkbox [checked]="item.isValid" (change)="item.isValid = ! item.isValid">{{item.name}}</mat-checkbox>
       </p>
     </div>
     <br>
-    <!-- <div>
-      <div class="search-buttons">
-        <div style="float:left;" class="search-title search-options">
-          <mat-chip-list>
-            <mat-chip selected class="search-options" (click)="onSelectPrevious()"><span
-                class="chip-text">{{searchOptions.name}}</span></mat-chip>
-          </mat-chip-list>
-        </div>
-        <div>
-          <mat-chip-list>
-            <mat-chip class="search-options" #chip="matChip" [selectable]=false
-              *ngFor="let field of searchOptions.next; let i = index" [attr.data-index]="i"
-              (click)="onSelect(i, field.name); chip.select();">
-              <span class="chip-text">{{field.name}}</span></mat-chip>
-          </mat-chip-list>
-        </div>
-      </div>
-    </div> -->
-    <p class="paragraph">Qual o tempo necessário (em minutos) para a realização da atividade?</p>
+    <p class="paragraph">Tempo necessário (em minutos) para a realização da atividade:</p>
     <br><br>
     <mat-slider thumbLabel [(ngModel)]="typicalLearningTime" id="typicalLearningTime" name="typicalLearningTime" [displayWith]=""
       min="0" max="180" step="15" value="15"></mat-slider>
     <br>
     <section>
-      <mat-checkbox (change)="setTypicalLearningTime($event)">Mais de 3 horas</mat-checkbox>
+      <mat-checkbox [checked]="moreThanThreeHours" (change)="setTypicalLearningTime($event)">Mais de 3 horas</mat-checkbox>
     </section>
 
   </form>
@@ -155,40 +190,30 @@
 
   <form>
     <p class="paragraph">É permitido compartilhar — copiar e redistribuir o material em qualquer suporte ou formato.</p><br>
-    <p class="paragraph">É permitido adaptar — remixar, transformar, e criar a partir do material.</p><br>
+    <p class="paragraph">É permitido adaptar — transformar e criar a partir do material.</p><br>
     <p class="paragraph">No caso de adaptação, têm de ser mantidos os créditos reconhecendo todos os autores ou intervenientes na produção do OA.</p> <br>
     <p class="paragraph">Quem alterar o seu OA não poderá revogar esta licença pelo que o novo OA terá de ser licenciado com a mesma licença.</p> <br>
     <p class="paragraph">Saiba mais sobre as licenças <a rel="license" target="_blank" href="http://creativecommons.org/licenses/">aqui.</a></p><br>
-    <p class="paragraph">Qual a licença?</p><br>
+    <p class="paragraph">Licença pretendida: *</p><br>
     <mat-radio-group [(ngModel)]="simple.licence" name="licence" id="licence">
-      <p style="font-weight: normal" style="font-weight: normal;">
+      <div style="font-weight: normal;display: inline-block;">
         <mat-radio-button value="CC BY-SA">
-          <table>
-            <tr>
-              <td>
-                <a rel="license" target="_blank" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Licença Creative Commons" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" /></a>
-              </td>
-              <td style="text-align:left; padding: 15px;">
-                É permitida a utilização para qualquer fim, mesmo que comercial
-              </td>
-            </tr>
-          </table>
         </mat-radio-button>
-      </p>
-      <p style="font-weight: normal" style="font-weight: normal;">
+        <a rel="license" target="_blank" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Licença Creative Commons" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" /></a>
+        <span>
+          É permitida a utilização para qualquer fim, mesmo que comercial.
+        </span>
+      </div>
+      <br>
+      <br>
+      <div style="font-weight: normal;display: inline-block;">
         <mat-radio-button value="CC BY-NC-SA">
-          <table>
-            <tr>
-              <td>
-                <a rel="license" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Licença Creative Commons" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a>
-              </td>
-              <td style="text-align:left; padding: 15px;">
-                Não é permitida a utilização para fins comerciais.
-              </td>
-            </tr>
-          </table>  
-        </mat-radio-button>
-      </p>
+        </mat-radio-button>  
+        <a rel="license" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Licença Creative Commons" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a>
+        <span> 
+          Não é permitida a utilização para fins comerciais.
+        </span> 
+      </div>
     </mat-radio-group> <br>
   </form>
 </div>
@@ -197,23 +222,22 @@
 
   <p class="paragraph">Quem contribuiu para o projeto?</p><br>
   <div *ngFor="let author of simple.author">
-
     <p class="paragraph">Nome:</p>
     <mat-form-field style="width:50%">
-      <input matInput [(ngModel)]="author.name" name="author" placeholder="Sua resposta">
+      <input required matInput [(ngModel)]="author.name" name="author" placeholder="Resposta">
     </mat-form-field>
     <br>
 
     <p class="paragraph">Instituição:</p>
     <mat-form-field style="width:50%">
-      <input matInput [(ngModel)]="author.institution" name="institution" placeholder="Sua resposta">
-    </mat-form-field>
+      <input required matInput [(ngModel)]="author.institution" name="institution" placeholder="Resposta">
+      </mat-form-field>
     <br>
 
     <p class="paragraph">De que forma?</p>
     <mat-form-field>
-      <mat-select [(ngModel)]="author.role" name="role">
-        <!-- <mat-option value=Aluno>Aluno</mat-option>
+      <mat-select required [(ngModel)]="author.role" name="role">
+      <!-- <mat-option value=Aluno>Aluno</mat-option>
         <mat-option value=Professor>Professor</mat-option>
         <mat-option value=Gestor>Gestor</mat-option> -->
 
@@ -223,27 +247,71 @@
         <mat-option value="graphical designer"> Designer Gráfico</mat-option>
         <mat-option value="script writer"> Guionista</mat-option>
         <mat-option value="pedagogical reviewer"> Revisor\a pedagógico</mat-option>
-        <mat-option value="content reviewer about the sea"> Revisor\a do conteúdo sobre o mar</mat-option>
+        <mat-option value="content reviewer about the sea"> Revisor\a do conteúdo</mat-option>
         <mat-option value="programmer"> Programador\a </mat-option>
         <mat-option value="other"> Outra </mat-option>
       </mat-select>
     </mat-form-field> <br><br>
 
   </div>
-  <button mat-raised-button (click)="addAuthor()">Adicionar outro contribuinte</button>
-  <button style="margin-left:30px" mat-raised-button (click)="removeAuthor()">Remover contribuinte</button>
-  <br><br><br><br>
-
-  <p class="paragraph">Adicione uma imagem de rosto para seu objeto:</p><br>
-  <input style="height: 30px" type="file" name="photo" id="photoUpload" (click)="uploader.clearQueue()" ng2FileSelect [uploader]="uploader" />
+  <button mat-raised-button (click)="addAuthor('','','author')">Adicionar outro contribuinte</button>
   <br>
-
-  
-
-
+  <br>
+  <button mat-raised-button (click)="removeAuthor()">Remover contribuinte</button>
+  <br><br><br><br>
 </div>
 
 <div class="center-div-step2" id="step7" style="display:none">
+  <h1 style="text-align: center;"><strong>Relações</strong></h1> <br><br>
+
+  <p class="paragraph">O OA \ Recurso usou como base outro OA já existente nesse repositório?</p><br>
+  <mat-radio-group name="loRelation">
+    <p style="font-weight: normal" style="font-weight: normal;">
+      <mat-radio-button [checked]="existRelation" value="1" (change)="showRelationDiv($event)">Sim</mat-radio-button>
+    </p>
+    <p style="font-weight: normal" style="font-weight: normal;">
+      <mat-radio-button [checked]="!existRelation" value="0" (change)="showRelationDiv($event)">Não</mat-radio-button>
+    </p>
+  </mat-radio-group>
+  
+  <div id="relationDiv" style="display:none" *ngFor="let relation of simple.relationWith; let i = index">
+    <p class="paragraph">De que forma?</p>
+    <mat-form-field>
+      <mat-select [(ngModel)]="relation.kind" name="kind">
+        <!-- <mat-option value="">  </mat-option> -->
+        <!-- <mat-option value="ispartof"> É parte de </mat-option> -->
+        <mat-option value="haspart"> Contém parte </mat-option>
+        <mat-option value="isversionof"> É uma versão de </mat-option>
+        <!-- <mat-option value="hasversion"> Tem versão</mat-option> -->
+        <!-- <mat-option value="isformatof"> É formato de</mat-option>
+        <mat-option value="hasformat"> Tem formato</mat-option> -->
+        <mat-option value="references"> Referencia</mat-option>
+        <!-- <mat-option value="isreferencedby"> É referenciado por </mat-option> -->
+        <!-- <mat-option value="isbasedon"> É baseado em </mat-option>
+        <mat-option value="isbasisfor"> É base para </mat-option> -->
+        <mat-option value="requires"> Requer </mat-option>
+        <!-- <mat-option value="isrequiredby"> É requerido por </mat-option> -->
+      </mat-select>
+    </mat-form-field> <br><br>
+    
+    <p class="paragraph">Entrada(s): {{documentsTiny[i]}}</p>
+    <br>
+    <br>
+    <button mat-raised-button (click)="openRelationDialog(i)">Selecione</button>
+    <br>
+    <br>
+    <br>
+    <br>
+    <button mat-raised-button (click)="addRelation()">Adicionar outra relação</button>
+    <br>
+    <br>
+    <button mat-raised-button (click)="removeRelation()">Remover relação</button>
+    <br>
+  </div>
+  
+</div>
+
+<div class="center-div-step2" id="step8" style="display:none">
   <h1 style="text-align: center;"><strong>Resumo - {{simple.name}}</strong></h1> <br><br>
 
   <app-show-metadata [simple]="simple"></app-show-metadata>
@@ -266,16 +334,17 @@
 </div>
 
 <div class="pagination" style="margin-top:4em;">
-  <div style="width:70%" class="pagination">
-    <a href="javascript:void(0);" style="font-weight: bold;" (click)="prevPage()">&lt; Anterior</a>
-    <a href="javascript:void(0);" id="page1" style="margin-left: 25%; font-weight: bold;" (click)="page(1)">1</a>
+  <div class="pagination">
+    <a href="javascript:void(0);" class="margin-left-pag" style="font-weight: bold;" (click)="prevPage()">&lt; Anterior</a>
+    <a href="javascript:void(0);" id="page1" style="margin-left: 20%; font-weight: bold;" (click)="page(1)">1</a>
     <a href="javascript:void(0);" id="page2" style="margin-left: 3%;" (click)="page(2)">2</a>
     <a href="javascript:void(0);" id="page3" style="margin-left: 3%;" (click)="page(3)">3</a>
     <a href="javascript:void(0);" id="page4" style="margin-left: 3%;" (click)="page(4)">4</a>
     <a href="javascript:void(0);" id="page5" style="margin-left: 3%;" (click)="page(5)">5</a>
     <a href="javascript:void(0);" id="page6" style="margin-left: 3%;" (click)="page(6)">6</a>
     <a href="javascript:void(0);" id="page7" style="margin-left: 3%;" (click)="page(7)">7</a>
-    <a href="javascript:void(0);" style="margin-left: 25%; font-weight: bold;" (click)="nextPage()"> Próximo &gt;</a>
+    <a href="javascript:void(0);" id="page8" style="margin-left: 3%;" (click)="page(8)">8</a>
+    <a href="javascript:void(0);" style="margin-left: 20%; font-weight: bold;" (click)="nextPage()"> &gt; Próximo </a>
   </div>
 
 </div>

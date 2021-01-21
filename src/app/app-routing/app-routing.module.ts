@@ -10,11 +10,15 @@ import { ProfileComponent } from '../profile/profile.component';
 import { NewDocumentFastComponent } from '../new-document-fast/new-document-fast.component';
 import { SearchComponent } from '../search/search.component';
 import { LoginComponent } from '../login/login.component';
+import { ContactComponent } from '../contact/contact.component';
 
 const routes: Routes = [
   {
     path: '',
     component: HomeComponent
+  }, {
+    path: 'contact',
+    component: ContactComponent
   }, {
     path: 'about',
     component: AboutComponent
@@ -26,6 +30,9 @@ const routes: Routes = [
     component: ProfileComponent
   },  {
     path: 'documents/add',
+    component: NewDocumentFastComponent
+  }, {
+    path: 'documents/:id/edit',
     component: NewDocumentFastComponent
   }, {
     path: 'documents/:id',

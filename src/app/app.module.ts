@@ -32,14 +32,18 @@ import { InfoMetadadosComponent } from './info-metadados/info-metadados.componen
 import { AboutComponent } from './about/about.component';
 import { RegisterComponent } from './register/register.component';
 import { ProfileComponent } from './profile/profile.component';
-import { NewDocumentFastComponent } from './new-document-fast/new-document-fast.component';
+import { NewDocumentFastComponent, DialogOverviewExampleDialog } from './new-document-fast/new-document-fast.component';
 import { HttpClientModule } from '@angular/common/http';
 
 import { FileUploadModule } from 'ng2-file-upload';
 import { SearchComponent } from './search/search.component';
 import { ShowMetadataComponent } from './show-metadata/show-metadata.component';
 import { LoginComponent } from './login/login.component';
+import { ContactComponent } from './contact/contact.component';
 
+import {MatDialogModule} from '@angular/material/dialog';
+import { DocumentTinyComponent } from './document-tiny/document-tiny.component';
+import { MatAutocompleteModule, MatFormFieldModule } from '@angular/material';
 
 @NgModule({
   declarations: [
@@ -56,7 +60,10 @@ import { LoginComponent } from './login/login.component';
     NewDocumentFastComponent,
     SearchComponent,
     ShowMetadataComponent,
-    LoginComponent
+    LoginComponent,
+    ContactComponent,
+    DialogOverviewExampleDialog,
+    DocumentTinyComponent
   ],
   imports: [
     BrowserModule,
@@ -69,9 +76,12 @@ import { LoginComponent } from './login/login.component';
     HttpClientModule,
     ReactiveFormsModule, 
     FileUploadModule,
-    
+    MatDialogModule,
+    MatAutocompleteModule, 
+    MatFormFieldModule,
   ],
-  providers: [LoginService],
+  providers: [LoginService, ],
+  entryComponents: [ DialogOverviewExampleDialog],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

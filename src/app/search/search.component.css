@@ -16,9 +16,6 @@
     text-align: center;
 }
 
-.search-bar{
-    width:20em;
-}
 
 .search-box{
     background-color: #FDFDFD;
@@ -28,9 +25,27 @@
     font-size: 1.5em;
     margin-top:1em;
     margin-bottom: 0.5em;
-
 }
 
+@media (min-width: 992px){
+    .search-bar{
+        width:20em;
+    }
+
+    .search-box{
+        width: 25em;
+    }
+}
+
+@media (max-width: 991px){
+    .search-bar{
+        width:10em;
+    }
+
+    .search-box{
+        width: 15em;
+    }
+}
 
 .mat-form-field{
     margin:0px 0px;
@@ -106,6 +121,5 @@
     float: right;
     height: 100%;
     width: 3em;
-    background-color: #FF6F00;
     border-radius: 50%;
   }

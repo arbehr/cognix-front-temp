@@ -6,17 +6,21 @@
 <div class="center-div">
 <form fxFlex [formGroup] = "signUpForm">
 
-            <mat-form-field class="input-size">
-                <input formControlName='username' matInput placeholder="E-mail">
-            </mat-form-field><br><br>
-            <mat-form-field class="input-size">
-              <input formControlName='password' matInput placeholder="Senha">
-          </mat-form-field><br><br>
+  <mat-form-field class="input-size">
+    <input formControlName='name' required matInput placeholder="Nome">
+  </mat-form-field><br><br>
+  <mat-form-field class="input-size">
+      <input type="email" required email="true" formControlName='username' matInput placeholder="E-mail">
+  </mat-form-field><br><br>
+  <mat-form-field class="input-size">
+    <input [type]="hide ? 'password' : 'text'" required formControlName='password' matInput placeholder="Senha">
+    <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
+      <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+      </button>
+  </mat-form-field><br><br>
 
-            </form>
-              <div class="orange-button">
-              <button class="orange-button" mat-raised-button (click)="onSignUp()">Criar</button>
-            </div>
+  </form>
 
+    <button class="create-button" mat-raised-button (click)="onSignUp()">Criar</button>
 
 </div>

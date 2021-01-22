@@ -3,8 +3,8 @@ import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http
 import { Observable, of, Subject, throwError } from 'rxjs';
 import { map, catchError, tap } from 'rxjs/operators';
 
-export const endpoint = 'http://localhost:8080';
-export const endpointSOLR = 'http://localhost:8983';
+export const endpoint = 'http://edumar.uac.pt:8080';
+export const endpointSOLR = 'http://edumar.uac.pt:8983';
 const httpOptionsWithToken = {
   headers: new HttpHeaders({
     'Authorization': localStorage.getItem('token'),

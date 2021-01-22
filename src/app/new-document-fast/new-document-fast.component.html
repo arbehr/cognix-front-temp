@@ -124,7 +124,7 @@
       min="1" max="4" step="1" value="1"></mat-slider>
     <br><br>
 
-    <mat-radio-group [(ngModel)]="interactivitySelection" name="interactivitySelection" id="interactivitySelection">
+    <mat-radio-group id="interactivitySelection">
       <p style="font-weight: normal" style="font-weight: normal;">
         <mat-radio-button [checked]="simple.interactionNumber == 1" value="1" (change)="radioInteractivityChange($event)">Nenhuma</mat-radio-button>
       </p>

@@ -52,10 +52,6 @@ export class ProfileComponent implements OnInit {
     });
   }
 
-  async delay(ms: number) {
-    await new Promise(resolve => setTimeout(()=>resolve(), ms)).then(()=>console.log("fired"));
-  }
-
   reviewDocuments(){
     document.body.style.cursor="wait";
     let tokenInfo = this.rest.decodePayloadJWT();

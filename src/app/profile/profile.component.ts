@@ -20,12 +20,12 @@ export class ProfileComponent implements OnInit {
     if(status.length > 0) {
       this.getDocuments(status[0], "");
       this.getDocuments(status[1], tokenInfo.sub);
-      console.log(status);
+      // console.log(status);
     }
   }
 
   getStatusScope(roles) {
-    roles = roles.split(',');
+    roles = roles.toString().split(',');
     for(let role of roles) {
       // console.log(role);
       switch(role) {
@@ -43,12 +43,12 @@ export class ProfileComponent implements OnInit {
     }
     this.rest.querySOLR(query).subscribe((data: any) => {
       var rec = data.response.docs;
-      console.log(rec);
+      // console.log(rec);
       for (var x in rec){
-        console.log(x);
+        // console.log(x);
         this.documents.push({id:rec[x].id, title:rec[x].name, isValid:false, status:status, owner:rec[x].owner});
       }
-      console.log(this.documents);
+      // console.log(this.documents);
     });
   }
 
@@ -58,7 +58,7 @@ export class ProfileComponent implements OnInit {
     for(var i = 0; i < this.documents.length; i++){
       let status = this.getStatusScope(tokenInfo.roles);
       if(this.documents[i].isValid) {
-        console.log(i)
+        // console.log(i)
         this.rest.addDocumentSOLR(this.buildJson(this.documents[i].id, status[1])).subscribe((data: {}) => {
           console.log(data);
         });

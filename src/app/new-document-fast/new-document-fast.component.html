@@ -222,7 +222,7 @@
 
   <p class="paragraph">Quem contribuiu para a criação do objeto?</p><br>
   <div *ngFor="let author of simple.author">
-    <p class="paragraph">Nome:</p>
+    <p class="paragraph">Nome completo:</p>
     <mat-form-field style="width:50%">
       <input required matInput [(ngModel)]="author.name" name="author" placeholder="Resposta">
     </mat-form-field>

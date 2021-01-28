@@ -56,8 +56,8 @@ export class RestService {
   }
 
   addDocument(product, id, edit): Observable<any> {
-    console.log("Lets begin");
-    console.log(product);
+    // console.log("Lets begin");
+    // console.log(product);
     return this.http.post<any>(endpoint + '/documents/' + id + edit, product, httpOptionsWithToken).pipe(
       tap((product) => console.log("addProduct")),
       catchError(this.handleError<any>('addProduct'))
@@ -65,8 +65,8 @@ export class RestService {
   }
 
   addDocumentSOLR(product): Observable<any> {
-    console.log("Lets add to solr");
-    console.log(product);
+    // console.log("Lets add to solr");
+    // console.log(product);
     return this.http.post<any>(endpointSOLR + '/solr/DocumentTinyDto/update?commitWithin=1000&overwrite=true&wt=json', product, httpOptionsSolr).pipe(
       tap((product) => console.log("addProduct")),
       catchError(this.handleError<any>('addProduct'))
@@ -74,8 +74,8 @@ export class RestService {
   }
 
   querySOLR(id): Observable<any> {
-    console.log("Lets begin");
-    console.log(endpointSOLR + '/solr/DocumentTinyDto/select?_=' + id);
+    // console.log("Lets begin");
+    // console.log(endpointSOLR + '/solr/DocumentTinyDto/select?_=' + id);
     return this.http.get(endpointSOLR + '/solr/DocumentTinyDto/select?' + id, httpOptionsSolr).pipe(
       tap((product) => console.log("SolrQuery")),
       catchError(this.handleError<any>('SolrQuery'))
@@ -83,7 +83,7 @@ export class RestService {
   }
 
   getDocument(): Observable<any> {
-    console.log("Lets begin");
+    // console.log("Lets begin");
     return this.http.get(endpoint + '/documents/', httpOptionsReading).pipe(
       tap((product) => console.log("getDocument")),
       catchError(this.handleError<any>('getDocument'))
@@ -91,7 +91,7 @@ export class RestService {
   }
 
   getThumbnail(id: string): Observable<any> {
-    console.log("Lets begin thumbnail");
+    // console.log("Lets begin thumbnail");
     return this.http.get(endpoint + '/files/' + id + '/thumbnail', httpOptionsWithToken).pipe(
       tap((product) => console.log("getThumbnail done")),
       catchError(this.handleError<any>('getThumbnail'))
@@ -185,8 +185,8 @@ export class RestService {
   }
   
   sendEmail(body: any): Observable<any> {
-    console.log("Sending email...!");
-    console.log(body);
+    // console.log("Sending email...!");
+    // console.log(body);
     return this.http.post<MsgData>(endpoint + '/email-send', JSON.stringify(body), httpOptionsReading).pipe(
       map((body) => {
         if (body.msg == "Email enviado com sucesso!") {

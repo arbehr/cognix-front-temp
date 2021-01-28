@@ -1,25 +1,24 @@
+.card {
+  width: 13.5em;
+  height: 13.5em;
+}
 
-  .card {
-    width: 13.5em;
-    height: 13.5em;
-  }
-  
 
-  .mat-card-image{
-    margin-bottom: 0px;
-    object-fit: cover;
-    width:13.5em;
-    height:8.5em;
-  }
+.mat-card-image{
+  margin-bottom: 0px;
+  object-fit: cover;
+  width:13.5em;
+  height:8.5em;
+}
 
-  .card-footers{
-    font-size: 16px;
-    margin-left: 0.7em;
-    margin-bottom: 0px;
-    color: #FFA040;
-    margin-right: 6.2em;
-  }
+.card-footers{
+  font-size: 16px;
+  margin-left: 0.7em;
+  margin-bottom: 0px;
+  color: #FFA040;
+  margin-right: 6.2em;
+}
 
-  .mat-card-actions{
-    margin-bottom: 0.6em;
-  }
+.mat-card-actions{
+  margin-bottom: 0.6em;
+}

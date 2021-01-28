@@ -95,7 +95,7 @@ export class NewDocumentFastComponent implements OnInit {
           this.router.navigate([router.url]);
         });
         // this.OBAA.id = parseInt(this.route.snapshot.paramMap.get('id'));
-        console.log(this.route.snapshot.paramMap.get('id'))
+        // console.log(this.route.snapshot.paramMap.get('id'))
         this.edit = "/edit";
       } else {
         this.rest.getID().subscribe((data: {}) => {
@@ -415,7 +415,7 @@ export class NewDocumentFastComponent implements OnInit {
 
       this.rest.querySOLR("q=id:" + id).subscribe((data: any) => {
         var documents = data.response.docs;
-        console.log(documents)
+        // console.log(documents)
         
         this.otherResource = "";
         this.updateCheckBoxes(documents[0].resources, this.resources, "resources");
@@ -452,9 +452,9 @@ export class NewDocumentFastComponent implements OnInit {
     }
   }
 
-  // TODO: repeated function, refactor. Same as in profile
+  // TODO: repeated function, refactor. Almost same as in profile
   getStatusScope(roles) {
-    roles = roles.split(',');
+    roles = roles.toString().split(',');
     for(let role of roles) {
       // console.log(role);
       switch(role) {
@@ -601,7 +601,7 @@ export class NewDocumentFastComponent implements OnInit {
 
     for (var propt in this.simple){
       if (Object.prototype.hasOwnProperty.call(this.simple, propt)) {
-          if(this.simple[propt].trim() == "" && !(propt == "id" || propt == "typicalLearningTime" ||
+          if(this.simple[propt] == "" && !(propt == "id" || propt == "typicalLearningTime" ||
             propt == "relation")){
               alert('Preencha todos os campos necessários antes do envio.');
               return;
@@ -672,16 +672,16 @@ export class NewDocumentFastComponent implements OnInit {
     
     this.simple.id = this.OBAA.id;  
     
-    console.log( "BEFORE");
-    console.log(this.OBAA);
-    console.log(this.simple);
+    // console.log( "BEFORE");
+    // console.log(this.OBAA);
+    // console.log(this.simple);
  
     this.rest.addDocument(JSON.stringify(this.OBAA), this.OBAA.id, this.edit).subscribe((data: {}) => {
-      console.log(data);
-      console.log(this.simple);
+      // console.log(data);
+      // console.log(this.simple);
       
       this.rest.addDocumentSOLR(JSON.stringify([this.simple])).subscribe((data: {}) => {
-        console.log(data);
+        // console.log(data);
         
 
         this.uploader2.uploadAll();
@@ -779,7 +779,7 @@ export class NewDocumentFastComponent implements OnInit {
   }
 
   nextPage(){
-      console.log(this.currentPage);
+    // console.log('page: ' + this.currentPage);
     if (this.currentPage != this.numPages){
       this.page(this.currentPage + 1);
     }

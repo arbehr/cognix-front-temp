@@ -3,7 +3,7 @@
 <div class="center-div" id="step1">
   <h1 style="text-align: center;"><strong>Arquivo(s)</strong></h1> <br><br>
   <div id="uploadFileDiv">
-    <p class="paragraph">Adicione o arquivo do seu OA \ recurso</p><br>
+    <p class="paragraph">Adicione o arquivo do seu objeto \ recurso</p><br>
     
     <input style="height: 30px" type="file" name="file" id="uploadFile" (click)="uploader2.clearQueue()" ng2FileSelect [uploader]="uploader2" />
   </div>
@@ -13,7 +13,7 @@
   <a *ngIf="fileId" href="{{fileId}}">Arquivo enviado</a>
   <br><br>
   <div id="uploadPhotoDiv">
-    <p class="paragraph">Adicione uma imagem de rosto para o seu OA \ recurso</p><br>
+    <p class="paragraph">Adicione uma imagem de rosto para o seu objeto \ recurso</p><br>
     <input style="height: 30px" type="file" name="photo" id="photoUpload" (click)="uploader.clearQueue()" ng2FileSelect [uploader]="uploader" />
   </div>
   <br>
@@ -87,7 +87,7 @@
     </div>
     <br>
     <br>
-    <p class="paragraph">Tipo(s) de OA \ recurso de aprendizagem: (pode selecionar vários) *
+    <p class="paragraph">Tipo(s) de objeto \ recurso de aprendizagem: (pode selecionar vários) *
     </p>
     <br>
     <div class="table-responsive">
@@ -192,7 +192,7 @@
     <p class="paragraph">É permitido compartilhar — copiar e redistribuir o material em qualquer suporte ou formato.</p><br>
     <p class="paragraph">É permitido adaptar — transformar e criar a partir do material.</p><br>
     <p class="paragraph">No caso de adaptação, têm de ser mantidos os créditos reconhecendo todos os autores ou intervenientes na produção do OA.</p> <br>
-    <p class="paragraph">Quem alterar o seu OA não poderá revogar esta licença pelo que o novo OA terá de ser licenciado com a mesma licença.</p> <br>
+    <p class="paragraph">Quem alterar o seu objeto de aprendizagem não poderá revogar esta licença pelo que o novo objeto de aprendizagem terá de ser licenciado com a mesma licença.</p> <br>
     <p class="paragraph">Saiba mais sobre as licenças <a rel="license" target="_blank" href="http://creativecommons.org/licenses/">aqui.</a></p><br>
     <p class="paragraph">Licença pretendida: *</p><br>
     <mat-radio-group [(ngModel)]="simple.licence" name="licence" id="licence">
@@ -264,7 +264,7 @@
 <div class="center-div-step2" id="step7" style="display:none">
   <h1 style="text-align: center;"><strong>Relações entre objetos de aprendizagem</strong></h1> <br><br>
 
-  <p class="paragraph">O objeto \ recurso usou como base outro OA já existente nesse repositório?</p><br>
+  <p class="paragraph">O objeto \ recurso usou como base outro objeto de aprendizagem já existente nesse repositório?</p><br>
   <mat-radio-group name="loRelation">
     <p style="font-weight: normal" style="font-weight: normal;">
       <mat-radio-button [checked]="existRelation" value="1" (change)="showRelationDiv($event)">Sim</mat-radio-button>

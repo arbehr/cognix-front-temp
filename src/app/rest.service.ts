@@ -3,8 +3,8 @@ import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http
 import { Observable, of, Subject, throwError } from 'rxjs';
 import { map, catchError, tap } from 'rxjs/operators';
 
-export const endpoint = 'http://edumar.uac.pt:8080';
-export const endpointSOLR = 'http://edumar.uac.pt:8983';
+export const endpoint = 'http://localhost:8080';
+export const endpointSOLR = 'http://localhost:8983';
 const httpOptionsWithToken = {
   headers: new HttpHeaders({
     'Authorization': localStorage.getItem('token'),
@@ -35,7 +35,11 @@ export class RestService {
   @Output() logged : EventEmitter<any> = new EventEmitter();
   @Output() email : EventEmitter<any> = new EventEmitter();
 
-  constructor(private http: HttpClient) { }
+  isLogged: boolean;
+
+  constructor(private http: HttpClient) { 
+    this.isLogged = false;
+  }
 
   private extractData(res: Response) {
     let body = res;
@@ -43,7 +47,7 @@ export class RestService {
   }
 
   getID(): Observable<any> {
-    return this.http.post<any>(endpoint + '/documents/new', "", httpOptionsWithToken).pipe(
+    return this.http.post<any>(endpoint + '/documents/new', "{\"id\":\"any\"}", httpOptionsWithToken).pipe(
       tap(() => console.log('getID')),
       catchError((err) => {
         return throwError(err);    //Rethrow it back to component
@@ -130,6 +134,7 @@ export class RestService {
              if(emailField != "anonymous@uac.pt"){
               this.email.emit(emailField)
               this.logged.emit(true)
+              this.isLogged = true;
              }
             return 'ok'
           }
@@ -151,11 +156,12 @@ export class RestService {
         map((body) => {
           if (body.token != undefined) {
            localStorage.setItem('token', body.token);
-            let tokenInfo = JSON.parse(atob(body.token.match(/\..*\./)[0].replace(/\./g, '')));
+            let tokenInfo = this.decodePayloadJWT();
             localStorage.setItem('token_expiration', tokenInfo.exp);
             localStorage.setItem('email', emailField);
             this.email.emit(emailField)
             this.logged.emit(true)
+            this.isLogged = true;
            return true
           } 
         }
@@ -197,6 +203,13 @@ export class RestService {
     );
   }
 
+  public decodePayloadJWT(): any {
+    try {
+      return JSON.parse(atob(localStorage.getItem('token').match(/\..*\./)[0].replace(/\./g, '')));
+    } catch (Error) {
+      return null;
+    }
+  }
 }
 
 

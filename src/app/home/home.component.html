@@ -1,9 +1,8 @@
 <div>
     <div class="inside-image">
-        <div class="image-text editable"> Adicione os seus objetos de aprendizagem, pesquise, partilhe</div>
+        <div class="image-text editable"> Adicione os seus objetos de aprendizagem, pesquise, partilhe!</div>
 
         <div class="search-box center-div">
-
             <span>
                 <mat-form-field floatLabel="never" class="search-bar">
                     <input matInput [(ngModel)]="searchText" name="searchTexts"
@@ -12,18 +11,22 @@
             </span>
 
             <a style="cursor:pointer" [routerLink]="['/search/'+searchText]  " routerLinkActive="router-link-active">
-                <div class="dot">
-
-                    <mat-icon style="color:#2b82b8; margin-right:0.2em; margin-top:0.2em; font-size: 2em"
+                <div class="dot-search">
+                    <mat-icon class="dot-icon-search"
                         aria-hidden="false" aria-label="search">search</mat-icon>
-
-
                 </div>
             </a>
-
         </div>
         <br>
         <br>
-        <div> <a [routerLink]="['/register']" class="register">FAÇA SEU REGISTO</a> </div>
+        <div class="add-box center-div">
+            <a style="cursor:pointer" [routerLink]="documentAddRouter" routerLinkActive="router-link-active">
+                <span class="submit-text" style="display: inline-flex;align-items: center;">Submissão de objetos</span>
+                <div class="dot-add">
+                    <mat-icon class="dot-icon-add"
+                        aria-hidden="false" aria-label="add">add</mat-icon>
+                </div>
+            </a>
+        </div>
     </div>
 </div>

@@ -49,7 +49,7 @@ const routes: Routes = [
   //   component: LoggedComponent
   // },
   {
-    path: 'singin',
+    path: 'signin',
     component: LoginComponent
   },
 ];

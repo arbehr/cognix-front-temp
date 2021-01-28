@@ -12,7 +12,7 @@
 .center-paragraph{
     margin-left:17%;
     margin-right: 17%;
-
+    font-size: 1.2em;
 }
 
 .center-div{
@@ -35,5 +35,6 @@
 
 }
 .orange-letter{
-    color: #FF6F40
+    color: #FF6F40;
+    font-size: 1.2em;
 }

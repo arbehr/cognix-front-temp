@@ -19,31 +19,39 @@ export class HomeComponent implements OnInit {
   }
 
   private Login: LoginService;
-  private isLogged: boolean;
+  private userEmail: string
   private documents: object;
   searchText = "";
+  documentAddRouter = ""
 
   ngOnInit() {
-
-
+    
     this.rest.getDocument().subscribe((data: {}) => {
       this.documents = data;
       console.log(this.documents);
     });
-
-    if(!localStorage.getItem('email')){
+    
+    if(!localStorage.getItem('token')){
       this.loginForm.setValue({
         username: "anonymous@uac.pt", 
         password: "anonymous"
       });
+      this.documentAddRouter = "/signin";
 
       this.rest.postLogin(this.loginForm.value).subscribe((data: {}) => {
-        console.log(data);
+        // console.log(data);
         window.location.reload();
       });
       
+    } else {
+      let tokenInfo = this.rest.decodePayloadJWT();
+      if(tokenInfo.sub != 'anonymous@uac.pt') {
+        (this.rest.isLogged === true) ? this.documentAddRouter = "/documents/add" : this.documentAddRouter = "/signin";
+        //console.log(this.isLogged);
+      } else {
+        this.documentAddRouter = "/signin";
+      }
     }
-
   }
 
 

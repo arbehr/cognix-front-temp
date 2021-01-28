@@ -1,13 +1,13 @@
 
 <div class="grey-division">
-    <div class="grey-division-text"><strong>Novo Cadastro</strong></div>
+    <div class="grey-division-text"><strong>Novo Registo</strong></div>
 </div>
 
 <div class="center-div">
 <form fxFlex [formGroup] = "signUpForm">
 
   <mat-form-field class="input-size">
-    <input formControlName='name' required matInput placeholder="Nome">
+    <input formControlName='name' required matInput placeholder="Nome completo">
   </mat-form-field><br><br>
   <mat-form-field class="input-size">
       <input type="email" required email="true" formControlName='username' matInput placeholder="E-mail">
@@ -21,6 +21,6 @@
 
   </form>
 
-    <button class="create-button" mat-raised-button (click)="onSignUp()">Criar</button>
+    <button class="create-button" mat-raised-button (click)="onSignUp()">Registar</button>
 
 </div>

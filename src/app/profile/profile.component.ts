@@ -15,19 +15,25 @@ export class ProfileComponent implements OnInit {
 
   ngOnInit() {
     this.documents = [];
-    let status = this.getStatusScope(localStorage.getItem("roles"));
+    let tokenInfo = this.rest.decodePayloadJWT();
+    let status = this.getStatusScope(tokenInfo.roles);
     if(status.length > 0) {
       this.getDocuments(status[0], "");
-      this.getDocuments(status[1], localStorage.getItem("email"));
+      this.getDocuments(status[1], tokenInfo.sub);
+      console.log(status);
     }
   }
 
-  getStatusScope(role) {
-    switch(role) {
-      case "tech_reviewer": return ["NEEDS_TECH_REVIEW", "UNDER_TECH_REVIEW"];
-      case "pedag_reviewer": return ["NEEDS_PEDAG_REVIEW", "UNDER_PEDAG_REVIEW"];
-      default: return [];
+  getStatusScope(roles) {
+    roles = roles.split(',');
+    for(let role of roles) {
+      // console.log(role);
+      switch(role) {
+        case "tech_reviewer": return ["NEEDS_TECH_REVIEW", "UNDER_TECH_REVIEW"];
+        case "pedag_reviewer": return ["NEEDS_PEDAG_REVIEW", "UNDER_PEDAG_REVIEW"];
+      }
     }
+    return ['undefined','undefined'];
   }
 
   getDocuments(status, reviewer) {
@@ -48,8 +54,9 @@ export class ProfileComponent implements OnInit {
 
   reviewDocuments(){
     document.body.style.cursor="wait";
+    let tokenInfo = this.rest.decodePayloadJWT();
     for(var i = 0; i < this.documents.length; i++){
-      let status = this.getStatusScope(localStorage.getItem("roles"));
+      let status = this.getStatusScope(tokenInfo.roles);
       if(this.documents[i].isValid) {
         console.log(i)
         this.rest.addDocumentSOLR(this.buildJson(this.documents[i].id, status[1])).subscribe((data: {}) => {
@@ -63,12 +70,13 @@ export class ProfileComponent implements OnInit {
   }
 
   buildJson(id:string, status:string)  {
+    let tokenInfo = this.rest.decodePayloadJWT();
     var updateDoc =
     [
       { 
         id: id,
         status: {"set":status},
-        reviewer: {"set": localStorage.getItem("email")} 
+        reviewer: {"set": tokenInfo.sub} 
       },    
     ];
     return JSON.stringify(updateDoc);

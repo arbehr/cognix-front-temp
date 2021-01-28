@@ -34,7 +34,7 @@ export class LoginComponent implements OnInit {
         console.log(response)
           if (response == 'ok') {
               alert("Logado com sucesso")
-              this.router.navigate(['']);
+              this.router.navigate(['/documents/add']);
           }else if (response == undefined){
             alert("Erro ao realizar login");
           }

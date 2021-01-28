@@ -84,9 +84,30 @@ export class NewDocumentFastComponent implements OnInit {
 
   constructor(public rest:RestService, private router:Router, 
     private route: ActivatedRoute, private dialog: MatDialog) { 
-    this.rest.getID().subscribe((data: {}) => {
-      Object.assign(this.OBAA,data);
-      //console.log(this.OBAA);
+      this.edit = "";
+      if(this.route.snapshot.paramMap.get('id') != null) {
+        this.rest.getDocumentFromID(parseInt(this.route.snapshot.paramMap.get('id'))).subscribe((data: {}) => {
+          Object.assign(this.OBAA,data);
+        },
+        (error) => {                              
+          document.body.style.cursor="initial";
+          alert("Erro ao editar, token inválido. Recarregue a página novamente.");
+          this.router.navigate([router.url]);
+        });
+        // this.OBAA.id = parseInt(this.route.snapshot.paramMap.get('id'));
+        console.log(this.route.snapshot.paramMap.get('id'))
+        this.edit = "/edit";
+      } else {
+        this.rest.getID().subscribe((data: {}) => {
+          Object.assign(this.OBAA,data);
+          //console.log(this.OBAA);
+        },
+        (error) => {                              
+          document.body.style.cursor="initial";
+          alert("Erro ao criar novo documento, token inválido. Recarregue a página novamente.");
+          this.router.navigate([router.url]);
+        });
+      }
       this.uploader.onBuildItemForm = (item, form) => {
         form.append("docId", this.OBAA.id);
         form.append("filename", "Thumbnail");
@@ -96,20 +117,11 @@ export class NewDocumentFastComponent implements OnInit {
         form.append("docId", this.OBAA.id);
         form.append("filename", "Material");
       };
-   
-
-    },
-    (error) => {                              
-      document.body.style.cursor="initial";
-      alert("Erro ao criar novo documento, token inválido. Recarregue a página novamente.");
-      window.location.reload();
-    });
-
+    
     this.fileId = "";
     this.fileThumb = "";
     this.existRelation = false;
-    this.edit = "";
-
+    let tokenInfo = this.rest.decodePayloadJWT();
     this.simple = {
       name:"",
       language:"",
@@ -123,7 +135,7 @@ export class NewDocumentFastComponent implements OnInit {
         role:"author",
       }],
       relationWith:[{
-        kind: "",
+        kind: "haspart",
         entry: "",
       }],
       typicalLearningTime: "",
@@ -132,7 +144,7 @@ export class NewDocumentFastComponent implements OnInit {
       age: [],
       knowledgeArea: [],
       resources: [],
-      owner: localStorage.getItem('email'),
+      owner: tokenInfo.sub,
       favorites:["admin"],
       free:"yes",
       status:"NEEDS_TECH_REVIEW",
@@ -159,7 +171,7 @@ export class NewDocumentFastComponent implements OnInit {
         isValid: false 
       }],
       [{ 
-        name: "Estudante",
+        name: "Estudantes",
         isValid: false 
       },
       { 
@@ -413,7 +425,7 @@ export class NewDocumentFastComponent implements OnInit {
         this.updateCheckBoxes(documents[0].knowledgeArea, this.knowledgeArea, "knowledgeArea");
         
         this.updateTypicalLearningTime(documents[0].typicalLearningTime);
-
+        let tokenInfo = this.rest.decodePayloadJWT();
         this.simple = {
           name: documents[0].name,
           language: documents[0].language,
@@ -433,20 +445,24 @@ export class NewDocumentFastComponent implements OnInit {
           relationWith: this.updateRelations(documents[0].relationWith),
           //authors: documents[0].author,
           author: this.updateAuthors(documents[0].author),
-          status: this.getStatusScope(localStorage.getItem("roles"))[2],
-          reviewer: localStorage.getItem("email")
+          status: this.getStatusScope(tokenInfo.roles)[2],
+          reviewer: tokenInfo.sub
         }
       });
     }
   }
 
   // TODO: repeated function, refactor. Same as in profile
-  getStatusScope(role) {
-    switch(role) {
-      case "tech_reviewer": return ["NEEDS_TECH_REVIEW", "UNDER_TECH_REVIEW", "NEEDS_PEDAG_REVIEW"];
-      case "pedag_reviewer": return ["NEEDS_PEDAG_REVIEW", "UNDER_PEDAG_REVIEW", "REVIEWED"];
-      default: return [];
+  getStatusScope(roles) {
+    roles = roles.split(',');
+    for(let role of roles) {
+      // console.log(role);
+      switch(role) {
+        case "tech_reviewer": return ["NEEDS_TECH_REVIEW", "UNDER_TECH_REVIEW", "NEEDS_PEDAG_REVIEW"];
+        case "pedag_reviewer": return ["NEEDS_PEDAG_REVIEW", "UNDER_PEDAG_REVIEW", "REVIEWED"];
+      }
     }
+    return ['undefined','undefined', 'undefined'];
   }
 
   updateRelations(associatedRelations){
@@ -567,8 +583,10 @@ export class NewDocumentFastComponent implements OnInit {
   showRelationDiv(event: MatRadioChange) {
     if(+event.value) {
       document.getElementById("relationDiv").style.display = "block";
+      this.existRelation = true;
     } else {
       document.getElementById("relationDiv").style.display = "none";
+      this.existRelation = false;
     }
   }
 
@@ -578,9 +596,12 @@ export class NewDocumentFastComponent implements OnInit {
   }
 
   finish(){
+
+    document.body.style.cursor="wait";
+
     for (var propt in this.simple){
       if (Object.prototype.hasOwnProperty.call(this.simple, propt)) {
-          if(this.simple[propt] == "" && !(propt == "id" || propt == "typicalLearningTime" ||
+          if(this.simple[propt].trim() == "" && !(propt == "id" || propt == "typicalLearningTime" ||
             propt == "relation")){
               alert('Preencha todos os campos necessários antes do envio.');
               return;
@@ -588,7 +609,26 @@ export class NewDocumentFastComponent implements OnInit {
       }
     }
 
-    document.body.style.cursor="wait";
+    for(var i = 0; i < this.simple["author"].length; i++) {
+      if(this.simple["author"][i].name.trim() == "" || 
+          this.simple["author"][i].institution.trim() == "") {
+            alert('Preencha todos os campos necessários antes do envio.');
+            return;
+      }
+    }
+
+    if(this.existRelation) {
+      for(var i = 0; i < this.simple["relationWith"].length; i++) {
+        if(this.simple["relationWith"][i].entry.trim() == "") {
+          alert('Preencha todos os campos necessários antes do envio.');
+          return;
+        }
+      }
+    } else {
+      this.documentsTiny = [];
+      this.simple.relationWith = [];
+      this.addRelation("");
+    }
 
     if(this.route.snapshot.paramMap.get('id') != null) {
       this.OBAA.id = parseInt(this.route.snapshot.paramMap.get('id'));
@@ -604,7 +644,7 @@ export class NewDocumentFastComponent implements OnInit {
     this.updateSimple();
  
     this.addAuthor("","","author"); 
-    this.addRelation();
+    this.addRelation("");
 
     for(var i = 0; i < this.contribute.length; i++){
       this.OBAA.metadata.lifeCycle.contribute[i] = this.contribute[i];
@@ -820,15 +860,19 @@ export class NewDocumentFastComponent implements OnInit {
     }
     
     for(var i = 0; i < this.simple.relationWith.length; i++){
-      if (this.documentsTiny.length > 0){
+      if (this.documentsTiny[i]){
         var entries = this.documentsTiny[i].toString().split(',');
         for(var k = 0; k < entries.length; k++){
           this.relation.push({kind:this.simple.relationWith[i].kind, 
             resource:{identifier:[{catalog: "URI" , 
             entry: entries[k]}]}});
           this.simple.relationWith[i].entry = entries[k];
-      }
+        }
       //TODO: group identifiers to the same kind
+      }  else {
+        this.relation.push({kind:this.simple.relationWith[i].kind, 
+          resource:{identifier:[{catalog: "URI" , 
+          entry: ""}]}});
       }
     }
     
@@ -884,9 +928,9 @@ export class NewDocumentFastComponent implements OnInit {
     this.simple.author.pop();
   }
 
-  addRelation(){
+  addRelation(newKind: string){
     var rel = {
-      kind:"",
+      kind: newKind,
       entry:"",
     };
     this.simple.relationWith.push(rel);
@@ -907,22 +951,37 @@ export class NewDocumentFastComponent implements OnInit {
     
   }
 
-  check(){
-    var complete = false;
+  check() {
+    var complete = true;
+    document.getElementById("incomplete").style.display="block";
+
     for (var propt in this.simple){
       if (Object.prototype.hasOwnProperty.call(this.simple, propt)) {
           if(this.simple[propt] == "" && !(propt == "id" 
-            // || propt == "age" 
-            // || propt == "target" || propt == "resources" || propt == "knowledgeArea"
             || propt == "typicalLearningTime" || propt == "relation")){
-            document.getElementById("incomplete").style.display="block";
-            complete = true;
+            complete = false;
             //console.log(propt);
           }
       }
     }
 
-    if(!complete)
+    for(var i = 0; i < this.simple["author"].length; i++) {
+      if(this.simple["author"][i].name.trim() == "" || 
+          this.simple["author"][i].institution.trim() == "") {
+        complete = false;
+      } 
+    }
+
+    if(this.existRelation) {
+      for(var i = 0; i < this.simple["relationWith"].length; i++) {
+        console.log(this.simple["relationWith"][i])
+        if(this.simple["relationWith"][i].entry.trim() == "") {
+          complete = false;
+        }
+      }
+    }
+
+    if(complete)
       document.getElementById("incomplete").style.display="none";
     
     if(this.uploader2.queue.length == 0 && this.edit == ""){

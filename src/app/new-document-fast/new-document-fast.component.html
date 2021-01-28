@@ -61,7 +61,7 @@
       </tr>
     </table>
   </div>
-    <mat-form-field style="width:45%">
+    <mat-form-field style="width:45%;padding-right: 1em;">
       <input matInput
           placeholder="Adicione outra palavra-chave"
           [formControl]="control"
@@ -220,7 +220,7 @@
 <div class="center-div-step2" id="step6" style="display:none">
   <h1 style="text-align: center;"><strong>Contribuintes</strong></h1> <br><br>
 
-  <p class="paragraph">Quem contribuiu para o projeto?</p><br>
+  <p class="paragraph">Quem contribuiu para a criação do objeto?</p><br>
   <div *ngFor="let author of simple.author">
     <p class="paragraph">Nome:</p>
     <mat-form-field style="width:50%">
@@ -257,14 +257,14 @@
   <button mat-raised-button (click)="addAuthor('','','author')">Adicionar outro contribuinte</button>
   <br>
   <br>
-  <button mat-raised-button (click)="removeAuthor()">Remover contribuinte</button>
+  <button *ngIf="this.simple.author.length > 1" mat-raised-button (click)="removeAuthor()">Remover contribuinte</button>
   <br><br><br><br>
 </div>
 
 <div class="center-div-step2" id="step7" style="display:none">
-  <h1 style="text-align: center;"><strong>Relações</strong></h1> <br><br>
+  <h1 style="text-align: center;"><strong>Relações entre objetos de aprendizagem</strong></h1> <br><br>
 
-  <p class="paragraph">O OA \ Recurso usou como base outro OA já existente nesse repositório?</p><br>
+  <p class="paragraph">O objeto \ recurso usou como base outro OA já existente nesse repositório?</p><br>
   <mat-radio-group name="loRelation">
     <p style="font-weight: normal" style="font-weight: normal;">
       <mat-radio-button [checked]="existRelation" value="1" (change)="showRelationDiv($event)">Sim</mat-radio-button>
@@ -273,42 +273,42 @@
       <mat-radio-button [checked]="!existRelation" value="0" (change)="showRelationDiv($event)">Não</mat-radio-button>
     </p>
   </mat-radio-group>
-  
-  <div id="relationDiv" style="display:none" *ngFor="let relation of simple.relationWith; let i = index">
-    <p class="paragraph">De que forma?</p>
-    <mat-form-field>
-      <mat-select [(ngModel)]="relation.kind" name="kind">
-        <!-- <mat-option value="">  </mat-option> -->
-        <!-- <mat-option value="ispartof"> É parte de </mat-option> -->
-        <mat-option value="haspart"> Contém parte </mat-option>
-        <mat-option value="isversionof"> É uma versão de </mat-option>
-        <!-- <mat-option value="hasversion"> Tem versão</mat-option> -->
-        <!-- <mat-option value="isformatof"> É formato de</mat-option>
-        <mat-option value="hasformat"> Tem formato</mat-option> -->
-        <mat-option value="references"> Referencia</mat-option>
-        <!-- <mat-option value="isreferencedby"> É referenciado por </mat-option> -->
-        <!-- <mat-option value="isbasedon"> É baseado em </mat-option>
-        <mat-option value="isbasisfor"> É base para </mat-option> -->
-        <mat-option value="requires"> Requer </mat-option>
-        <!-- <mat-option value="isrequiredby"> É requerido por </mat-option> -->
-      </mat-select>
-    </mat-form-field> <br><br>
-    
-    <p class="paragraph">Entrada(s): {{documentsTiny[i]}}</p>
+  <div id="relationDiv" style="display:none">
+    <div *ngFor="let relation of simple.relationWith; let i = index">
+      <p class="paragraph">De que forma?</p>
+      <mat-form-field>
+        <mat-select [(ngModel)]="relation.kind" name="kind">
+          <!-- <mat-option value="">  </mat-option> -->
+          <!-- <mat-option value="ispartof"> É parte de </mat-option> -->
+          <mat-option value="haspart"> Contém parte </mat-option>
+          <mat-option value="isversionof"> É uma versão de </mat-option>
+          <!-- <mat-option value="hasversion"> Tem versão</mat-option> -->
+          <!-- <mat-option value="isformatof"> É formato de</mat-option>
+          <mat-option value="hasformat"> Tem formato</mat-option> -->
+          <mat-option value="references"> Referencia</mat-option>
+          <!-- <mat-option value="isreferencedby"> É referenciado por </mat-option> -->
+          <!-- <mat-option value="isbasedon"> É baseado em </mat-option>
+          <mat-option value="isbasisfor"> É base para </mat-option> -->
+          <mat-option value="requires"> Requer </mat-option>
+          <!-- <mat-option value="isrequiredby"> É requerido por </mat-option> -->
+        </mat-select>
+      </mat-form-field> <br><br>
+      
+      <p class="paragraph">Identificador(es): {{documentsTiny[i]}}</p>
+      <br>
+      <br>
+      <button mat-raised-button (click)="openRelationDialog(i)">Escolha o objeto com que se relaciona</button>
+      <br>
+      <br>
+      <br>
+      <br>
+    </div>
+    <button mat-raised-button (click)="addRelation('haspart')">Adicionar outra relação</button>
     <br>
     <br>
-    <button mat-raised-button (click)="openRelationDialog(i)">Selecione</button>
-    <br>
-    <br>
-    <br>
-    <br>
-    <button mat-raised-button (click)="addRelation()">Adicionar outra relação</button>
-    <br>
-    <br>
-    <button mat-raised-button (click)="removeRelation()">Remover relação</button>
+    <button *ngIf="simple.relationWith.length > 1" mat-raised-button (click)="removeRelation()">Remover relação</button>
     <br>
   </div>
-  
 </div>
 
 <div class="center-div-step2" id="step8" style="display:none">

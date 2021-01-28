@@ -128,7 +128,7 @@ export class RestService {
           if (body.error == undefined) {
             localStorage.setItem('token', body.token);
              let tokenInfo = JSON.parse(atob(body.token.match(/\..*\./)[0].replace(/\./g, '')));
-             localStorage.setItem('roles', tokenInfo.roles);
+            //  localStorage.setItem('roles', tokenInfo.roles);
              localStorage.setItem('token_expiration', tokenInfo.exp);
              localStorage.setItem('email', emailField);
              if(emailField != "anonymous@uac.pt"){

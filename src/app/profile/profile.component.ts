@@ -52,6 +52,10 @@ export class ProfileComponent implements OnInit {
     });
   }
 
+  async delay(ms: number) {
+    await new Promise(resolve => setTimeout(()=>resolve(), ms)).then(()=>console.log("fired"));
+  }
+
   reviewDocuments(){
     document.body.style.cursor="wait";
     let tokenInfo = this.rest.decodePayloadJWT();
@@ -64,8 +68,17 @@ export class ProfileComponent implements OnInit {
         });
       }
     }
-    // document.body.style.cursor="wait";
-    window.location.reload();
+
+    for(var i = 0; i < this.documents.length; i++){
+      if(this.documents[i].isValid) {
+        if(tokenInfo.roles.toString().includes('tech_reviewer')){
+          this.documents[i].status = "UNDER_TECH_REVIEW";
+        }
+        if(tokenInfo.roles.toString().includes('pedag_reviewer')){
+          this.documents[i].status = "UNDER_PEDAG_REVIEW";
+        }
+      }
+    }
     document.body.style.cursor="initial";
   }
 
@@ -85,6 +98,7 @@ export class ProfileComponent implements OnInit {
   logoutUser(){
     if (confirm("Tens certeza de realizar o logout?")) {
       this.rest.logged.emit(false)
+      this.rest.isLogged = false;
       this.router.navigate([''])
     }
   }

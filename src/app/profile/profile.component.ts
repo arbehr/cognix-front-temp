@@ -12,11 +12,13 @@ export class ProfileComponent implements OnInit {
 
   constructor(private rest: RestService, private router: Router) { }
   documents: any;
+  isReviewer: boolean;
 
   ngOnInit() {
     this.documents = [];
     let tokenInfo = this.rest.decodePayloadJWT();
     let status = this.getStatusScope(tokenInfo.roles);
+    tokenInfo.roles.toString().includes('reviewer') ? this.isReviewer = true : this.isReviewer = false;
     if(status.length > 0) {
       this.getDocuments(status[0], "");
       this.getDocuments(status[1], tokenInfo.sub);

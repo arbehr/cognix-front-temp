@@ -2,58 +2,58 @@
   <div class="grey-division-text"><strong>Perfil</strong></div>
 </div>
 
-<div class="center-div-step2">
-<h1 style="text-align: center;"><strong>Revisão de objetos de aprendizagem (OAs)</strong></h1> <br><br>
-<p class="paragraph">A revisar:</p>
-<div style="margin-left: 1em; font-size:1.5em; margin-top: 1.5em; width:90%">
-  <table>
-    <tr>
-      <th></th>
-      <th>OA</th>
-      <th>Depositante</th>
-    </tr>
-    <tr *ngFor="let document of documents">
-      <td *ngIf="document.status.includes('NEEDS')">
-          <mat-checkbox (change)="document.isValid = ! document.isValid">
-          </mat-checkbox>
-      </td>
-      <td *ngIf="document.status.includes('NEEDS')">
-        <p style="margin-bottom: 0em;font-size: 15px;">
-          <a [routerLink]="['/documents/' + document.id]" routerLinkActive="router-link-active" target="_blank">
-          <strong>{{document.title}}</strong></a>
-        </p>
-      </td>
-      <td *ngIf="document.status.includes('NEEDS')">{{document.owner}}</td>
-    </tr>
-  </table>
-  <br>
-  <button mat-raised-button (click)="reviewDocuments()">Selecionar</button>
-</div>
-<br/>
-<br/>
-<p class="paragraph">Vossas revisões:</p>
-<div style="margin-left: 1em; font-size:1.5em; margin-top: 1.5em; width:90%">
-  <table>
-    <tr>
-      <th>OA</th>
-      <th>Depositante</th>
-    </tr>
-    <tr *ngFor="let document of documents">
-      <td *ngIf="document.status.includes('UNDER')">
-        <p style="margin-bottom: 0em;font-size: 15px;">
-          <!-- <mat-checkbox (change)="document.isValid = ! document.isValid"> -->
-            <a [routerLink]="['/documents/' + document.id + '/edit']" routerLinkActive="router-link-active">
-              <strong>{{document.title}}</strong>
-            </a> 
-          <!-- </mat-checkbox> -->
-        </p>
-      </td>
-      <td *ngIf="document.status.includes('UNDER')">{{document.owner}}</td>
-    </tr>
-  </table>
-  <br>
-  <!-- <button mat-raised-button (click)="reviewDocuments()">Revise</button> -->
-</div>
+<div *ngIf="isReviewer" class="center-div-step2">
+  <h1 style="text-align: center;"><strong>Revisão de objetos de aprendizagem (OAs)</strong></h1> <br><br>
+  <p class="paragraph">A revisar:</p>
+  <div style="margin-left: 1em; font-size:1.5em; margin-top: 1.5em; width:90%">
+    <table>
+      <tr>
+        <th></th>
+        <th>OA</th>
+        <th>Depositante</th>
+      </tr>
+      <tr *ngFor="let document of documents">
+        <td *ngIf="document.status.includes('NEEDS')">
+            <mat-checkbox (change)="document.isValid = ! document.isValid">
+            </mat-checkbox>
+        </td>
+        <td *ngIf="document.status.includes('NEEDS')">
+          <p style="margin-bottom: 0em;font-size: 15px;">
+            <a [routerLink]="['/documents/' + document.id]" routerLinkActive="router-link-active" target="_blank">
+            <strong>{{document.title}}</strong></a>
+          </p>
+        </td>
+        <td *ngIf="document.status.includes('NEEDS')">{{document.owner}}</td>
+      </tr>
+    </table>
+    <br>
+    <button mat-raised-button (click)="reviewDocuments()">Selecionar</button>
+  </div>
+  <br/>
+  <br/>
+  <p class="paragraph">Vossas revisões:</p>
+  <div style="margin-left: 1em; font-size:1.5em; margin-top: 1.5em; width:90%">
+    <table>
+      <tr>
+        <th>OA</th>
+        <th>Depositante</th>
+      </tr>
+      <tr *ngFor="let document of documents">
+        <td *ngIf="document.status.includes('UNDER')">
+          <p style="margin-bottom: 0em;font-size: 15px;">
+            <!-- <mat-checkbox (change)="document.isValid = ! document.isValid"> -->
+              <a [routerLink]="['/documents/' + document.id + '/edit']" routerLinkActive="router-link-active">
+                <strong>{{document.title}}</strong>
+              </a> 
+            <!-- </mat-checkbox> -->
+          </p>
+        </td>
+        <td *ngIf="document.status.includes('UNDER')">{{document.owner}}</td>
+      </tr>
+    </table>
+    <br>
+    <!-- <button mat-raised-button (click)="reviewDocuments()">Revise</button> -->
+  </div>
 </div>
 <div class="center-div">
   <button (click) = "logoutUser()" mat-button class="logout-button">

@@ -39,9 +39,9 @@ export class ProfileComponent implements OnInit {
   }
 
   getDocuments(status, reviewer) {
-    let query = "q=*:*&fq=status:" + status;
+    let query = "q=*:*&fq=status:" + status + "&rows=100&start=0";
     if(reviewer != "") {
-      query+="&fq=reviewer:" + reviewer;
+      query+="&fq=reviewer:" + reviewer + "&rows=100&start=0";
     }
     this.rest.querySOLR(query).subscribe((data: any) => {
       var rec = data.response.docs;

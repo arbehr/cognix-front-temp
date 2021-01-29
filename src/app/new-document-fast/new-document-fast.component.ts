@@ -85,6 +85,7 @@ export class NewDocumentFastComponent implements OnInit {
   constructor(public rest:RestService, private router:Router, 
     private route: ActivatedRoute, private dialog: MatDialog) { 
       this.edit = "";
+      
       if(this.route.snapshot.paramMap.get('id') != null) {
         this.rest.getDocumentFromID(parseInt(this.route.snapshot.paramMap.get('id'))).subscribe((data: {}) => {
           Object.assign(this.OBAA,data);
@@ -92,20 +93,20 @@ export class NewDocumentFastComponent implements OnInit {
         (error) => {                              
           document.body.style.cursor="initial";
           alert("Erro ao editar, token inválido. Recarregue a página novamente.");
-          this.router.navigate([router.url]);
+          //this.router.navigate([router.url]);
         });
         // this.OBAA.id = parseInt(this.route.snapshot.paramMap.get('id'));
         // console.log(this.route.snapshot.paramMap.get('id'))
         this.edit = "/edit";
       } else {
         this.rest.getID().subscribe((data: {}) => {
+          //console.log(data)
           Object.assign(this.OBAA,data);
           //console.log(this.OBAA);
         },
         (error) => {                              
           document.body.style.cursor="initial";
           alert("Erro ao criar novo documento, token inválido. Recarregue a página novamente.");
-          this.router.navigate([router.url]);
         });
       }
       this.uploader.onBuildItemForm = (item, form) => {
@@ -132,7 +133,7 @@ export class NewDocumentFastComponent implements OnInit {
       author:[{
         name: "",
         institution: "",
-        role:"author",
+        role:["author"],
       }],
       relationWith:[{
         kind: "haspart",
@@ -151,7 +152,6 @@ export class NewDocumentFastComponent implements OnInit {
       id:0
     };
   }
-
 
   ngOnInit() {
     this.documentsTiny = [];
@@ -298,10 +298,6 @@ export class NewDocumentFastComponent implements OnInit {
         isValid: false 
       },
       { 
-        name: "Aula gravada",
-        isValid: false 
-      },
-      { 
         name: "Experiência laboratorial",
         isValid: false 
       },
@@ -323,7 +319,7 @@ export class NewDocumentFastComponent implements OnInit {
         isValid: false 
       },
       { 
-        name: "Texto representado",
+        name: "Texto teatral/dramatizado",
         isValid: false 
       },
       { 
@@ -506,12 +502,29 @@ export class NewDocumentFastComponent implements OnInit {
     let contributors = [];
     for(var i = 0; i < authors_list.length-1; i++) {
         let aut = authors_list[i];
-        let aut_parts = aut.split(",")
-        let aut_name = aut_parts[0].split("=")[1];
-        let aut_institution = aut_parts[1].split("=")[1];
-        let aut_role = aut_parts[2].split("=")[1];
-        let aut_role_fixed = aut_role.substr(0, aut_role.length - 1);
-        contributors.push({name: aut_name, institution: aut_institution, role:aut_role_fixed}); 
+        let aut_parts = aut.split("=")
+        let aut_name = aut_parts[1].split(",")[0];
+        let aut_institution = aut_parts[2].split(",")[0];
+        let aut_roles = [];
+        
+        if(aut_parts[3].includes(',')) {
+          // console.log(aut_parts[3])
+          let roles = aut_parts[3].split(",");
+          for(var i = 0; i < roles.length; i++) {
+            
+            if(roles[i].includes('[')) {
+              aut_roles.push(roles[i].substr(1, roles[i].length).trim())
+            } else if(roles[i].includes(']')) {
+              aut_roles.push(roles[i].substr(0, roles[i].length - 2).trim())
+            } else {
+              aut_roles.push(roles[i].trim());
+            }
+          }
+        } else {
+          aut_roles.push(aut_parts[3].substr(1, aut_parts[3].length - 3));
+        }
+        // console.log(aut_roles)
+        contributors.push({name: aut_name, institution: aut_institution, role:aut_roles}); 
     }
     return contributors;
   }
@@ -611,7 +624,8 @@ export class NewDocumentFastComponent implements OnInit {
 
     for(var i = 0; i < this.simple["author"].length; i++) {
       if(this.simple["author"][i].name.trim() == "" || 
-          this.simple["author"][i].institution.trim() == "") {
+          this.simple["author"][i].institution.trim() == "" ||
+          this.simple["author"][i].role.length == 0) {
             alert('Preencha todos os campos necessários antes do envio.');
             return;
       }
@@ -643,7 +657,7 @@ export class NewDocumentFastComponent implements OnInit {
 
     this.updateSimple();
  
-    this.addAuthor("","","author"); 
+    this.addAuthor("","",["author"]); 
     this.addRelation("");
 
     for(var i = 0; i < this.contribute.length; i++){
@@ -672,10 +686,10 @@ export class NewDocumentFastComponent implements OnInit {
     
     this.simple.id = this.OBAA.id;  
     
-    // console.log( "BEFORE");
-    // console.log(this.OBAA);
-    // console.log(this.simple);
- 
+    console.log( "BEFORE");
+    console.log(this.OBAA);
+    console.log(this.simple);
+
     this.rest.addDocument(JSON.stringify(this.OBAA), this.OBAA.id, this.edit).subscribe((data: {}) => {
       // console.log(data);
       // console.log(this.simple);
@@ -855,8 +869,10 @@ export class NewDocumentFastComponent implements OnInit {
     }
 
     for(var i = 0; i < this.simple.author.length; i++){
-      this.contribute.push({role:this.simple.author[i].role, 
-        entities:[this.simple.author[i].name , this.simple.author[i].institution]}); 
+      for(var recIndex = 0; recIndex < this.simple.author[i].role.length; recIndex++){
+        this.contribute.push({role:this.simple.author[i].role[recIndex], 
+          entities:[this.simple.author[i].name , this.simple.author[i].institution]}); 
+      }
     }
     
     for(var i = 0; i < this.simple.relationWith.length; i++){
@@ -915,7 +931,7 @@ export class NewDocumentFastComponent implements OnInit {
     this.keywords.splice(i,1);
   }
 
-  addAuthor(newName:string, newInsitution:string, newRole:string){
+  addAuthor(newName:string, newInsitution:string, newRole:string[]){
     var aut = {
       name: newName,
       institution:newInsitution,
@@ -967,7 +983,8 @@ export class NewDocumentFastComponent implements OnInit {
 
     for(var i = 0; i < this.simple["author"].length; i++) {
       if(this.simple["author"][i].name.trim() == "" || 
-          this.simple["author"][i].institution.trim() == "") {
+          this.simple["author"][i].institution.trim() == "" ||
+          this.simple["author"][i].role.length == 0) {
         complete = false;
       } 
     }

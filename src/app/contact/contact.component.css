@@ -6,7 +6,8 @@
 
 .grey-division-text{
     text-align: center;
-    line-height: 5em; 
+    line-height: 4em; 
+    font-size: x-large;
 }
 
 .center-paragraph{
@@ -16,7 +17,7 @@
 }
 
 .paragraph{
-    font-size: 14px;
+    font-size: large;
     font-weight: bold;
     margin-bottom: 0em;
 }

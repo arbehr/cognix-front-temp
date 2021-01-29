@@ -5,25 +5,12 @@ import { map, catchError, tap } from 'rxjs/operators';
 
 export const endpoint = 'http://localhost:8080';
 export const endpointSOLR = 'http://localhost:8983';
-const httpOptionsWithToken = {
-  headers: new HttpHeaders({
-    'Authorization': localStorage.getItem('token'),
-    'Content-Type': 'application/json',    
-  })
-};
+
 const httpOptionsReading = {
   headers: new HttpHeaders({
     'Content-Type': 'application/json',    
   })
 };
-const httpOptionsSolr = {
-  headers: new HttpHeaders({
-    'Authorization': "Bearer " + localStorage.getItem('token'),
-    'Content-Type': 'application/json',    
-  })
-};
-
-
 
 @Injectable({
   providedIn: 'root'
@@ -34,6 +21,7 @@ export class RestService {
 
   @Output() logged : EventEmitter<any> = new EventEmitter();
   @Output() email : EventEmitter<any> = new EventEmitter();
+  @Output() name : EventEmitter<any> = new EventEmitter();
 
   isLogged: boolean;
 
@@ -46,8 +34,26 @@ export class RestService {
     return body || {};
   }
 
+  getHttpOptionsWithToken() {
+    return {
+      headers: new HttpHeaders({
+        'Authorization': localStorage.getItem('token'),
+        'Content-Type': 'application/json',    
+      })
+    };
+  }
+
+  getHttpOptionsSolr() { 
+    return {
+      headers: new HttpHeaders({
+        'Authorization': "Bearer " + localStorage.getItem('token'),
+        'Content-Type': 'application/json',    
+      })
+    };
+  }
+
   getID(): Observable<any> {
-    return this.http.post<any>(endpoint + '/documents/new', "{\"id\":\"any\"}", httpOptionsWithToken).pipe(
+    return this.http.post<any>(endpoint + '/documents/new', "{\"id\":\"any\"}", this.getHttpOptionsWithToken()).pipe(
       tap(() => console.log('getID')),
       catchError((err) => {
         return throwError(err);    //Rethrow it back to component
@@ -58,7 +64,7 @@ export class RestService {
   addDocument(product, id, edit): Observable<any> {
     // console.log("Lets begin");
     // console.log(product);
-    return this.http.post<any>(endpoint + '/documents/' + id + edit, product, httpOptionsWithToken).pipe(
+    return this.http.post<any>(endpoint + '/documents/' + id + edit, product, this.getHttpOptionsWithToken()).pipe(
       tap((product) => console.log("addProduct")),
       catchError(this.handleError<any>('addProduct'))
     );
@@ -67,7 +73,7 @@ export class RestService {
   addDocumentSOLR(product): Observable<any> {
     // console.log("Lets add to solr");
     // console.log(product);
-    return this.http.post<any>(endpointSOLR + '/solr/DocumentTinyDto/update?commitWithin=1000&overwrite=true&wt=json', product, httpOptionsSolr).pipe(
+    return this.http.post<any>(endpointSOLR + '/solr/DocumentTinyDto/update?commitWithin=1000&overwrite=true&wt=json', product, this.getHttpOptionsSolr()).pipe(
       tap((product) => console.log("addProduct")),
       catchError(this.handleError<any>('addProduct'))
     );
@@ -76,7 +82,7 @@ export class RestService {
   querySOLR(id): Observable<any> {
     // console.log("Lets begin");
     // console.log(endpointSOLR + '/solr/DocumentTinyDto/select?_=' + id);
-    return this.http.get(endpointSOLR + '/solr/DocumentTinyDto/select?' + id, httpOptionsSolr).pipe(
+    return this.http.get(endpointSOLR + '/solr/DocumentTinyDto/select?' + id, this.getHttpOptionsSolr()).pipe(
       tap((product) => console.log("SolrQuery")),
       catchError(this.handleError<any>('SolrQuery'))
     );
@@ -92,7 +98,7 @@ export class RestService {
 
   getThumbnail(id: string): Observable<any> {
     // console.log("Lets begin thumbnail");
-    return this.http.get(endpoint + '/files/' + id + '/thumbnail', httpOptionsWithToken).pipe(
+    return this.http.get(endpoint + '/files/' + id + '/thumbnail', this.getHttpOptionsWithToken()).pipe(
       tap((product) => console.log("getThumbnail done")),
       catchError(this.handleError<any>('getThumbnail'))
     );
@@ -113,7 +119,7 @@ export class RestService {
   }
 
   getDocumentFromID(id): Observable<any> {
-    return this.http.get(endpoint + '/documents/' + id, httpOptionsWithToken).pipe(
+    return this.http.get(endpoint + '/documents/' + id, this.getHttpOptionsWithToken()).pipe(
       tap((product) => console.log("getDocument")),
       catchError(this.handleError<any>('getDocument'))
     );
@@ -121,7 +127,7 @@ export class RestService {
 
   postLogin(body: any) {
     let emailField = body.username
-
+    localStorage.clear();
     return this.http.post<AuthData>(endpoint + '/login', body)
       .pipe(
         map((body) => {
@@ -133,6 +139,7 @@ export class RestService {
              localStorage.setItem('email', emailField);
              if(emailField != "anonymous@uac.pt"){
               this.email.emit(emailField)
+              this.name.emit(tokenInfo.name)
               this.logged.emit(true)
               this.isLogged = true;
              }
@@ -160,6 +167,7 @@ export class RestService {
             localStorage.setItem('token_expiration', tokenInfo.exp);
             localStorage.setItem('email', emailField);
             this.email.emit(emailField)
+            this.name.emit(tokenInfo.name)
             this.logged.emit(true)
             this.isLogged = true;
            return true

@@ -1,7 +1,7 @@
 <mat-progress-bar id="progress" class="orange-progress" [value]="progressBarValue"></mat-progress-bar>
 
 <div class="center-div" id="step1">
-  <h1 style="text-align: center;"><strong>Arquivo(s)</strong></h1> <br><br>
+  <h3 style="text-align: center;"><strong>Arquivo(s)</strong></h3> <br><br>
   <div id="uploadFileDiv">
     <p class="paragraph">Adicione o arquivo do seu objeto \ recurso</p><br>
     
@@ -24,7 +24,7 @@
 </div>
 
 <div class="center-div-step2" id="step2" style="display:none">
-  <h1 style="text-align: center;"><strong>Informações gerais</strong></h1> <br><br>
+  <h3 style="text-align: center;"><strong>Informações gerais</strong></h3> <br><br>
 
   <form>
 
@@ -54,7 +54,7 @@
     <table cellpadding="10">
       <tr *ngFor="let list of keywords_predefined">
         <th *ngFor="let item of list">
-          <p style="margin-bottom: 0em;font-weight: normal;">
+          <p style="margin-bottom: 0em;font-size: large;">
             <mat-checkbox [checked]="item.isValid" (change)="item.isValid = ! item.isValid;">{{item.name}}</mat-checkbox>
           </p>
         </th>
@@ -78,7 +78,7 @@
     <button mat-raised-button (click)="addKeyword();">Adicione</button>
     <br>
     <div *ngFor="let item of keywords; let i = index">
-      <p style="font-weight: normal">
+      <p style="font-size: large;">
         <span>{{item}}</span>
         <button mat-icon-button (click)="removeKeyord(i)">
           <mat-icon class="mat-24">delete</mat-icon>
@@ -94,7 +94,7 @@
     <table cellpadding="10">
       <tr *ngFor="let list of resources">
         <th *ngFor="let item of list">
-          <p style="margin-bottom: 0em;font-weight: normal;">
+          <p style="margin-bottom: 0em;font-size: large;">
             <mat-checkbox [checked]="item.isValid" (change)="item.isValid = ! item.isValid;addOtherResource(item.name,item.isValid)">{{item.name}}</mat-checkbox>
           </p>
         </th>
@@ -117,7 +117,7 @@
 
 
 <div class="center-div-step2" id="step3" style="display:none">
-  <h1 style="text-align: center;"><strong>Interatividade</strong></h1> <br><br>
+  <h3 style="text-align: center;"><strong>Interatividade</strong></h3> <br><br>
   <form>
     <p class="paragraph">Nível de interação: *</p><br><br>
     <mat-slider thumbLabel class="cdk-focused" style="pointer-events:none;" [(ngModel)]="simple.interactionNumber" id="interactivityNumber" name="interactivityNumber" [displayWith]="formatLabel"
@@ -125,16 +125,16 @@
     <br><br>
 
     <mat-radio-group id="interactivitySelection">
-      <p style="font-weight: normal" style="font-weight: normal;">
+      <p style="font-size: large;">
         <mat-radio-button [checked]="simple.interactionNumber == 1" value="1" (change)="radioInteractivityChange($event)">Nenhuma</mat-radio-button>
       </p>
-      <p style="font-weight: normal" style="font-weight: normal;">
+      <p style="font-size: large;">
         <mat-radio-button [checked]="simple.interactionNumber == 2" value="2" (change)="radioInteractivityChange($event)">Apenas texto ou  vídeo</mat-radio-button>
       </p>
-      <p style="font-weight: normal" style="font-weight: normal;">
+      <p style="font-size: large;">
         <mat-radio-button [checked]="simple.interactionNumber == 3" value="3" (change)="radioInteractivityChange($event)">Vídeo com perguntas, página web</mat-radio-button>
       </p>
-      <p style="font-weight: normal" style="font-weight: normal;">
+      <p style="font-size: large;">
         <mat-radio-button [checked]="simple.interactionNumber == 4" value="4" (change)="radioInteractivityChange($event)">Jogo, simulações interativas</mat-radio-button>
       </p>
     </mat-radio-group> <br>
@@ -142,14 +142,14 @@
 </div>
 
 <div class="center-div-step2" id="step4" style="display:none">
-  <h1 style="text-align: center;"><strong>Público Alvo</strong></h1> <br><br>
+  <h3 style="text-align: center;"><strong>Público Alvo</strong></h3> <br><br>
   <form>
 
     <p class="paragraph">Utilizadores finais: *</p> <br>
     <table cellpadding="10">
       <tr *ngFor="let list of target">
         <th *ngFor="let item of list">
-          <p style="margin-bottom: 0em;font-weight: normal;">
+          <p style="margin-bottom: 0em;font-size: large;">
             <mat-checkbox [checked]="item.isValid" (change)="item.isValid = ! item.isValid;">{{item.name}}</mat-checkbox>
           </p>
         </th>
@@ -159,7 +159,7 @@
 
     <p class="paragraph">Etapa(s) da educação: *</p> <br>
     <div *ngFor="let item of age">
-      <p style="font-weight: normal">
+      <p style="font-size: large;">
         <mat-checkbox [checked]="item.isValid" (change)="item.isValid = ! item.isValid">{{item.name}}</mat-checkbox>
       </p>
     </div>
@@ -167,7 +167,7 @@
     <p class="paragraph">Área(s) do conhecimento: *</p>
     <br>
     <div *ngFor="let item of knowledgeArea">
-      <p style="font-weight: normal">
+      <p style="font-size: large;">
         <mat-checkbox [checked]="item.isValid" (change)="item.isValid = ! item.isValid">{{item.name}}</mat-checkbox>
       </p>
     </div>
@@ -178,7 +178,7 @@
       min="0" max="180" step="15" value="15"></mat-slider>
     <br>
     <section>
-      <mat-checkbox [checked]="moreThanThreeHours" (change)="setTypicalLearningTime($event)">Mais de 3 horas</mat-checkbox>
+      <mat-checkbox style="font-size: large;" [checked]="moreThanThreeHours" (change)="setTypicalLearningTime($event)">Mais de 3 horas</mat-checkbox>
     </section>
 
   </form>
@@ -186,7 +186,7 @@
 </div>
 
 <div class="center-div-step2" id="step5" style="display:none">
-  <h1 style="text-align: center;"><strong>Direitos</strong></h1> <br><br>
+  <h3 style="text-align: center;"><strong>Direitos</strong></h3> <br><br>
 
   <form>
     <p class="paragraph">É permitido compartilhar — copiar e redistribuir o material em qualquer suporte ou formato.</p><br>
@@ -196,7 +196,7 @@
     <p class="paragraph">Saiba mais sobre as licenças <a rel="license" target="_blank" href="http://creativecommons.org/licenses/">aqui.</a></p><br>
     <p class="paragraph">Licença pretendida: *</p><br>
     <mat-radio-group [(ngModel)]="simple.licence" name="licence" id="licence">
-      <div style="font-weight: normal;display: inline-block;">
+      <div style="font-size: large;display: inline-block;">
         <mat-radio-button value="CC BY-SA">
         </mat-radio-button>
         <a rel="license" target="_blank" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Licença Creative Commons" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" /></a>
@@ -206,7 +206,7 @@
       </div>
       <br>
       <br>
-      <div style="font-weight: normal;display: inline-block;">
+      <div style="font-size: large;display: inline-block;">
         <mat-radio-button value="CC BY-NC-SA">
         </mat-radio-button>  
         <a rel="license" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Licença Creative Commons" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a>
@@ -218,7 +218,7 @@
   </form>
 </div>
 <div class="center-div-step2" id="step6" style="display:none">
-  <h1 style="text-align: center;"><strong>Contribuintes</strong></h1> <br><br>
+  <h3 style="text-align: center;"><strong>Contribuintes</strong></h3> <br><br>
 
   <p class="paragraph">Quem contribuiu para a criação do objeto?</p><br>
   <div *ngFor="let author of simple.author">
@@ -236,7 +236,7 @@
 
     <p class="paragraph">De que forma?</p>
     <mat-form-field>
-      <mat-select required [(ngModel)]="author.role" name="role">
+      <mat-select required [(ngModel)]="author.role" name="role" multiple>
       <!-- <mat-option value=Aluno>Aluno</mat-option>
         <mat-option value=Professor>Professor</mat-option>
         <mat-option value=Gestor>Gestor</mat-option> -->
@@ -262,14 +262,14 @@
 </div>
 
 <div class="center-div-step2" id="step7" style="display:none">
-  <h1 style="text-align: center;"><strong>Relações entre objetos de aprendizagem</strong></h1> <br><br>
+  <h3 style="text-align: center;"><strong>Relações entre objetos de aprendizagem</strong></h3> <br><br>
 
   <p class="paragraph">O objeto \ recurso usou como base outro objeto de aprendizagem já existente nesse repositório?</p><br>
   <mat-radio-group name="loRelation">
-    <p style="font-weight: normal" style="font-weight: normal;">
+    <p style="font-size: large;">
       <mat-radio-button [checked]="existRelation" value="1" (change)="showRelationDiv($event)">Sim</mat-radio-button>
     </p>
-    <p style="font-weight: normal" style="font-weight: normal;">
+    <p style="font-size: large;">
       <mat-radio-button [checked]="!existRelation" value="0" (change)="showRelationDiv($event)">Não</mat-radio-button>
     </p>
   </mat-radio-group>
@@ -312,7 +312,7 @@
 </div>
 
 <div class="center-div-step2" id="step8" style="display:none">
-  <h1 style="text-align: center;"><strong>Resumo - {{simple.name}}</strong></h1> <br><br>
+  <h3 style="text-align: center;"><strong>Resumo - {{simple.name}}</strong></h3> <br><br>
 
   <app-show-metadata [simple]="simple"></app-show-metadata>
   <div style="text-align: center">
@@ -336,7 +336,7 @@
 <div class="pagination" style="margin-top:4em;">
   <div class="pagination">
     <a href="javascript:void(0);" class="margin-left-pag" style="font-weight: bold;" (click)="prevPage()">&lt; Anterior</a>
-    <a href="javascript:void(0);" id="page1" style="margin-left: 20%; font-weight: bold;" (click)="page(1)">1</a>
+    <a href="javascript:void(0);" id="page1" style="margin-left: 15%; font-weight: bold;" (click)="page(1)">1</a>
     <a href="javascript:void(0);" id="page2" style="margin-left: 3%;" (click)="page(2)">2</a>
     <a href="javascript:void(0);" id="page3" style="margin-left: 3%;" (click)="page(3)">3</a>
     <a href="javascript:void(0);" id="page4" style="margin-left: 3%;" (click)="page(4)">4</a>
@@ -344,7 +344,7 @@
     <a href="javascript:void(0);" id="page6" style="margin-left: 3%;" (click)="page(6)">6</a>
     <a href="javascript:void(0);" id="page7" style="margin-left: 3%;" (click)="page(7)">7</a>
     <a href="javascript:void(0);" id="page8" style="margin-left: 3%;" (click)="page(8)">8</a>
-    <a href="javascript:void(0);" style="margin-left: 20%; font-weight: bold;" (click)="nextPage()"> &gt; Próximo </a>
+    <a *ngIf="currentPage <= 7" id="next" href="javascript:void(0);" style="margin-left: 15%; margin-right: 18%; font-weight: bold;" (click)="nextPage()"> &gt; Próximo </a>
   </div>
 
 </div>

@@ -40,7 +40,7 @@ export class HomeComponent implements OnInit {
 
       this.rest.postLogin(this.loginForm.value).subscribe((data: {}) => {
         // console.log(data);
-        window.location.reload();
+        //window.location.reload();
       });
       
     } else {

@@ -82,7 +82,7 @@ export class RestService {
   querySOLR(id): Observable<any> {
     // console.log("Lets begin");
     // console.log(endpointSOLR + '/solr/DocumentTinyDto/select?_=' + id);
-    return this.http.get(endpointSOLR + '/solr/DocumentTinyDto/select?' + id, this.getHttpOptionsSolr()).pipe(
+    return this.http.get(endpointSOLR + '/solr/DocumentTinyDto/select?' + id + "&rows=100&start=0", this.getHttpOptionsSolr()).pipe(
       tap((product) => console.log("SolrQuery")),
       catchError(this.handleError<any>('SolrQuery'))
     );
@@ -136,11 +136,14 @@ export class RestService {
              let tokenInfo = JSON.parse(atob(body.token.match(/\..*\./)[0].replace(/\./g, '')));
             //  localStorage.setItem('roles', tokenInfo.roles);
              localStorage.setItem('token_expiration', tokenInfo.exp);
-             localStorage.setItem('email', emailField);
+             //localStorage.setItem('email', emailField);
              if(emailField != "anonymous@uac.pt"){
-              this.email.emit(emailField)
-              this.name.emit(tokenInfo.name)
-              this.logged.emit(true)
+              this.email.emit(emailField);
+              this.name.emit(decodeURIComponent(escape(tokenInfo.name)))
+              // console.log(tokenInfo.name);
+              // console.log(this.userName)
+              // console.log(decodeURIComponent(escape(tokenInfo.name)))
+              this.logged.emit(true);
               this.isLogged = true;
              }
             return 'ok'
@@ -165,10 +168,10 @@ export class RestService {
            localStorage.setItem('token', body.token);
             let tokenInfo = this.decodePayloadJWT();
             localStorage.setItem('token_expiration', tokenInfo.exp);
-            localStorage.setItem('email', emailField);
-            this.email.emit(emailField)
-            this.name.emit(tokenInfo.name)
-            this.logged.emit(true)
+            // localStorage.setItem('email', emailField);
+            this.email.emit(emailField);
+            this.name.emit(decodeURIComponent(escape(tokenInfo.name)));
+            this.logged.emit(true);
             this.isLogged = true;
            return true
           } 

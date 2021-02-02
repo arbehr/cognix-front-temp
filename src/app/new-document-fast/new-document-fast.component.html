@@ -24,6 +24,84 @@
 </div>
 
 <div class="center-div-step2" id="step2" style="display:none">
+  <h3 style="text-align: center;"><strong>Relações entre objetos de aprendizagem</strong></h3> <br><br>
+
+  <p class="paragraph">O objeto \ recurso usou como base outro objeto de aprendizagem já existente nesse repositório?</p><br>
+  <mat-radio-group name="loRelation">
+    <p style="font-size: large;">
+      <mat-radio-button [checked]="existRelation" value="1" (change)="showRelationDiv($event)">Sim</mat-radio-button>
+    </p>
+    <p style="font-size: large;">
+      <mat-radio-button [checked]="!existRelation" value="0" (change)="showRelationDiv($event)">Não</mat-radio-button>
+    </p>
+  </mat-radio-group>
+  <div id="relationDiv" style="display:none">
+    <div *ngFor="let relation of simple.relationWith; let i = index">
+      <p class="paragraph"><span>De que forma?</span>
+        <button *ngIf="simple.relationWith.length > 1" mat-icon-button (click)="removeRelation(i)">
+            <mat-icon class="mat-24">clear</mat-icon>
+        </button>
+      </p>
+      <mat-form-field>
+        <mat-select [(ngModel)]="relation.kind" name="kind">
+          <!-- <mat-option value="">  </mat-option> -->
+          <!-- <mat-option value="ispartof"> É parte de </mat-option> -->
+          <mat-option value="haspart"> Contém parte </mat-option>
+          <mat-option value="isversionof"> É uma versão de </mat-option>
+          <!-- <mat-option value="hasversion"> Tem versão</mat-option> -->
+          <!-- <mat-option value="isformatof"> É formato de</mat-option>
+          <mat-option value="hasformat"> Tem formato</mat-option> -->
+          <mat-option value="references"> Referencia</mat-option>
+          <!-- <mat-option value="isreferencedby"> É referenciado por </mat-option> -->
+          <!-- <mat-option value="isbasedon"> É baseado em </mat-option>
+          <mat-option value="isbasisfor"> É base para </mat-option> -->
+          <mat-option value="requires"> Requer </mat-option>
+          <!-- <mat-option value="isrequiredby"> É requerido por </mat-option> -->
+        </mat-select>
+      </mat-form-field> <br><br>
+      
+      <table cellpadding="10">
+        <tr *ngFor="let docTiny of documentsTiny[i]; let k = index">
+          <td>{{docTiny.id}}</td>
+          <td>{{docTiny.title}}</td>
+          <td>
+            <button mat-icon-button (click)="removeDocTiny(i,k)">
+            <mat-icon class="mat-24">delete</mat-icon>
+            </button>
+          </td>
+        </tr>
+      </table>
+      <br>
+      <br>
+      <button mat-raised-button (click)="openRelationDialog(i)">Escolha o objeto com que se relaciona</button>
+      <br>
+      <br>
+      <br>
+      <br>
+    </div>
+    <button mat-raised-button (click)="addRelation('haspart')">Adicionar outra relação</button>
+    <!-- <br>
+    <br>
+    <button *ngIf="simple.relationWith.length > 1" mat-raised-button (click)="removeRelation()">Remover relação</button> -->
+    <br>
+    <br>
+  <br>
+  <p class="paragraph">Escolha o objeto \ recurso para pré-preencher este relacionado?</p><br>
+  <mat-form-field>
+    <mat-select [(ngModel)]="preFillValue">
+      <mat-option (onSelectionChange)="changePreFillValue($event)" [value]="0">Nenhum</mat-option>
+      <mat-optgroup *ngFor="let group of documentsTiny">
+        <mat-option (onSelectionChange)="changePreFillValue($event)" *ngFor="let docTiny of group" [value]="docTiny.id">
+          {{docTiny.id}} - {{docTiny.title}}
+        </mat-option>
+      </mat-optgroup>
+    </mat-select>
+  </mat-form-field>
+</div>
+  </div>
+  
+
+<div class="center-div-step2" id="step3" style="display:none">
   <h3 style="text-align: center;"><strong>Informações gerais</strong></h3> <br><br>
 
   <form>
@@ -116,7 +194,7 @@
 </div>
 
 
-<div class="center-div-step2" id="step3" style="display:none">
+<div class="center-div-step2" id="step4" style="display:none">
   <h3 style="text-align: center;"><strong>Interatividade</strong></h3> <br><br>
   <form>
     <p class="paragraph">Nível de interação: *</p><br><br>
@@ -141,7 +219,7 @@
   </form>
 </div>
 
-<div class="center-div-step2" id="step4" style="display:none">
+<div class="center-div-step2" id="step5" style="display:none">
   <h3 style="text-align: center;"><strong>Público Alvo</strong></h3> <br><br>
   <form>
 
@@ -185,7 +263,7 @@
 
 </div>
 
-<div class="center-div-step2" id="step5" style="display:none">
+<div class="center-div-step2" id="step6" style="display:none">
   <h3 style="text-align: center;"><strong>Direitos</strong></h3> <br><br>
 
   <form>
@@ -217,12 +295,16 @@
     </mat-radio-group> <br>
   </form>
 </div>
-<div class="center-div-step2" id="step6" style="display:none">
+<div class="center-div-step2" id="step7" style="display:none">
   <h3 style="text-align: center;"><strong>Contribuintes</strong></h3> <br><br>
 
   <p class="paragraph">Quem contribuiu para a criação do objeto?</p><br>
   <div *ngFor="let author of simple.author">
-    <p class="paragraph">Nome completo:</p>
+    <p class="paragraph"><span>Nome completo:</span>
+      <button *ngIf="simple.author.length > 1" mat-icon-button (click)="removeAuthor(i)">
+          <mat-icon class="mat-24">clear</mat-icon>
+      </button>
+    </p>
     <mat-form-field style="width:50%">
       <input required matInput [(ngModel)]="author.name" name="author" placeholder="Resposta">
     </mat-form-field>
@@ -255,60 +337,10 @@
 
   </div>
   <button mat-raised-button (click)="addAuthor('','',['author'])">Adicionar outro contribuinte</button>
+  <!-- <br>
   <br>
-  <br>
-  <button *ngIf="this.simple.author.length > 1" mat-raised-button (click)="removeAuthor()">Remover contribuinte</button>
+  <button *ngIf="this.simple.author.length > 1" mat-raised-button (click)="removeAuthor()">Remover contribuinte</button> -->
   <br><br><br><br>
-</div>
-
-<div class="center-div-step2" id="step7" style="display:none">
-  <h3 style="text-align: center;"><strong>Relações entre objetos de aprendizagem</strong></h3> <br><br>
-
-  <p class="paragraph">O objeto \ recurso usou como base outro objeto de aprendizagem já existente nesse repositório?</p><br>
-  <mat-radio-group name="loRelation">
-    <p style="font-size: large;">
-      <mat-radio-button [checked]="existRelation" value="1" (change)="showRelationDiv($event)">Sim</mat-radio-button>
-    </p>
-    <p style="font-size: large;">
-      <mat-radio-button [checked]="!existRelation" value="0" (change)="showRelationDiv($event)">Não</mat-radio-button>
-    </p>
-  </mat-radio-group>
-  <div id="relationDiv" style="display:none">
-    <div *ngFor="let relation of simple.relationWith; let i = index">
-      <p class="paragraph">De que forma?</p>
-      <mat-form-field>
-        <mat-select [(ngModel)]="relation.kind" name="kind">
-          <!-- <mat-option value="">  </mat-option> -->
-          <!-- <mat-option value="ispartof"> É parte de </mat-option> -->
-          <mat-option value="haspart"> Contém parte </mat-option>
-          <mat-option value="isversionof"> É uma versão de </mat-option>
-          <!-- <mat-option value="hasversion"> Tem versão</mat-option> -->
-          <!-- <mat-option value="isformatof"> É formato de</mat-option>
-          <mat-option value="hasformat"> Tem formato</mat-option> -->
-          <mat-option value="references"> Referencia</mat-option>
-          <!-- <mat-option value="isreferencedby"> É referenciado por </mat-option> -->
-          <!-- <mat-option value="isbasedon"> É baseado em </mat-option>
-          <mat-option value="isbasisfor"> É base para </mat-option> -->
-          <mat-option value="requires"> Requer </mat-option>
-          <!-- <mat-option value="isrequiredby"> É requerido por </mat-option> -->
-        </mat-select>
-      </mat-form-field> <br><br>
-      
-      <p class="paragraph">Identificador(es): {{documentsTiny[i]}}</p>
-      <br>
-      <br>
-      <button mat-raised-button (click)="openRelationDialog(i)">Escolha o objeto com que se relaciona</button>
-      <br>
-      <br>
-      <br>
-      <br>
-    </div>
-    <button mat-raised-button (click)="addRelation('haspart')">Adicionar outra relação</button>
-    <br>
-    <br>
-    <button *ngIf="simple.relationWith.length > 1" mat-raised-button (click)="removeRelation()">Remover relação</button>
-    <br>
-  </div>
 </div>
 
 <div class="center-div-step2" id="step8" style="display:none">
@@ -344,7 +376,7 @@
     <a href="javascript:void(0);" id="page6" style="margin-left: 3%;" (click)="page(6)">6</a>
     <a href="javascript:void(0);" id="page7" style="margin-left: 3%;" (click)="page(7)">7</a>
     <a href="javascript:void(0);" id="page8" style="margin-left: 3%;" (click)="page(8)">8</a>
-    <a *ngIf="currentPage <= 7" id="next" href="javascript:void(0);" style="margin-left: 15%; margin-right: 18%; font-weight: bold;" (click)="nextPage()"> &gt; Próximo </a>
+    <a *ngIf="currentPage < numPages" id="next" href="javascript:void(0);" style="margin-left: 15%; margin-right: 18%; font-weight: bold;" (click)="nextPage()"> &gt; Próximo </a>
   </div>
 
 </div>

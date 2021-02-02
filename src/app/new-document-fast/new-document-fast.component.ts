@@ -66,7 +66,7 @@ export class NewDocumentFastComponent implements OnInit {
   fileId: string;
   fileThumb: string;
   existRelation: boolean;
-
+  preFillValue: string;
 
   OBAA: OBAACreator;
   public uploader: FileUploader = new FileUploader({url: endpoint + "/files/uploadFile", authToken: localStorage.getItem('token'), itemAlias: "file"});
@@ -154,6 +154,7 @@ export class NewDocumentFastComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.preFillValue = "";
     this.documentsTiny = [];
     this.currentPage = 1;
     this.numPages = 8;
@@ -356,7 +357,7 @@ export class NewDocumentFastComponent implements OnInit {
       ]
       
     ];
-    this.getDocument(this.route.snapshot.paramMap.get('id'));
+    this.getDocument(this.route.snapshot.paramMap.get('id'), true);
     
     this.OBAA = emptyMockOBAACreator;
 
@@ -400,14 +401,15 @@ export class NewDocumentFastComponent implements OnInit {
     return value.toLowerCase().replace(/\s/g, '');
   }
 
-  getDocument(id): void {
+  getDocument(id, withRelations): void {
     if(id != null) {
-
-      this.fileId = endpoint  + "/files/" + id;
-      this.fileThumb = endpoint  + "/files/" + id + "/thumbnail";
+      if(withRelations) {
+        this.fileId = endpoint  + "/files/" + id;
+        this.fileThumb = endpoint  + "/files/" + id + "/thumbnail";
       
-      document.getElementById("uploadFileDiv").style.display = "none";
-      document.getElementById("uploadPhotoDiv").style.display = "none";
+        document.getElementById("uploadFileDiv").style.display = "none";
+        document.getElementById("uploadPhotoDiv").style.display = "none";
+      }
 
       this.rest.querySOLR("q=id:" + id).subscribe((data: any) => {
         var documents = data.response.docs;
@@ -438,7 +440,7 @@ export class NewDocumentFastComponent implements OnInit {
           owner: documents[0].owner,
           favorites: documents[0].favorites, 
           free: documents[0].free,
-          relationWith: this.updateRelations(documents[0].relationWith),
+          relationWith: (withRelations) ? this.updateRelations(documents[0].relationWith) : this.simple.relationWith,
           //authors: documents[0].author,
           author: this.updateAuthors(documents[0].author),
           status: this.getStatusScope(tokenInfo.roles)[2],
@@ -580,13 +582,70 @@ export class NewDocumentFastComponent implements OnInit {
       if(result){
         for(var i = 0; i < result.length; i++){
           if(result[i].selected) {
-            filteredResult.push(result[i].id);
+            filteredResult.push({id: result[i].id, title: result[i].title});
           }
         }
         this.documentsTiny[index] = filteredResult;
         // console.log(this.documentsTiny);
       } 
     });
+  }
+
+  changePreFillValue(event) {
+    if(event.isUserInput) {
+      // console.log(event.source.value, event.source.selected);
+      if(event.source.value == "0") {
+        if(confirm("Você deseja apagar todos os dados pré-preenchidos?")) {
+          this.clearFormValues();
+        }
+      } else {
+        this.getDocument(event.source.value, false);
+      }
+    }
+  }
+
+  clearCheckBoxes(fieldsList, varName) {
+    for(var j = 0; j < fieldsList.length; j++){
+      if(fieldsList[j].length > 0) {
+        for(var k = 0; k < fieldsList[j].length; k++){
+            fieldsList[j][k].isValid = false;
+        }
+      } else {
+          fieldsList[j].isValid = false;
+      }
+    }
+  }
+
+  clearFormValues() {
+    this.otherResource = "";
+    this.keywords = [];
+    this.clearCheckBoxes(this.resources, "resources");
+    this.clearCheckBoxes(this.target, "target");
+    this.clearCheckBoxes(this.keywords_predefined, "keywords");
+    this.clearCheckBoxes(this.age, "age");
+    this.clearCheckBoxes(this.knowledgeArea, "knowledgeArea");
+    this.typicalLearningTime = 0;
+    this.moreThanThreeHours = false;
+
+    let tokenInfo = this.rest.decodePayloadJWT();
+    this.simple = {
+      name: "",
+      language: "",
+      // keywords: documents[0].keywords,
+      description: "",
+      interaction: "",
+      interactionNumber: "",
+      licence: "",
+      owner: "",
+      favorites: "", 
+      free: "",
+      relationWith: this.simple.relationWith,
+      //authors: documents[0].author,
+      author: this.updateAuthors([]),
+      status: this.getStatusScope(tokenInfo.roles)[2],
+      reviewer: tokenInfo.sub
+    }
+    this.addAuthor("","",["author"]);
   }
 
   radioInteractivityChange(event: MatRadioChange) {
@@ -600,6 +659,9 @@ export class NewDocumentFastComponent implements OnInit {
     } else {
       document.getElementById("relationDiv").style.display = "none";
       this.existRelation = false;
+      if(confirm("Você deseja apagar todos os dados pré-preenchidos?")) {
+        this.clearFormValues();
+      }
     }
   }
 
@@ -686,9 +748,9 @@ export class NewDocumentFastComponent implements OnInit {
     
     this.simple.id = this.OBAA.id;  
     
-    console.log( "BEFORE");
-    console.log(this.OBAA);
-    console.log(this.simple);
+    // console.log( "BEFORE");
+    // console.log(this.OBAA);
+    // console.log(this.simple);
 
     this.rest.addDocument(JSON.stringify(this.OBAA), this.OBAA.id, this.edit).subscribe((data: {}) => {
       // console.log(data);
@@ -877,7 +939,14 @@ export class NewDocumentFastComponent implements OnInit {
     
     for(var i = 0; i < this.simple.relationWith.length; i++){
       if (this.documentsTiny[i]){
-        var entries = this.documentsTiny[i].toString().split(',');
+        // console.log(this.documentsTiny[i])
+        var entries = [];
+        for(var j = 0; j < this.documentsTiny[i].length; j++) {
+          entries.push(this.documentsTiny[i][j].id)
+          
+          // console.log(this.documentsTiny[i][j].id)
+        }
+        // this.documentsTiny[i].toString().split(',');
         for(var k = 0; k < entries.length; k++){
           this.relation.push({kind:this.simple.relationWith[i].kind, 
             resource:{identifier:[{catalog: "URI" , 
@@ -931,6 +1000,10 @@ export class NewDocumentFastComponent implements OnInit {
     this.keywords.splice(i,1);
   }
 
+  removeDocTiny(i: number, k: number){
+    this.documentsTiny[i].splice(k,1);
+  }
+
   addAuthor(newName:string, newInsitution:string, newRole:string[]){
     var aut = {
       name: newName,
@@ -940,8 +1013,8 @@ export class NewDocumentFastComponent implements OnInit {
     this.simple.author.push(aut);
   }
 
-  removeAuthor(){
-    this.simple.author.pop();
+  removeAuthor(i: number){
+    this.simple.author.splice(i,1);
   }
 
   addRelation(newKind: string){
@@ -952,9 +1025,9 @@ export class NewDocumentFastComponent implements OnInit {
     this.simple.relationWith.push(rel);
   }
 
-  removeRelation(){
-    this.documentsTiny.pop();
-    this.simple.relationWith.pop();
+  removeRelation(i: number){
+    this.documentsTiny.splice(i,1);
+    this.simple.relationWith.splice(i,1);
   }
 
   addOtherResource(value:string, isValid:boolean){
@@ -991,7 +1064,7 @@ export class NewDocumentFastComponent implements OnInit {
 
     if(this.existRelation) {
       for(var i = 0; i < this.simple["relationWith"].length; i++) {
-        console.log(this.simple["relationWith"][i])
+        // console.log(this.simple["relationWith"][i])
         if(this.simple["relationWith"][i].entry.trim() == "") {
           complete = false;
         }
@@ -1041,12 +1114,12 @@ export class DialogOverviewExampleDialog {
     
     this.rest.querySOLR(finalString).subscribe((data: any) => {
       var rec = data.response.docs;
-      console.log(rec);
+      // console.log(rec);
       for (var x in rec){
-        console.log(x);
+        // console.log(x);
         this.documentsTiny.push({id:rec[x].id, title:rec[x].name, selected:false});
       }
-      console.log(this.documentsTiny);
+      // console.log(this.documentsTiny);
     });
 
   }

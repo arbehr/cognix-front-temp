@@ -1,10 +1,13 @@
-<div mat-dialog-content>
-    <p class="paragraph">Selecione os objetos de aprendizagem relacionados:</p>
+<div style="position: sticky;top:0;z-index: 999;background-color: white;">
+    <div mat-dialog-content>
+        <p class="paragraph">Selecione os objetos de aprendizagem relacionados:</p>
+    </div>
+    <div mat-dialog-actions>
+      <button mat-raised-button (click)="onCancelClick()">Cancelar</button>
+      <button mat-raised-button [mat-dialog-close]="documentsTiny" cdkFocusInitial>Ok</button>
+    </div>
 </div>
-<div mat-dialog-actions>
-  <button mat-raised-button (click)="onCancelClick()">Cancelar</button>
-  <button mat-raised-button [mat-dialog-close]="documentsTiny" cdkFocusInitial>Ok</button>
-</div>
+
 <div style="font-size:1.5em; margin-top: 1.5em; width:100%">
     <mat-grid-list cols=2 rowHeight=20em [gutterSize]="'10px'">
         <mat-grid-tile *ngFor="let document of documentsTiny">

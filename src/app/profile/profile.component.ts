@@ -13,9 +13,11 @@ export class ProfileComponent implements OnInit {
   constructor(private rest: RestService, private router: Router) { }
   documents: any;
   isReviewer: boolean;
+  hideRevisionsDiv: boolean;
 
   ngOnInit() {
     this.documents = [];
+    this.hideRevisionsDiv = true;
     let tokenInfo = this.rest.decodePayloadJWT();
     let status = this.getStatusScope(tokenInfo.roles);
     tokenInfo.roles.toString().includes('reviewer') ? this.isReviewer = true : this.isReviewer = false;
@@ -24,6 +26,16 @@ export class ProfileComponent implements OnInit {
       this.getDocuments(status[1], tokenInfo.sub);
       // console.log(status);
     }
+  }
+
+  showRevisions() {
+    this.hideRevisionsDiv = false;
+    document.getElementById("revisionsDiv").style.display = "block";
+  }
+
+  hideRevisions() {
+    this.hideRevisionsDiv = true;
+    document.getElementById("revisionsDiv").style.display = "none";
   }
 
   getStatusScope(roles) {
@@ -39,9 +51,9 @@ export class ProfileComponent implements OnInit {
   }
 
   getDocuments(status, reviewer) {
-    let query = "q=*:*&fq=status:" + status + "&rows=100&start=0";
+    let query = "q=*:*&fq=status:" + status;
     if(reviewer != "") {
-      query+="&fq=reviewer:" + reviewer + "&rows=100&start=0";
+      query+="&fq=reviewer:" + reviewer;
     }
     this.rest.querySOLR(query).subscribe((data: any) => {
       var rec = data.response.docs;

@@ -62,7 +62,8 @@ export class NewDocumentFastComponent implements OnInit {
   numPages: number;
   documentsTiny: any;
   name: string;
-
+  preName: string;
+  preDescription: string;
   fileId: string;
   fileThumb: string;
   existRelation: boolean;
@@ -446,6 +447,8 @@ export class NewDocumentFastComponent implements OnInit {
           status: this.getStatusScope(tokenInfo.roles)[2],
           reviewer: tokenInfo.sub
         }
+        this.preName = documents[0].name;
+        this.preDescription = documents[0].description;
       });
     }
   }
@@ -673,6 +676,12 @@ export class NewDocumentFastComponent implements OnInit {
   finish(){
 
     document.body.style.cursor="wait";
+
+    if(this.preName.trim() == this.simple.name.trim() ||
+       this.preDescription.trim() == this.simple.description.trim()) {
+        alert('Título e descrição do objeto não podem ser iguais ao do objeto relacionado.');
+              return;
+    }
 
     for (var propt in this.simple){
       if (Object.prototype.hasOwnProperty.call(this.simple, propt)) {
@@ -1069,6 +1078,11 @@ export class NewDocumentFastComponent implements OnInit {
           complete = false;
         }
       }
+    }
+
+    if(this.preName.trim() == this.simple.name.trim() ||
+       this.preDescription.trim() == this.simple.description.trim()) {
+        document.getElementById("sameLO").style.display="block";
     }
 
     if(complete)

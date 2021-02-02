@@ -90,7 +90,8 @@
   <mat-form-field>
     <mat-select [(ngModel)]="preFillValue">
       <mat-option (onSelectionChange)="changePreFillValue($event)" [value]="0">Nenhum</mat-option>
-      <mat-optgroup *ngFor="let group of documentsTiny">
+      <mat-optgroup *ngFor="let group of documentsTiny; let i = index;">
+        <button mat-raised-button color="primary">Relação #{{i+1}}</button>
         <mat-option (onSelectionChange)="changePreFillValue($event)" *ngFor="let docTiny of group" [value]="docTiny.id">
           {{docTiny.id}} - {{docTiny.title}}
         </mat-option>
@@ -352,15 +353,14 @@
 
 
   </div> <br><br>
+  <div id="sameLO" style="text-align: center;display:none;">
+    <p style="color:red">TÍTULO E DESCRIÇÃO DO OBJETO NÃO PODEM SER IGUAIS AO DO OBJETO RELACIONADO</p>
+  </div>
   <div id="incomplete" style="text-align: center;display:none;">
     <p style="color:red">O QUESTIONÁRIO AINDA NÃO ESTÁ TOTALMENTE COMPLETO</p>
-
-
   </div>
   <div id="uploadEmpty" style="text-align: center;display:none;">
     <p style="color:red">NENHUM ARQUIVO FOI SELECIONADO PARA O ENVIO</p>
-
-
   </div>
 
 </div>

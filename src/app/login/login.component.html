@@ -14,7 +14,12 @@
         <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
       </button>
     </mat-form-field><br><br>
-
+    <re-captcha
+      (resolved)="resolved($event)"
+      (error)="onError($event)"
+      errorMode="handled"
+      siteKey="6LcOuyYTAAAAAHTjFuqhA52fmfJ_j5iFk5PsfXaU"
+    ></re-captcha>
   </form>
   <div>
     <button class="login-button" mat-raised-button (click)="doLogin()">Entrar</button>

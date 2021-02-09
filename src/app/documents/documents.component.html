@@ -7,14 +7,14 @@
           <h5 style="text-align: center;"><strong>{{document.title}}</strong></h5>
 
       </mat-card-actions>
-      
-          <a class="card-footers theme-orange" [routerLink]="['/documents/' + document.id]" routerLinkActive="router-link-active">
-              <strong>+ Informações</strong>
-           </a> 
-           <!-- <button *ngIf = "isLogged" mat-button > <mat-icon aria-hidden="false" aria-label="favorite" >favorite_border</mat-icon> 
-           </button>-->
-           <!-- <button mat-button > <mat-icon aria-label="share" >share_border</mat-icon>
-           </button> -->
+        
+        <a class="card-footers theme-orange" [routerLink]="['/documents/' + document.id]" routerLinkActive="router-link-active">
+            <strong>+ Informações</strong>
+        </a> 
+        <button *ngIf = "isLogged" mat-button > <mat-icon aria-hidden="false" aria-label="favorite" >favorite_border</mat-icon> 
+        </button>
+        <button mat-button style="float: right;"> <mat-icon aria-label="share" >share_border</mat-icon>
+        </button>
   </mat-card>
 
 

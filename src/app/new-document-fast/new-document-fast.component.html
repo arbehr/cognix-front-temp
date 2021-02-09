@@ -166,7 +166,7 @@
     </div>
     <br>
     <br>
-    <p class="paragraph">Tipo(s) de objeto \ recurso de aprendizagem: (pode selecionar vários) *
+    <p class="paragraph">Tipo(s) de objeto \ recurso de aprendizagem: *
     </p>
     <br>
     <div class="table-responsive">
@@ -254,7 +254,7 @@
     <p class="paragraph">Tempo necessário (em minutos) para a realização da atividade:</p>
     <br><br>
     <mat-slider thumbLabel [(ngModel)]="typicalLearningTime" id="typicalLearningTime" name="typicalLearningTime" [displayWith]=""
-      min="0" max="180" step="15" value="15"></mat-slider>
+      min="0" max="180" step="15" value="15"></mat-slider><span>(máximo 3 horas)</span>
     <br>
     <section>
       <mat-checkbox style="font-size: large;" [checked]="moreThanThreeHours" (change)="setTypicalLearningTime($event)">Mais de 3 horas</mat-checkbox>
@@ -376,7 +376,7 @@
     <a href="javascript:void(0);" id="page6" style="margin-left: 3%;" (click)="page(6)">6</a>
     <a href="javascript:void(0);" id="page7" style="margin-left: 3%;" (click)="page(7)">7</a>
     <a href="javascript:void(0);" id="page8" style="margin-left: 3%;" (click)="page(8)">8</a>
-    <a *ngIf="currentPage < numPages" id="next" href="javascript:void(0);" style="margin-left: 15%; margin-right: 18%; font-weight: bold;" (click)="nextPage()"> &gt; Próximo </a>
+    <a *ngIf="currentPage < numPages" id="next" href="javascript:void(0);" style="margin-left: 15%; margin-right: 18%; font-weight: bold;" (click)="nextPage()"> &gt; Continuar </a>
   </div>
 
 </div>

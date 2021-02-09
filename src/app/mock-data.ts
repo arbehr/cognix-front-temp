@@ -186,7 +186,7 @@ export const emptyMockOBAA: OBAA =
                     identifier: [
                         {
                             catalog: "URI",
-                            entry: "http://edumar.uac.pt/documments/1"
+                            entry: "http://re-mar.uac.pt/documments/1"
                         }
                     ],
                 }
@@ -251,7 +251,7 @@ export const emptyMockOBAA: OBAA =
                     identifier: [
                         {
                             catalog: "URI",
-                            entry: "http://edumar.uac.pt/doccuments"
+                            entry: "http://re-mar.uac.pt/doccuments"
                         }
                     ],
                 }

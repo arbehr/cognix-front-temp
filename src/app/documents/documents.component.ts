@@ -17,7 +17,8 @@ export class DocumentsComponent implements OnInit {
 
   ngOnInit() {
     this.rest.logged.subscribe(logged => this.isLogged = logged)
-    console.log("Login " + this.isLogged);
+    this.isLogged = this.rest.isLogged;
+    
     this.thumb = endpoint  + "/files/" + this.document.id + "/thumbnail";
     if(this.document.title.length > 27)
       this.document.title = this.document.title.substr(0,23) + "..."

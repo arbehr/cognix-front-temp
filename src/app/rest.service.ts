@@ -1,4 +1,4 @@
-import { Injectable, Output, EventEmitter } from '@angular/core';
+import { Injectable, Output, EventEmitter, Directive } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { Observable, of, Subject, throwError } from 'rxjs';
 import { map, catchError, tap } from 'rxjs/operators';
@@ -12,6 +12,7 @@ const httpOptionsReading = {
   })
 };
 
+@Directive()
 @Injectable({
   providedIn: 'root'
 })

@@ -1,4 +1,5 @@
-
+<br>
+<br>
 <div class="grey-division">
     <div class="grey-division-text"><strong>Novo Registo</strong></div>
 </div>
@@ -18,7 +19,12 @@
       <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
       </button>
   </mat-form-field><br><br>
-
+  <mat-form-field class="input-size">
+    <input [type]="hideConfirm ? 'password' : 'text'" required formControlName='confirmPassword' matInput placeholder="Confirmar Senha">
+    <button mat-icon-button matSuffix (click)="hideConfirm = !hideConfirm" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hideConfirm">
+      <mat-icon>{{hideConfirm ? 'visibility_off' : 'visibility'}}</mat-icon>
+      </button>
+  </mat-form-field><br><br>
   </form>
 
     <button class="create-button" mat-raised-button (click)="onSignUp()">Registar</button>

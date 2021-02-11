@@ -1,7 +1,40 @@
+<br>
+<br>
 <div class="grey-division">
   <div class="grey-division-text"><strong>Perfil</strong></div>
 </div>
 
+<h1 style="text-align: center;">
+  <strong>Objetos de aprendizagem (OAs) incompletos:</strong>
+  <button *ngIf="hideIncompletesDiv" mat-icon-button (click)="showIncompletes()">
+    <mat-icon class="mat-24">add_circle</mat-icon>
+  </button>
+  <button *ngIf="!hideIncompletesDiv" mat-icon-button (click)="hideIncompletes()">
+    <mat-icon class="mat-24">remove_circle</mat-icon>
+  </button>
+</h1> 
+
+<div id="incompletesDiv" style="display: none;text-align: center;">
+  <br><br>
+  <p class="paragraph">A completar:</p>
+  <div style="margin-left: 1em; font-size:1.5em; margin-top: 1.5em; width:90%">
+    <table style="margin: 0px auto;">
+      <tr>
+          <th>Título</th>
+      </tr>
+      <tr *ngFor="let document of documentsToComplete">
+        <td>
+            <p style="margin-bottom: 0em;font-size: 15px;">
+              <a *ngIf="!document.title" [routerLink]="['/documents/' + document.id + '/edit']" routerLinkActive="router-link-active">
+              <strong>Sem título</strong></a>
+              <a *ngIf="document.title" [routerLink]="['/documents/' + document.id + '/edit']" routerLinkActive="router-link-active">
+                <strong>{{document.title}}</strong></a>
+            </p>
+        </td>
+      </tr>
+    </table>
+  </div>
+</div>
 <div *ngIf="isReviewer" class="center-div-step2">
   <h1 style="text-align: center;">
     <strong>Revisão de objetos de aprendizagem (OAs)</strong>
@@ -12,17 +45,18 @@
       <mat-icon class="mat-24">remove_circle</mat-icon>
     </button>
   </h1> 
-  <br><br>
-  <div id="revisionsDiv" style="display: none;">
+  
+  <div id="revisionsDiv" style="display: none;text-align: center;">
+    <br><br>
     <p class="paragraph">A revisar:</p>
     <div style="margin-left: 1em; font-size:1.5em; margin-top: 1.5em; width:90%">
-      <table>
+      <table style="margin: 0px auto;">
         <tr>
           <th></th>
-          <th>OA</th>
+          <th>Título</th>
           <th>Depositante</th>
         </tr>
-        <tr *ngFor="let document of documents">
+        <tr *ngFor="let document of documentsToReview">
           <td *ngIf="document.status.includes('NEEDS')">
               <mat-checkbox (change)="document.isValid = ! document.isValid">
               </mat-checkbox>
@@ -43,12 +77,12 @@
     <br/>
     <p class="paragraph">Vossas revisões:</p>
     <div style="margin-left: 1em; font-size:1.5em; margin-top: 1.5em; width:90%">
-      <table>
+      <table style="margin: 0px auto;">
         <tr>
-          <th>OA</th>
+          <th>Título</th>
           <th>Depositante</th>
         </tr>
-        <tr *ngFor="let document of documents">
+        <tr *ngFor="let document of documentsToReview">
           <td *ngIf="document.status.includes('UNDER')">
             <p style="margin-bottom: 0em;font-size: 15px;">
               <!-- <mat-checkbox (change)="document.isValid = ! document.isValid"> -->

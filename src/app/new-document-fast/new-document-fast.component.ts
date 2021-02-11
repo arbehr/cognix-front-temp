@@ -7,7 +7,8 @@ import {  FileUploader, FileSelectDirective } from 'ng2-file-upload/ng2-file-upl
 import { ActivatedRoute, Router } from "@angular/router"
 import { parameters } from '../search/searchParameters';
 import {MatStepperModule} from '@angular/material/stepper'; 
-import { MatCheckboxChange, MatRadioButton, MatRadioChange,  } from '@angular/material';
+import { MatCheckboxChange } from '@angular/material/checkbox';
+import { MatRadioButton, MatRadioChange } from '@angular/material/radio';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ThrowStmt } from '@angular/compiler';
 import { toJSDate } from '@ng-bootstrap/ng-bootstrap/datepicker/ngb-calendar';
@@ -149,7 +150,7 @@ export class NewDocumentFastComponent implements OnInit {
       owner: tokenInfo.sub,
       favorites:["admin"],
       free:"yes",
-      status:"NEEDS_TECH_REVIEW",
+      status:"INCOMPLETE",
       id:0
     };
   }
@@ -358,7 +359,7 @@ export class NewDocumentFastComponent implements OnInit {
       ]
       
     ];
-    this.getDocument(this.route.snapshot.paramMap.get('id'), true);
+    this.getDocument(this.route.snapshot.paramMap.get('id'), true, false);
     
     this.OBAA = emptyMockOBAACreator;
 
@@ -402,28 +403,22 @@ export class NewDocumentFastComponent implements OnInit {
     return value.toLowerCase().replace(/\s/g, '');
   }
 
-  getDocument(id, withRelations): void {
+  getDocument(id, withRelations, checkNameAndDescription): void {
     if(id != null) {
-      if(withRelations) {
-        this.fileId = endpoint  + "/files/" + id;
-        this.fileThumb = endpoint  + "/files/" + id + "/thumbnail";
-      
-        document.getElementById("uploadFileDiv").style.display = "none";
-        document.getElementById("uploadPhotoDiv").style.display = "none";
-      }
 
       this.rest.querySOLR("q=id:" + id).subscribe((data: any) => {
         var documents = data.response.docs;
         // console.log(documents)
         
         this.otherResource = "";
-        this.updateCheckBoxes(documents[0].resources, this.resources, "resources");
-        this.updateCheckBoxes(documents[0].target, this.target, "target");
-        this.updateCheckBoxes(documents[0].keywords, this.keywords_predefined, "keywords");
-        this.updateCheckBoxes(documents[0].age, this.age, "age");
-        this.updateCheckBoxes(documents[0].knowledgeArea, this.knowledgeArea, "knowledgeArea");
+        (documents[0].resources) ? this.updateCheckBoxes(documents[0].resources, this.resources, "resources") : "";
+        (documents[0].target) ? this.updateCheckBoxes(documents[0].target, this.target, "target") : "";
+        (documents[0].keywords) ? this.updateCheckBoxes(documents[0].keywords, this.keywords_predefined, "keywords") : "";
+        (documents[0].age) ? this.updateCheckBoxes(documents[0].age, this.age, "age") : "";
+        (documents[0].knowledgeArea) ? this.updateCheckBoxes(documents[0].knowledgeArea, this.knowledgeArea, "knowledgeArea") : "";
         
-        this.updateTypicalLearningTime(documents[0].typicalLearningTime);
+        (documents[0].typicalLearningTime) ? this.updateTypicalLearningTime(documents[0].typicalLearningTime) : "";
+        
         let tokenInfo = this.rest.decodePayloadJWT();
         this.simple = {
           name: documents[0].name,
@@ -438,32 +433,41 @@ export class NewDocumentFastComponent implements OnInit {
           // knowledgeArea:  documents[0].knowledgeArea,
           // resources:  documents[0].resources[0],
           // typicalLearningTime: documents[0].typicalLearningTime,
-          owner: documents[0].owner,
-          favorites: documents[0].favorites, 
+          owner: (withRelations) ? documents[0].owner : tokenInfo.sub,
+          favorites: (withRelations) ? documents[0].favorites : [], 
           free: documents[0].free,
           relationWith: (withRelations) ? this.updateRelations(documents[0].relationWith) : this.simple.relationWith,
           //authors: documents[0].author,
           author: this.updateAuthors(documents[0].author),
-          status: this.getStatusScope(tokenInfo.roles)[2],
+          status: (withRelations) ? documents[0].status : "INCOMPLETE",
           reviewer: tokenInfo.sub
         }
-        this.preName = documents[0].name;
-        this.preDescription = documents[0].description;
+        if(checkNameAndDescription) {
+          this.preName = documents[0].name;
+          this.preDescription = documents[0].description;
+        } else {
+          this.preName = "";
+          this.preDescription = "";
+        }       
+     
+        if(this.simple.status != "INCOMPLETE") {
+          this.fileId = endpoint  + "/files/" + id;
+          this.fileThumb = endpoint  + "/files/" + id + "/thumbnail";
+        
+          document.getElementById("uploadFileDiv").style.display = "none";
+          document.getElementById("uploadPhotoDiv").style.display = "none";
+        }
       });
     }
   }
 
-  // TODO: repeated function, refactor. Almost same as in profile
-  getStatusScope(roles) {
-    roles = roles.toString().split(',');
-    for(let role of roles) {
-      // console.log(role);
-      switch(role) {
-        case "tech_reviewer": return ["NEEDS_TECH_REVIEW", "UNDER_TECH_REVIEW", "NEEDS_PEDAG_REVIEW"];
-        case "pedag_reviewer": return ["NEEDS_PEDAG_REVIEW", "UNDER_PEDAG_REVIEW", "REVIEWED"];
-      }
+  nextStatusScope(status) {
+    switch(status) {
+      case "INCOMPLETE": return "NEEDS_TECH_REVIEW";
+      case "UNDER_TECH_REVIEW": return "NEEDS_PEDAG_REVIEW";
+      case "UNDER_PEDAG_REVIEW": return "REVIEWED";
+      default: return "ERROR_STATUS";
     }
-    return ['undefined','undefined', 'undefined'];
   }
 
   updateRelations(associatedRelations){
@@ -477,10 +481,13 @@ export class NewDocumentFastComponent implements OnInit {
         let rel_entry = rel_parts[0].split("=")[1];
         let rel_kind = rel_parts[1].split("=")[1];
         let rel_kind_fixed = rel_kind.substr(0, rel_kind.length - 1);
+
         if(rel_kind_fixed.trim() != ""){
           relation_ret.push({kind: rel_kind_fixed, entry: rel_entry});
           this.documentsTiny[i] = rel_entry;
-          this.existRelation = true;
+          if(rel_entry.trim() != "") {
+            this.existRelation = true;
+          }         
         } else {
           relation_ret.push({kind: "", entry: ""});
               this.documentsTiny[i] = "";
@@ -602,7 +609,7 @@ export class NewDocumentFastComponent implements OnInit {
           this.clearFormValues();
         }
       } else {
-        this.getDocument(event.source.value, false);
+        this.getDocument(event.source.value, false, true);
       }
     }
   }
@@ -645,7 +652,7 @@ export class NewDocumentFastComponent implements OnInit {
       relationWith: this.simple.relationWith,
       //authors: documents[0].author,
       author: this.updateAuthors([]),
-      status: this.getStatusScope(tokenInfo.roles)[2],
+      status: "INCOMPLETE",
       reviewer: tokenInfo.sub
     }
     this.addAuthor("","",["author"]);
@@ -673,6 +680,35 @@ export class NewDocumentFastComponent implements OnInit {
     this.typicalLearningTime = 0;
   }
 
+  save(){
+    document.body.style.cursor="wait";
+
+    this.updateSimple();
+ 
+    if(this.simple.author.length == 1) {
+      this.addAuthor("","",["author"]); 
+    }
+    
+    if(this.simple.relationWith.length == 1) {
+      this.addRelation("");
+    }    
+
+    this.simple.id = this.OBAA.id;  
+
+    console.log(this.simple)
+    this.rest.addDocumentSOLR(JSON.stringify([this.simple])).subscribe(
+      result => {
+        alert("Objeto salvo com sucesso!")
+      },
+      error => {
+          alert("Erro ao salvar objeto!")
+          console.log(error);
+      }
+  ); 
+
+    document.body.style.cursor="initial";
+  }
+
   finish(){
 
     document.body.style.cursor="wait";
@@ -686,7 +722,7 @@ export class NewDocumentFastComponent implements OnInit {
     for (var propt in this.simple){
       if (Object.prototype.hasOwnProperty.call(this.simple, propt)) {
           if(this.simple[propt] == "" && !(propt == "id" || propt == "typicalLearningTime" ||
-            propt == "relation")){
+            propt == "relation" || propt == "favorites")){
               alert('Preencha todos os campos necessários antes do envio.');
               return;
           }
@@ -726,10 +762,13 @@ export class NewDocumentFastComponent implements OnInit {
     this.OBAA.metadata.general.descriptions[0] = this.simple.description;
     this.OBAA.metadata.general.keywords[0] = this.simple.keywords.toString();
 
-    this.updateSimple();
+    // this.updateSimple();
  
     this.addAuthor("","",["author"]); 
     this.addRelation("");
+    this.simple.status = this.nextStatusScope(this.simple.status);
+    
+    this.save();
 
     for(var i = 0; i < this.contribute.length; i++){
       this.OBAA.metadata.lifeCycle.contribute[i] = this.contribute[i];
@@ -755,7 +794,7 @@ export class NewDocumentFastComponent implements OnInit {
     
     this.OBAA.isVersion = "1";
     
-    this.simple.id = this.OBAA.id;  
+    // this.simple.id = this.OBAA.id;  
     
     // console.log( "BEFORE");
     // console.log(this.OBAA);
@@ -765,13 +804,14 @@ export class NewDocumentFastComponent implements OnInit {
       // console.log(data);
       // console.log(this.simple);
       
-      this.rest.addDocumentSOLR(JSON.stringify([this.simple])).subscribe((data: {}) => {
-        // console.log(data);
+      // this.rest.addDocumentSOLR(JSON.stringify([this.simple])).subscribe((data: {}) => {
+      //   // console.log(data);
         
 
-        this.uploader2.uploadAll();
-      });
-      alert("Documento adicionado com sucesso! Aguarde pela revisão!");
+      //   this.uploader2.uploadAll();
+      // });
+      this.uploader2.uploadAll();
+      alert("Objeto adicionado com sucesso! Aguarde pela revisão!");
     });
 
     this.router.navigate(['/']);
@@ -1056,9 +1096,10 @@ export class NewDocumentFastComponent implements OnInit {
     for (var propt in this.simple){
       if (Object.prototype.hasOwnProperty.call(this.simple, propt)) {
           if(this.simple[propt] == "" && !(propt == "id" 
-            || propt == "typicalLearningTime" || propt == "relation")){
+            || propt == "typicalLearningTime" || propt == "relation"
+            || propt == "favorites")){
             complete = false;
-            //console.log(propt);
+            console.log(propt);
           }
       }
     }
@@ -1080,15 +1121,18 @@ export class NewDocumentFastComponent implements OnInit {
       }
     }
 
-    if(this.preName.trim() == this.simple.name.trim() ||
-       this.preDescription.trim() == this.simple.description.trim()) {
-        document.getElementById("sameLO").style.display="block";
-    }
-
-    if(complete)
+    if(complete) {
       document.getElementById("incomplete").style.display="none";
-    
-    if(this.uploader2.queue.length == 0 && this.edit == ""){
+      document.getElementById("sameLO").style.display="none";
+      if(this.existRelation) {
+        if(this.preName.trim() == this.simple.name.trim() ||
+         this.preDescription.trim() == this.simple.description.trim()) {
+            document.getElementById("sameLO").style.display="block";
+        }
+      }
+    }
+      
+    if(this.uploader2.queue.length == 0 && this.simple.status == "INCOMPLETE"){
       document.getElementById("uploadEmpty").style.display="block";
       return;
     }
@@ -1125,7 +1169,8 @@ export class DialogOverviewExampleDialog {
     if(this.searchText != ""){
       finalString = "q=name:\""+ this.searchText + "\"";
     }
-    
+    finalString += "&fq=status:REVIEWED";
+
     this.rest.querySOLR(finalString).subscribe((data: any) => {
       var rec = data.response.docs;
       // console.log(rec);

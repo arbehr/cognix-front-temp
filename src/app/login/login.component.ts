@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { RestService } from '../rest.service';
-import { RecaptchaErrorParameters } from "ng-recaptcha";
+
 
 @Component({
   selector: 'app-login',
@@ -13,14 +13,6 @@ export class LoginComponent implements OnInit {
 
   public loginForm: FormGroup;
   hide = true;
-
-  public resolved(captchaResponse: string): void {
-    console.log(`Resolved captcha with response: ${captchaResponse}`);
-  }
-
-  public onError(errorDetails: RecaptchaErrorParameters): void {
-    console.log(`reCAPTCHA error encountered; details:`, errorDetails);
-  }
   
   constructor(private formBuilder: FormBuilder, private router: Router, private restApi: RestService) {
     this.loginForm = this.formBuilder.group({

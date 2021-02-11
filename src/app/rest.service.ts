@@ -75,7 +75,9 @@ export class RestService {
     // console.log(product);
     return this.http.post<any>(endpointSOLR + '/solr/DocumentTinyDto/update?commitWithin=1000&overwrite=true&wt=json', product, this.getHttpOptionsSolr()).pipe(
       tap((product) => console.log("addProduct")),
-      catchError(this.handleError<any>('addProduct'))
+      catchError((err) => {
+        return throwError(err);    //Rethrow it back to component
+      })
     );
   }
 

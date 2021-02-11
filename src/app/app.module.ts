@@ -43,7 +43,8 @@ import { ContactComponent } from './contact/contact.component';
 
 import {MatDialogModule} from '@angular/material/dialog';
 import { DocumentTinyComponent } from './document-tiny/document-tiny.component';
-import { MatAutocompleteModule, MatFormFieldModule } from '@angular/material';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 import { RecaptchaModule } from 'ng-recaptcha';
 

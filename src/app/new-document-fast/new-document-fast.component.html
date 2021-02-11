@@ -1,3 +1,5 @@
+<br>
+<br>
 <mat-progress-bar id="progress" class="orange-progress" [value]="progressBarValue"></mat-progress-bar>
 
 <div class="center-div" id="step1">
@@ -6,11 +8,15 @@
     <p class="paragraph">Adicione o arquivo do seu objeto \ recurso</p><br>
     
     <input style="height: 30px" type="file" name="file" id="uploadFile" (click)="uploader2.clearQueue()" ng2FileSelect [uploader]="uploader2" />
+    <br>
+    <p>* O arquivo pode ser composto por vários ficheiros de forma compactada.</p>
   </div>
-  <br><br>
+  
+  <br>
   <p *ngIf="fileId" class="paragraph">Objeto de aprendizagem:</p>
   <br>
   <a *ngIf="fileId" href="{{fileId}}">Arquivo enviado</a>
+  
   <br><br>
   <div id="uploadPhotoDiv">
     <p class="paragraph">Adicione uma imagem de rosto para o seu objeto \ recurso</p><br>
@@ -259,7 +265,8 @@
     <section>
       <mat-checkbox style="font-size: large;" [checked]="moreThanThreeHours" (change)="setTypicalLearningTime($event)">Mais de 3 horas</mat-checkbox>
     </section>
-
+    <br>
+    <br>
   </form>
 
 </div>
@@ -293,9 +300,12 @@
           Não é permitida a utilização para fins comerciais.
         </span> 
       </div>
-    </mat-radio-group> <br>
+    </mat-radio-group> <br><br>
+    <br>
   </form>
+  
 </div>
+
 <div class="center-div-step2" id="step7" style="display:none">
   <h3 style="text-align: center;"><strong>Contribuintes</strong></h3> <br><br>
 
@@ -363,6 +373,10 @@
     <p style="color:red">NENHUM ARQUIVO FOI SELECIONADO PARA O ENVIO</p>
   </div>
 
+</div>
+
+<div style="text-align: center">
+  <button *ngIf="currentPage < numPages && currentPage > 1" (click)="save()" mat-raised-button color="primary">Salvar</button>
 </div>
 
 <div class="pagination" style="margin-top:4em;">

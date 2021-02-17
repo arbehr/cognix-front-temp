@@ -44,6 +44,9 @@ export class LoginComponent implements OnInit {
           console.error('ERROR', err);
     
         });
-    }
+    } else {
+      alert("Preencha todos os campos.");
+      return;
+  }
   }
 }

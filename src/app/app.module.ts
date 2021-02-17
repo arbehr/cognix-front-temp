@@ -46,7 +46,8 @@ import { DocumentTinyComponent } from './document-tiny/document-tiny.component';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatFormFieldModule } from '@angular/material/form-field';
 
-import { RecaptchaModule } from 'ng-recaptcha';
+import { RecaptchaFormsModule, RecaptchaModule } from 'ng-recaptcha';
+import { MatTableModule } from '@angular/material/table' 
 
 @NgModule({
   declarations: [
@@ -83,6 +84,8 @@ import { RecaptchaModule } from 'ng-recaptcha';
     MatAutocompleteModule, 
     MatFormFieldModule,
     RecaptchaModule,
+    RecaptchaFormsModule,
+    MatTableModule
   ],
   providers: [LoginService, ],
   entryComponents: [ DialogOverviewExampleDialog],

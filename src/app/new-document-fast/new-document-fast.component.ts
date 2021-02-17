@@ -3,7 +3,7 @@ import { OBAA, OBAACreator } from '../metadata';
 import { emptyMockOBAA, emptyMockOBAACreator } from '../mock-data';
 
 import { RestService, endpoint } from '../rest.service';
-import {  FileUploader, FileSelectDirective } from 'ng2-file-upload/ng2-file-upload';
+import {  FileUploader, FileSelectDirective } from 'ng2-file-upload';
 import { ActivatedRoute, Router } from "@angular/router"
 import { parameters } from '../search/searchParameters';
 import {MatStepperModule} from '@angular/material/stepper'; 
@@ -76,12 +76,12 @@ export class NewDocumentFastComponent implements OnInit {
   
   control = new FormControl();
   keywords_suggestions: string[] = ['Algas', 'Alterações climáticas', 'Amostragens', 'Áreas protegidas', 'Artes', 'Aves',
-    'Baixa profundidade /Subtidal', 'Biotecnologia marinha', 'Circulação oceânica', 'Correntes',
-    'Ecossistemas marinhos', 'Embarcações', 'Energia', 'Entre marés /Interdital', 'Equipamentos marítimos',
-    'Espécies não indigenas /invasoras', 'Fontes hidrotermais', 'Invertebrados', 'Mamíferos marinhos', 'Marés',
+    'Baixa profundidade / Subtidal', 'Biotecnologia marinha', 'Circulação oceânica', 'Correntes',
+    'Ecossistemas marinhos', 'Embarcações', 'Energia', 'Entre marés / Interdital', 'Equipamentos marítimos',
+    'Espécies não indigenas / invasoras', 'Fontes hidrotermais', 'Invertebrados', 'Mamíferos marinhos', 'Marés',
     'Microorganismos e marés vermelhas', 'Ondas', 'Peixes', 'Plancton', 'Plantas costeiras', 'Plataforma continental',
     'Praias arenosas', 'Produtividade', 'Química da água do mar', 'Sustentabilidade', 'Tartarugas', 'Teias tróficas',
-    'Tubarões', 'Turismo, Desporto, Lazer', 'Zona costeira', 'Recursos marinhos /Pescas'];
+    'Tubarões', 'Turismo, Desporto, Lazer', 'Zona costeira', 'Recursos marinhos / Pescas'];
   filteredKeywords: Observable<string[]>;
 
   constructor(public rest:RestService, private router:Router, 
@@ -164,201 +164,79 @@ export class NewDocumentFastComponent implements OnInit {
     this.moreThanThreeHours = false;
     this.typicalLearningTime = 0;
     this.keywords = [];
-    this.target = [ 
-      [{ 
-        name: "Professores\\as",
-        isValid: false 
-      },
-      { 
-        name: "Formadores\\as",
-        isValid: false 
-      }],
-      [{ 
-        name: "Estudantes",
-        isValid: false 
-      },
-      { 
-        name: "Outros",
-        isValid: false 
-      }] 
-    ];
 
-    this.age = 
-    [
-      { 
-        name: "Ensino pré-escolar",
-        isValid: false 
-      },
-      { 
-        name: "Básico 1º ciclo",
-        isValid: false 
-      },
-      { 
-        name: "Básico 2º ciclo",
-        isValid: false 
-      },
-      { 
-        name: "Básico 3º ciclo",
-        isValid: false 
-      },
-      { 
-        name: "Ensino secundário",
-        isValid: false 
-      },
-      { 
-        name: "Ensino superior",
-        isValid: false 
-      },
-      { 
-        name: "Ensino profissional",
-        isValid: false 
-      },
-    ];
+    this.age = [
+      {col_1: {name: "Ensino pré-escolar", isValid: false}}, 
+      {col_1: {name: "Básico 1º ciclo", isValid: false}}, 
+      {col_1: {name: "Básico 2º ciclo", isValid: false}},
+      {col_1: {name: "Básico 3º ciclo", isValid: false}},
+      {col_1: {name: "Ensino secundário", isValid: false}},
+      {col_1: {name: "Ensino superior", isValid: false}},
+      {col_1: {name: "Ensino profissional", isValid: false}},
+    ]
 
-    this.knowledgeArea = 
-    [
-      { 
-        name: "Ciências exatas",
-        isValid: false 
-      },
-      { 
-        name: "Ciências humanas",
-        isValid: false 
-      }, 
-      { 
-        name: "Ciências naturais",
-        isValid: false 
-      },
-      { 
-        name: "Ciências tecnológicas",
-        isValid: false 
-      },      
-    ];
+    this.knowledgeArea = [
+      {col_1: {name: "Ciências exatas", isValid: false}}, 
+      {col_1: {name: "Ciências humanas", isValid: false}}, 
+      {col_1: {name: "Ciências naturais", isValid: false}},
+      {col_1: {name: "Ciências tecnológicas", isValid: false}},
+      {col_1: {name: "Ensino secundário", isValid: false}},
+      {col_1: {name: "Ensino superior", isValid: false}},
+      {col_1: {name: "Ensino profissional", isValid: false}},
+    ]
+
+    this.target = [
+      {col_1: {name: "Professores/as", isValid: false}, 
+       col_2: {name: "Formadores/as", isValid: false}},
+      {col_1: {name: "Estudantes", isValid: false}, 
+       col_2: {name: "Outros", isValid: false}}
+    ]
 
     this.keywords_predefined = [
-      [{
-        name: "Biodiversidade", 
-        isValid: false
-      },
-      {
-        name: "Ecologia marinha",
-        isValid: false  
-      },
-      {
-        name: "Economia do mar",
-        isValid: false
-      }],
-      [{
-        name: "Geografia",
-        isValid: false
-      },
-      {
-        name: "Geologia/Fundos/Sedimentos",
-        isValid: false
-      },
-      {
-        name: "Mar profundo",
-        isValid: false
-      }],
-      [{
-        name: "Oceanografia",
-        isValid: false
-      },
-      {
-        name: "Património/Arqueologia subaquáticos",
-        isValid: false
-      },
-      {
-        name: "Poluição/Lixo/Ruído",
-        isValid: false
-      }]
-    ];
-    
+        {col_1: {name: "Biodiversidade", isValid: false}, 
+         col_2: {name: "Ecologia marinha", isValid: false},
+         col_3: {name: "Economia do mar", isValid: false}},
+        {col_1: {name: "Geografia", isValid: false}, 
+         col_2: {name: "Geologia / Fundos / Sedimentos", isValid: false},
+         col_3: {name: "Mar profundo", isValid: false}},
+        {col_1: {name: "Oceanografia", isValid: false}, 
+         col_2: {name: "Património / Arqueologia subaquáticos", isValid: false},
+         col_3: {name: "Poluição / Lixo / Ruído", isValid: false}},
+    ]
+
     this.resources = [
-      [ { 
-        name: "Questionário",
-        isValid: false 
-      },
-      { 
-        name: "Problema",
-        isValid: false 
-      },
-      { 
-        name: "Prova",
-        isValid: false 
-      },
-      { 
-        name: "Enunciado de questão",
-        isValid: false 
-      }  ],
-      
-      [{ 
-        name: "Plano de aula",
-        isValid: false 
-      },
-      { 
-        name: "Saída de campo",
-        isValid: false 
-      },
-      { 
-        name: "Experiência laboratorial",
-        isValid: false 
-      },
-      { 
-        name: "Guião",
-        isValid: false 
-      }],
-      
-      [{ 
-        name: "Livro",
-        isValid: false 
-      },
-      { 
-        name: "Infografia",
-        isValid: false 
-      },
-      { 
-        name: "Página web",
-        isValid: false 
-      },
-      { 
-        name: "Texto teatral/dramatizado",
-        isValid: false 
-      },
-      { 
-        name: "Texto narrado",
-        isValid: false 
-      }],
-      [{
-        name: "Documentário em vídeo",
-        isValid: false
-      },
-      {
-        name: "Demonstração filmada",
-        isValid: false
-      },
-      {
-        name: "Aula gravada ou filmada",
-        isValid: false
-      }
-      ],
-      [{
-        name: "Jogo",
-        isValid: false 
-      },
-      {
-        name: "Simulação",
-        isValid: false 
-      }
-      ],
-      [
-        {
-          name: "Outro",
-          isValid: false 
-        }
-      ]
-      
-    ];
+      {col_1: {name: "Questionário", isValid: false}, 
+       col_2: {name: "Problema", isValid: false},
+       col_3: {name: "Prova", isValid: false},
+       col_4: {name: "Enunciado de questão", isValid: false},
+       col_5: {name: "", isValid: false}},
+      {col_1: {name: "Plano de aula", isValid: false}, 
+       col_2: {name: "Saída de campo", isValid: false},
+       col_3: {name: "Experiência laboratorial", isValid: false},
+       col_4: {name: "Guião", isValid: false},
+       col_5: {name: "", isValid: false}},
+      {col_1: {name: "Livro", isValid: false}, 
+       col_2: {name: "Infografia", isValid: false},
+       col_3: {name: "Página web", isValid: false},
+       col_4: {name: "Texto teatral / dramatizado", isValid: false},
+       col_5: {name: "Texto narrado", isValid: false}},
+      {col_1: {name: "Documentário em vídeo", isValid: false}, 
+       col_2: {name: "Demonstração filmada", isValid: false},
+       col_3: {name: "Aula gravada ou filmada", isValid: false},
+       col_4: {name: "", isValid: false},
+       col_5: {name: "", isValid: false}},
+      {col_1: {name: "Jogo", isValid: false}, 
+       col_2: {name: "Simulação", isValid: false},
+       col_3: {name: "", isValid: false},
+       col_4: {name: "", isValid: false},
+       col_5: {name: "", isValid: false}},
+      {col_1: {name: "Outro", isValid: false},
+       col_2: {name: "", isValid: false},
+       col_3: {name: "", isValid: false},
+       col_4: {name: "", isValid: false},
+       col_5: {name: "", isValid: false}}, 
+    ]
+
     this.getDocument(this.route.snapshot.paramMap.get('id'), true, false);
     
     this.OBAA = emptyMockOBAACreator;
@@ -411,11 +289,11 @@ export class NewDocumentFastComponent implements OnInit {
         // console.log(documents)
         
         this.otherResource = "";
-        (documents[0].resources) ? this.updateCheckBoxes(documents[0].resources, this.resources, "resources") : "";
-        (documents[0].target) ? this.updateCheckBoxes(documents[0].target, this.target, "target") : "";
-        (documents[0].keywords) ? this.updateCheckBoxes(documents[0].keywords, this.keywords_predefined, "keywords") : "";
-        (documents[0].age) ? this.updateCheckBoxes(documents[0].age, this.age, "age") : "";
-        (documents[0].knowledgeArea) ? this.updateCheckBoxes(documents[0].knowledgeArea, this.knowledgeArea, "knowledgeArea") : "";
+        (documents[0].resources) ? this.updateCheckBoxes(documents[0].resources, this.resources, "resources", 5) : "";
+        (documents[0].target) ? this.updateCheckBoxes(documents[0].target, this.target, "target", 2) : "";
+        (documents[0].keywords) ? this.updateCheckBoxes(documents[0].keywords, this.keywords_predefined, "keywords", 3) : "";
+        (documents[0].age) ? this.updateCheckBoxes(documents[0].age, this.age, "age", 1) : "";
+        (documents[0].knowledgeArea) ? this.updateCheckBoxes(documents[0].knowledgeArea, this.knowledgeArea, "knowledgeArea", 1) : "";
         
         (documents[0].typicalLearningTime) ? this.updateTypicalLearningTime(documents[0].typicalLearningTime) : "";
         
@@ -541,20 +419,14 @@ export class NewDocumentFastComponent implements OnInit {
     return contributors;
   }
 
-  updateCheckBoxes(fields, fieldsList, varName) {
+  updateCheckBoxes(fields, fieldsList, varName, colummns) {
+    
     var checkedFields = 0;
     for(var i = 0; i < fields.length; i++){
       for(var j = 0; j < fieldsList.length; j++){
-        if(fieldsList[j].length > 0) {
-          for(var k = 0; k < fieldsList[j].length; k++){
-            if(fields[i] == fieldsList[j][k].name){
-              fieldsList[j][k].isValid = true;
-              checkedFields++;
-            }
-          }
-        } else {
-          if(fields[i] == fieldsList[j].name){
-            fieldsList[j].isValid = true;
+        for(var k = 1; k <= colummns; k++){
+          if(fields[i] == fieldsList[j]["col_"+ k].name){
+            fieldsList[j]["col_" + k].isValid = true;
             checkedFields++;
           }
         }
@@ -569,7 +441,7 @@ export class NewDocumentFastComponent implements OnInit {
           }
           break;
         case "resources":
-          fieldsList[fieldsList.length-1][0].isValid = true;
+          fieldsList[fieldsList.length-1]["col_1"].isValid = true;
           this.otherResource = fields[fields.length-1];
           document.getElementById("otherResourceForm").style.display = "block";
           break;
@@ -684,7 +556,7 @@ export class NewDocumentFastComponent implements OnInit {
     document.body.style.cursor="wait";
 
     this.updateSimple();
- 
+
     if(this.simple.author.length == 1) {
       this.addAuthor("","",["author"]); 
     }
@@ -694,7 +566,7 @@ export class NewDocumentFastComponent implements OnInit {
     }    
 
     this.simple.id = this.OBAA.id;  
-
+  
     console.log(this.simple)
     this.rest.addDocumentSOLR(JSON.stringify([this.simple])).subscribe(
       result => {
@@ -939,9 +811,9 @@ export class NewDocumentFastComponent implements OnInit {
     this.relation = [];
 
     for(var i = 0; i < this.keywords_predefined.length; i++){
-      for(var recIndex = 0; recIndex < this.keywords_predefined[i].length; recIndex++){
-        if(this.keywords_predefined[i][recIndex].isValid){
-          this.simple.keywords.push(this.keywords_predefined[i][recIndex].name);
+      for(var recIndex = 1; recIndex <= this.keywords_predefined.length; recIndex++){
+        if(this.keywords_predefined[i]["col_" + recIndex].isValid){
+          this.simple.keywords.push(this.keywords_predefined[i]["col_" + recIndex].name);
         }
       }
     }
@@ -951,30 +823,29 @@ export class NewDocumentFastComponent implements OnInit {
     }
 
     for(var i = 0; i < this.target.length; i++){
-      for(var recIndex = 0; recIndex < this.target[i].length; recIndex++){
-        if(this.target[i][recIndex].isValid){
-          this.simple.target.push(this.target[i][recIndex].name);
+      for(var recIndex = 1; recIndex <= this.target.length; recIndex++){
+        if(this.target[i]["col_" + recIndex].isValid){
+          this.simple.target.push(this.target[i]["col_" + recIndex].name);
         }
       }
     }
 
     for(var i = 0; i < this.age.length; i++){
-      if(this.age[i].isValid){
-        this.simple.age.push(this.age[i].name);
+      if(this.age[i]["col_1"].isValid){
+        this.simple.age.push(this.age[i]["col_1"].name);
       }
     }
 
     for(var i = 0; i < this.knowledgeArea.length; i++){
-      if(this.knowledgeArea[i].isValid){
-        this.simple.knowledgeArea.push(this.knowledgeArea[i].name);
+      if(this.knowledgeArea[i]["col_1"].isValid){
+        this.simple.knowledgeArea.push(this.knowledgeArea[i]["col_1"].name);
       }
     }
 
-    
     for(var i = 0; i < this.resources.length; i++){
-      for(var recIndex = 0; recIndex < this.resources[i].length; recIndex++){
-        if(this.resources[i][recIndex].isValid){
-          this.simple.resources.push(this.resources[i][recIndex].name);
+      for(var recIndex = 1; recIndex < this.resources.length; recIndex++){
+        if(this.resources[i]["col_" + recIndex].isValid){
+          this.simple.resources.push(this.resources[i]["col_" + recIndex].name);
         }
       }
     }
@@ -1033,15 +904,9 @@ export class NewDocumentFastComponent implements OnInit {
     }
 
     this.check();
-
-    
   }
 
   addKeyword(){
-    // var key = {
-    //   name: this.control.value,
-    //   isValid: true,
-    // }
     this.keywords.push(this.control.value);
   }
 
@@ -1100,6 +965,9 @@ export class NewDocumentFastComponent implements OnInit {
             || propt == "favorites")){
             complete = false;
             console.log(propt);
+            if(propt == "keywords") {
+              console.log(this.simple[propt])
+            }
           }
       }
     }
@@ -1138,6 +1006,16 @@ export class NewDocumentFastComponent implements OnInit {
     }
 
     document.getElementById("uploadEmpty").style.display="none";
+  }
+
+  displayedTableColumms(size: number) {
+    let colummns = [];
+
+    for(var i=1; i <= size; i++) {
+      colummns.push("col_" + i);
+    }
+
+    return colummns;
   }
 }
 

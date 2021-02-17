@@ -24,9 +24,21 @@
     <button mat-icon-button matSuffix (click)="hideConfirm = !hideConfirm" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hideConfirm">
       <mat-icon>{{hideConfirm ? 'visibility_off' : 'visibility'}}</mat-icon>
       </button>
-  </mat-form-field><br><br>
+  </mat-form-field>
+  <br><br>
+  <re-captcha style="text-align: center; display: inline-block;"
+  equired 
+  formControlName='captcha'
+  (resolved)="resolved($event)"
+  (error)="onError($event)"
+  errorMode="handled"
+  siteKey="6Lc191saAAAAAP_SU17_higZhgcgH6KgV8asIRsw"
+  ></re-captcha>
+  <!-- key t 6LcOuyYTAAAAAHTjFuqhA52fmfJ_j5iFk5PsfXaU -->
+  
   </form>
 
-    <button class="create-button" mat-raised-button (click)="onSignUp()">Registar</button>
+  
+  <button class="create-button" mat-raised-button (click)="onSignUp()">Registar</button>
 
 </div>

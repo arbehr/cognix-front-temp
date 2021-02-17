@@ -70,3 +70,13 @@ a {
  }
 
  tr:nth-child(even) {background-color: #f2f2f2;}
+
+ .mat-row {
+    height: auto;
+  }
+  
+  .mat-cell {
+    padding: 8px 8px 8px 0;
+    text-align: left;
+  }
+  

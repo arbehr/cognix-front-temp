@@ -17,7 +17,7 @@
     }
 }
 
-@media (min-width: 602px) and (max-width: 991px){
+@media (min-width: 601px) and (max-width: 991px){
     .margin-left-pag{
         margin-left: 10%;
     }
@@ -69,14 +69,24 @@ a {
     width: 20em;
  }
 
- tr:nth-child(even) {background-color: #f2f2f2;}
+tr:nth-child(even) {background-color: #f2f2f2;}
 
- .mat-row {
+.mat-row {
     height: auto;
-  }
+}
   
-  .mat-cell {
+.mat-cell {
     padding: 8px 8px 8px 0;
     text-align: left;
-  }
+}
+
+table {
+    table-layout: fixed;
+    width: 100%;
+}
+
+table td {
+    word-wrap: break-word;         /* All browsers since IE 5.5+ */
+    overflow-wrap: break-word;     /* Renamed property in CSS3 draft spec */
+}
   

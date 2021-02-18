@@ -964,10 +964,6 @@ export class NewDocumentFastComponent implements OnInit {
             || propt == "typicalLearningTime" || propt == "relation"
             || propt == "favorites")){
             complete = false;
-            console.log(propt);
-            if(propt == "keywords") {
-              console.log(this.simple[propt])
-            }
           }
       }
     }

@@ -20,7 +20,7 @@
         <br>
         <br>
         <div class="add-box center-div">
-            <a style="cursor:pointer" [routerLink]="documentAddRouter" routerLinkActive="router-link-active">
+            <a style="cursor:pointer" [routerLink]="documentAddRouter" [queryParams]="{ page: 'add' }" routerLinkActive="router-link-active">
                 <span class="submit-text" style="display: inline-flex;align-items: center;">Submissão de objetos</span>
                 <div class="dot-add">
                     <mat-icon class="dot-icon-add"

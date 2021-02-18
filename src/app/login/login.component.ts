@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { RestService } from '../rest.service';
 
 
@@ -13,8 +13,10 @@ export class LoginComponent implements OnInit {
 
   public loginForm: FormGroup;
   hide = true;
+  page = 'none';
   
-  constructor(private formBuilder: FormBuilder, private router: Router, private restApi: RestService) {
+  constructor(private formBuilder: FormBuilder, private router: Router, private route: ActivatedRoute,
+     private restApi: RestService) {
     this.loginForm = this.formBuilder.group({
       username: ['', Validators.required],
       //email: ['', Validators.required],
@@ -25,6 +27,12 @@ export class LoginComponent implements OnInit {
 
   ngOnInit() {
     console.log('entrou na página de login')
+    this.route.queryParams
+      .subscribe(params => {
+        this.page = params.page;
+        console.log(this.page);
+      }
+    );
   }
 
   doLogin(){
@@ -35,7 +43,11 @@ export class LoginComponent implements OnInit {
         console.log(response)
           if (response == 'ok') {
               alert("Seja bem-vindo\\a ao Re-Mar!")
-              this.router.navigate(['/documents/add']);
+              switch(this.page){
+                case 'add': this.router.navigate(['/documents/add']); break;
+                default: this.router.navigate(['/']);
+              }
+              
           }else if (response == undefined){
             alert("Erro ao realizar login");
           }

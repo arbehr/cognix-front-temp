@@ -2,13 +2,20 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormControl, FormGroupDirective, NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 import { RestService } from '../rest.service';
-import { HttpClient  } from '@angular/common/http';
+import { HttpClient, HttpHeaders  } from '@angular/common/http';
+
+const httpOptions = {
+  headers: new HttpHeaders({
+    'Access-Control-Allow-Origin': '*',    
+  })
+};
 
 @Component({
   selector: 'app-contact',
   templateUrl: './contact.component.html',
   styleUrls: ['./contact.component.css']
 })
+
 export class ContactComponent implements OnInit {
 
   name: string;
@@ -33,8 +40,8 @@ export class ContactComponent implements OnInit {
   }
 
   getIPAddress(){
-    this.http.get("http://api.ipify.org/?format=json").subscribe((res:any)=>{
-      this.ipAddress = res.ip;
+    this.http.get("https://ipapi.co/ip/", {responseType: 'text'}).subscribe((res:any)=>{
+      this.ipAddress = res;
     });
   }
 

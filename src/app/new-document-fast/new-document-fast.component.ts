@@ -164,6 +164,8 @@ export class NewDocumentFastComponent implements OnInit {
     this.moreThanThreeHours = false;
     this.typicalLearningTime = 0;
     this.keywords = [];
+    this.preName = "";
+    this.preDescription = "";
 
     this.age = [
       {col_1: {name: "Ensino pré-escolar", isValid: false}}, 
@@ -567,7 +569,7 @@ export class NewDocumentFastComponent implements OnInit {
 
     this.simple.id = this.OBAA.id;  
   
-    console.log(this.simple)
+    // console.log(this.simple)
     this.rest.addDocumentSOLR(JSON.stringify([this.simple])).subscribe(
       result => {
         alert("Objeto salvo com sucesso!")
@@ -897,8 +899,8 @@ export class NewDocumentFastComponent implements OnInit {
     if(this.moreThanThreeHours){
       this.simple.typicalLearningTime = "PT3H15M0S";
     }
-    
-    if(this.otherResource!=""){
+
+    if(this.otherResource){
       this.simple.resources.pop();
       this.simple.resources.push(this.otherResource);
     }

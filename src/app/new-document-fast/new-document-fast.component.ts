@@ -556,11 +556,13 @@ export class NewDocumentFastComponent implements OnInit {
 
   save(){
     document.body.style.cursor="wait";
+    let removeExtraAuthor = false;
 
     this.updateSimple();
 
     if(this.simple.author.length == 1) {
-      this.addAuthor("","",["author"]); 
+      this.addAuthor("","",["author"]);
+      removeExtraAuthor = true;
     }
     
     if(this.simple.relationWith.length == 1) {
@@ -579,7 +581,9 @@ export class NewDocumentFastComponent implements OnInit {
           console.log(error);
       }
   ); 
-
+    if(removeExtraAuthor) {
+      this.simple.author.pop();
+    }
     document.body.style.cursor="initial";
   }
 
@@ -630,7 +634,7 @@ export class NewDocumentFastComponent implements OnInit {
       console.log(this.route.snapshot.paramMap.get('id'))
       this.edit = "/edit";
     }
-    
+
     this.OBAA.metadata.general.titles[0] = this.simple.name;
     this.OBAA.metadata.general.languages[0] = this.simple.language;
     this.OBAA.metadata.general.descriptions[0] = this.simple.description;
@@ -645,7 +649,9 @@ export class NewDocumentFastComponent implements OnInit {
     this.save();
 
     for(var i = 0; i < this.contribute.length; i++){
-      this.OBAA.metadata.lifeCycle.contribute[i] = this.contribute[i];
+      if(this.contribute[i].entities[0] != "") {
+        this.OBAA.metadata.lifeCycle.contribute[i] = this.contribute[i];
+      }
     }
 
     this.OBAA.metadata.educational.learningResourceTypes = this.simple.resources;
@@ -662,9 +668,10 @@ export class NewDocumentFastComponent implements OnInit {
     this.OBAA.metadata.rights.description = this.simple.licence;
     
     for(var i = 0; i < this.relation.length; i++){
-      this.OBAA.metadata.relations.push(this.relation[i]);
+      if(this.relation[i].kind != "") {
+        this.OBAA.metadata.relations.push(this.relation[i]);
+      }
     }
-    
     
     this.OBAA.isVersion = "1";
     

@@ -2,11 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { parameters } from './searchParameters'
 import { RestService } from '../rest.service';
 import { ActivatedRoute } from "@angular/router";
+
+
 @Component({
   selector: 'app-search',
   templateUrl: './search.component.html',
   styleUrls: ['./search.component.css']
 })
+
 export class SearchComponent implements OnInit {
   searchOptions : any;
   finalSearch : string;
@@ -117,6 +120,7 @@ export class SearchComponent implements OnInit {
   }
 
   search(){
+    
     // console.log(this.searchText);
     this.documents = [];
     var finalString = "q=*:*&fq=status:REVIEWED"
@@ -132,7 +136,7 @@ export class SearchComponent implements OnInit {
       // console.log(rec);
       for (var x in rec){
         // console.log(x);
-        this.documents.push({id:rec[x].id, title:rec[x].name});
+        this.documents.push({id:rec[x].id, title:rec[x].name, favorites:rec[x].favorites});
       }
       console.log(this.documents);
     });

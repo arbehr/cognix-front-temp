@@ -11,8 +11,9 @@
         <a class="card-footers theme-orange" [routerLink]="['/documents/' + document.id]" routerLinkActive="router-link-active">
             <strong>+ Informações</strong>
         </a> 
-        <button *ngIf = "isLogged" mat-button > <mat-icon aria-hidden="false" aria-label="favorite" >favorite_border</mat-icon> 
-        </button>
+        <button *ngIf = "isLogged" mat-icon-button matSuffix (click)="like = !like; updateLike(like,document.id)" [attr.aria-label]="'Like'" [attr.aria-pressed]="like">
+            <mat-icon>{{like ? 'favorite' : 'favorite_border'}}</mat-icon>
+          </button>
         <button mat-button style="float: right;"> <mat-icon aria-label="share" >share_border</mat-icon>
         </button>
   </mat-card>

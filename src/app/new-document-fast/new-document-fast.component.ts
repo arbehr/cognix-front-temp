@@ -182,9 +182,6 @@ export class NewDocumentFastComponent implements OnInit {
       {col_1: {name: "Ciências humanas", isValid: false}}, 
       {col_1: {name: "Ciências naturais", isValid: false}},
       {col_1: {name: "Ciências tecnológicas", isValid: false}},
-      {col_1: {name: "Ensino secundário", isValid: false}},
-      {col_1: {name: "Ensino superior", isValid: false}},
-      {col_1: {name: "Ensino profissional", isValid: false}},
     ]
 
     this.target = [

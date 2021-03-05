@@ -16,6 +16,7 @@ export class DocumentsComponent implements OnInit {
   thumb: String;
   isLogged: boolean;
   like: boolean;
+  showShareButtons: boolean;
 
   constructor(private rest: RestService) { }
 
@@ -23,6 +24,7 @@ export class DocumentsComponent implements OnInit {
     this.rest.logged.subscribe(logged => this.isLogged = logged)
     this.isLogged = this.rest.isLogged;
     this.like = false;
+    this.showShareButtons = false;
     
     this.thumb = endpoint  + "/files/" + this.document.id + "/thumbnail";
     if(this.document.title.length > 27)

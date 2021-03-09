@@ -89,8 +89,10 @@ export class NewDocumentFastComponent implements OnInit {
       this.edit = "";
       
       if(this.route.snapshot.paramMap.get('id') != null) {
-        this.rest.getDocumentFromID(parseInt(this.route.snapshot.paramMap.get('id'))).subscribe((data: {}) => {
+        this.rest.getDocumentFromID(parseInt(this.route.snapshot.paramMap.get('id'))).subscribe((data: any) => {
           Object.assign(this.OBAA,data);
+          this.fileId = endpoint  + "/files/" + data.files[0].id;
+          this.fileThumb = endpoint  + "/files/" + data.files[1].id;
         },
         (error) => {                              
           document.body.style.cursor="initial";
@@ -328,8 +330,8 @@ export class NewDocumentFastComponent implements OnInit {
         }       
      
         if(this.simple.status != "INCOMPLETE") {
-          this.fileId = endpoint  + "/files/" + id;
-          this.fileThumb = endpoint  + "/files/" + id + "/thumbnail";
+          // this.fileId = endpoint  + "/files/" + id;
+          // this.fileThumb = endpoint  + "/files/" + id + "/thumbnail";
         
           document.getElementById("uploadFileDiv").style.display = "none";
           document.getElementById("uploadPhotoDiv").style.display = "none";

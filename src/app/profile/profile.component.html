@@ -63,7 +63,7 @@
           </td>
           <td *ngIf="document.status.includes('NEEDS')">
             <p style="margin-bottom: 0em;font-size: 15px;">
-              <a [routerLink]="['/documents/' + document.id]" routerLinkActive="router-link-active" target="_blank">
+              <a [routerLink]="['/documents/' + document.id]" routerLinkActive="router-link-active">
               <strong>{{document.title}}</strong></a>
             </p>
           </td>

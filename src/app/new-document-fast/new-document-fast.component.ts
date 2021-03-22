@@ -491,14 +491,12 @@ export class NewDocumentFastComponent implements OnInit {
     }
   }
 
-  clearCheckBoxes(fieldsList, varName) {
-    for(var j = 0; j < fieldsList.length; j++){
-      if(fieldsList[j].length > 0) {
-        for(var k = 0; k < fieldsList[j].length; k++){
-            fieldsList[j][k].isValid = false;
+  clearCheckBoxes(fieldsList, varName, colummns) {
+    for(var i = 0; i < fieldsList.length; i++){
+      for(var j = 0; j < fieldsList.length; j++){
+        for(var k = 1; k <= colummns; k++){
+            fieldsList[j]["col_" + k].isValid = false;
         }
-      } else {
-          fieldsList[j].isValid = false;
       }
     }
   }
@@ -506,11 +504,11 @@ export class NewDocumentFastComponent implements OnInit {
   clearFormValues() {
     this.otherResource = "";
     this.keywords = [];
-    this.clearCheckBoxes(this.resources, "resources");
-    this.clearCheckBoxes(this.target, "target");
-    this.clearCheckBoxes(this.keywords_predefined, "keywords");
-    this.clearCheckBoxes(this.age, "age");
-    this.clearCheckBoxes(this.knowledgeArea, "knowledgeArea");
+    this.clearCheckBoxes(this.resources, "resources", 5);
+    this.clearCheckBoxes(this.target, "target", 2);
+    this.clearCheckBoxes(this.keywords_predefined, "keywords", 3);
+    this.clearCheckBoxes(this.age, "age", 1);
+    this.clearCheckBoxes(this.knowledgeArea, "knowledgeArea", 1);
     this.typicalLearningTime = 0;
     this.moreThanThreeHours = false;
 
@@ -546,7 +544,7 @@ export class NewDocumentFastComponent implements OnInit {
     } else {
       document.getElementById("relationDiv").style.display = "none";
       this.existRelation = false;
-      if(confirm("Você deseja apagar todos os dados pré-preenchidos?")) {
+      if(this.preFillValue != "" && confirm("Você deseja apagar todos os dados pré-preenchidos?")) {
         this.clearFormValues();
       }
     }

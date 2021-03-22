@@ -87,7 +87,7 @@ export class InfoMetadadosComponent implements OnInit {
         target: this.documents[0].target,
         age: this.documents[0].age,
         knowledgeArea: this.documents[0].knowledgeArea,
-        resources: this.documents[0].resources[0],
+        resources: this.documents[0].resources,
         typicalLearningTime:this.documents[0].typicalLearningTime,
         owner:this.documents[0].owner,
         favorites:this.documents[0].favorites,

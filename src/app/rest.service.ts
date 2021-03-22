@@ -61,7 +61,7 @@ export class RestService {
       })
     );
   }
-
+  
   addDocument(product, id, edit): Observable<any> {
     // console.log("Lets begin");
     // console.log(product);
@@ -177,7 +177,9 @@ export class RestService {
             this.logged.emit(true);
             this.isLogged = true;
            return true
-          } 
+          } else {
+            return body.error;
+          }
         }
         ),
         catchError((err: HttpErrorResponse) => {
@@ -197,6 +199,58 @@ export class RestService {
 
     return (error.error.error);
   }
+
+  validPasswordToken(token): Observable<any> {
+    return this.http.get<MsgData>(endpoint + '/users/validByToken/' + token, httpOptionsReading).pipe(
+      map((body) => {
+        console.log(body.msg);
+        if (body.msg == "Utilizador validado com sucesso!") {
+          return true;
+        } else {
+          return body.msg;
+        }
+      }
+      ),
+      catchError((err: HttpErrorResponse) => {
+        console.log(err);
+        return 'e'
+      })
+    );
+  }
+
+  setNewPassword(body: any, token): Observable<any> {
+    return this.http.post<MsgData>(endpoint + '/users/editPassByToken/' + token, JSON.stringify(body), httpOptionsReading).pipe(
+      map((body) => {
+        if (body.msg == "Palavra-passe atualizada com sucesso!") {
+          return true;
+        } else {
+          return body.msg;
+        }
+      }
+      ),
+      catchError((err: HttpErrorResponse) => {
+        console.log(err);
+        return 'e'
+      })
+    );
+  }
+
+  requestResetPassword(body: any): Observable<any> {
+    return this.http.post<MsgData>(endpoint + '/email-reset-password', JSON.stringify(body), httpOptionsReading).pipe(
+      map((body) => {
+        if (body.msg == "Email enviado com sucesso!") {
+          return true;
+        } else {
+          return body.msg;
+        }
+      }
+      ),
+      catchError((err: HttpErrorResponse) => {
+        console.log(err);
+        return 'e'
+      })
+    );
+  }
   
   sendEmail(body: any): Observable<any> {
     // console.log("Sending email...!");
@@ -212,7 +266,7 @@ export class RestService {
       ),
       catchError((err: HttpErrorResponse) => {
         console.log(err);
-        return 'e'
+        return 'e';
       })
     );
   }

@@ -40,7 +40,7 @@ export class RegisterComponent implements OnInit {
     onSignUp() {        
         if (this.signUpForm.valid) {
             if(this.signUpForm.controls['password'].value != this.signUpForm.controls['confirmPassword'].value) {
-                alert("As senhas devem ser iguais.");
+                alert("As palavras-passe devem ser iguais.");
                 return;
             }
             let seq = this.restApi.postSignup(this.signUpForm.value);
@@ -48,10 +48,12 @@ export class RegisterComponent implements OnInit {
             seq.subscribe((response) => {
                 console.log(response)
                 if (response == true) {
-                    alert("Usuario criado com sucesso")
+                    alert("Utilizador criado com sucesso")
                     this.router.navigate(['/']);
                 }else if (response=='e'){
-                    alert("Erro ao cadastrar usuario.");
+                    alert("Erro ao cadastrar utilizador. Envie mensagem de contacto.");
+                } else {
+                    alert(response);
                 }
             });
         } else {

@@ -47,7 +47,9 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatFormFieldModule } from '@angular/material/form-field';
 
 import { RecaptchaFormsModule, RecaptchaModule } from 'ng-recaptcha';
-import { MatTableModule } from '@angular/material/table' 
+import { MatTableModule } from '@angular/material/table';
+import { RequestResetPasswordComponent } from './request-reset-password/request-reset-password.component';
+import { ResponseResetPasswordComponent } from './response-reset-password/response-reset-password.component';
 
 @NgModule({
   declarations: [
@@ -67,7 +69,9 @@ import { MatTableModule } from '@angular/material/table'
     LoginComponent,
     ContactComponent,
     DialogOverviewExampleDialog,
-    DocumentTinyComponent
+    DocumentTinyComponent,
+    RequestResetPasswordComponent,
+    ResponseResetPasswordComponent
   ],
   imports: [
     BrowserModule,

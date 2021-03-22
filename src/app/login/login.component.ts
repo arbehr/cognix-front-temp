@@ -52,7 +52,7 @@ export class LoginComponent implements OnInit {
             alert("Erro ao realizar login");
           }
       },err => {
-          alert("Erro ao cadastrar usuario");
+          alert("Erro ao cadastrar utilizador. Envie mensagem de contacto.");
           console.error('ERROR', err);
     
         });

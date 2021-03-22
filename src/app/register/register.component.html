@@ -14,13 +14,13 @@
       <input type="email" required email="true" formControlName='username' matInput placeholder="E-mail">
   </mat-form-field><br><br>
   <mat-form-field class="input-size">
-    <input [type]="hide ? 'password' : 'text'" required formControlName='password' matInput placeholder="Senha">
+    <input [type]="hide ? 'password' : 'text'" required formControlName='password' matInput placeholder="Palavra-passe">
     <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
       <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
       </button>
   </mat-form-field><br><br>
   <mat-form-field class="input-size">
-    <input [type]="hideConfirm ? 'password' : 'text'" required formControlName='confirmPassword' matInput placeholder="Confirmar Senha">
+    <input [type]="hideConfirm ? 'password' : 'text'" required formControlName='confirmPassword' matInput placeholder="Confirmar palavra-passe">
     <button mat-icon-button matSuffix (click)="hideConfirm = !hideConfirm" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hideConfirm">
       <mat-icon>{{hideConfirm ? 'visibility_off' : 'visibility'}}</mat-icon>
       </button>

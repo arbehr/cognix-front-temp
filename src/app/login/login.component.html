@@ -11,7 +11,7 @@
       <input formControlName='username' required matInput placeholder="E-mail">
     </mat-form-field><br><br>
     <mat-form-field class="input-size">
-      <input [type]="hide ? 'password' : 'text'" required formControlName='password' matInput placeholder="Senha">
+      <input [type]="hide ? 'password' : 'text'" required formControlName='password' matInput placeholder="Palavra-passe">
       <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
         <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
       </button>
@@ -21,6 +21,8 @@
     <button class="login-button" mat-raised-button (click)="doLogin()">Entrar</button>
   </div>
   <br><br>
+  <p class="center-paragraph"> Esqueces-te da palavra-passe? <a class = "orange-letter" routerLink = "/request-reset-password">Redefina!</a> </p>
+  <br>
   <p class="center-paragraph"> Não tem uma conta? <a class = "orange-letter" routerLink = "/register">Registe-se!</a> </p>
 
 </div>

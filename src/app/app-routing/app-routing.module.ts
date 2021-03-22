@@ -11,6 +11,8 @@ import { NewDocumentFastComponent } from '../new-document-fast/new-document-fast
 import { SearchComponent } from '../search/search.component';
 import { LoginComponent } from '../login/login.component';
 import { ContactComponent } from '../contact/contact.component';
+import { RequestResetPasswordComponent } from '../request-reset-password/request-reset-password.component';
+import { ResponseResetPasswordComponent } from '../response-reset-password/response-reset-password.component';
 
 const routes: Routes = [
   {
@@ -51,6 +53,14 @@ const routes: Routes = [
   {
     path: 'signin',
     component: LoginComponent
+  },
+  {
+    path: 'request-reset-password',
+    component: RequestResetPasswordComponent
+  },
+  {
+    path: 'response-reset-password',
+    component: ResponseResetPasswordComponent
   },
 ];
 @NgModule({

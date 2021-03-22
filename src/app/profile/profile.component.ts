@@ -16,6 +16,7 @@ export class ProfileComponent implements OnInit {
   isReviewer: boolean;
   hideRevisionsDiv: boolean;
   hideIncompletesDiv: boolean;
+  reviewerMainRole: string;
 
   ngOnInit() {
     this.documentsToReview = [];
@@ -24,6 +25,7 @@ export class ProfileComponent implements OnInit {
     this.hideIncompletesDiv = true;
     let tokenInfo = this.rest.decodePayloadJWT();
     let status = this.getStatusScope(tokenInfo.roles);
+    this.reviewerMainRole = this.getReviewRole(tokenInfo.roles);
     tokenInfo.roles.toString().includes('reviewer') ? this.isReviewer = true : this.isReviewer = false;
     if(status.length > 0) {
       this.getDocumentsToReview(status[0], "");
@@ -51,6 +53,18 @@ export class ProfileComponent implements OnInit {
   hideIncompletes() {
     this.hideIncompletesDiv = true;
     document.getElementById("incompletesDiv").style.display = "none";
+  }
+
+  getReviewRole(roles) {
+    roles = roles.toString().split(',');
+    for(let role of roles) {
+      // console.log(role);
+      switch(role) {
+        case "tech_reviewer": return "tech_reviewer";
+        case "pedag_reviewer": return "pedag_reviewer";
+      }
+    }
+    return "undefined";
   }
 
   getStatusScope(roles) {

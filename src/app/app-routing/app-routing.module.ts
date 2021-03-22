@@ -37,6 +37,9 @@ const routes: Routes = [
     path: 'documents/:id/edit',
     component: NewDocumentFastComponent
   }, {
+    path: 'documents/:id/edit/:reviewer_role',
+    component: NewDocumentFastComponent
+  }, {
     path: 'documents/:id',
     component: InfoMetadadosComponent
   },{

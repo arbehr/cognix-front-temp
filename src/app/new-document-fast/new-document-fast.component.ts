@@ -69,6 +69,7 @@ export class NewDocumentFastComponent implements OnInit {
   fileThumb: string;
   existRelation: boolean;
   preFillValue: string;
+  reviewerMainRole: string;
 
   OBAA: OBAACreator;
   public uploader: FileUploader = new FileUploader({url: endpoint + "/files/uploadFile", authToken: localStorage.getItem('token'), itemAlias: "file"});
@@ -102,6 +103,11 @@ export class NewDocumentFastComponent implements OnInit {
         // this.OBAA.id = parseInt(this.route.snapshot.paramMap.get('id'));
         // console.log(this.route.snapshot.paramMap.get('id'))
         this.edit = "/edit";
+        if(this.route.snapshot.paramMap.get('reviewer_role') != null) {
+          this.edit += "/?reviewer_role=" + this.reviewerMainRole;
+        } else {
+          this.edit += "/?reviewer_role=none";
+        }
       } else {
         this.rest.getID().subscribe((data: {}) => {
           //console.log(data)
@@ -239,6 +245,9 @@ export class NewDocumentFastComponent implements OnInit {
     ]
 
     this.getDocument(this.route.snapshot.paramMap.get('id'), true, false);
+
+    let tokenInfo = this.rest.decodePayloadJWT();
+    this.reviewerMainRole = this.getReviewRole(tokenInfo.roles);
     
     this.OBAA = emptyMockOBAACreator;
 
@@ -280,6 +289,18 @@ export class NewDocumentFastComponent implements OnInit {
 
   private _normalizeValue(value: string): string {
     return value.toLowerCase().replace(/\s/g, '');
+  }
+
+  getReviewRole(roles) {
+    roles = roles.toString().split(',');
+    for(let role of roles) {
+      // console.log(role);
+      switch(role) {
+        case "tech_reviewer": return "tech_reviewer";
+        case "pedag_reviewer": return "pedag_reviewer";
+      }
+    }
+    return "undefined";
   }
 
   getDocument(id, withRelations, checkNameAndDescription): void {
@@ -638,6 +659,11 @@ export class NewDocumentFastComponent implements OnInit {
       this.OBAA.id = parseInt(this.route.snapshot.paramMap.get('id'));
       console.log(this.route.snapshot.paramMap.get('id'))
       this.edit = "/edit";
+      if(this.route.snapshot.paramMap.get('reviewer_role') != null) {
+        this.edit += "/?reviewer_role=" + this.reviewerMainRole;
+      } else {
+        this.edit += "/?reviewer_role=none";
+      }
     }
 
     this.OBAA.metadata.general.titles[0] = this.simple.name;
@@ -760,7 +786,7 @@ export class NewDocumentFastComponent implements OnInit {
   //Pagination starts here
   page(page: number){
     this.resetPagesBoldness();
-
+    if(page == 8) console.log(this.simple)
     var currentPageString = "page" + this.currentPage;
     var currentPageStep = "step" + this.currentPage;
     document.getElementById(currentPageString).style.fontWeight = "normal";

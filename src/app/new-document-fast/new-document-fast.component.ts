@@ -519,9 +519,9 @@ export class NewDocumentFastComponent implements OnInit {
       interaction: "",
       interactionNumber: "",
       licence: "",
-      owner: "",
-      favorites: "", 
-      free: "",
+      owner: tokenInfo.sub,
+      favorites:["admin"],
+      free:"yes",
       relationWith: this.simple.relationWith,
       //authors: documents[0].author,
       author: this.updateAuthors([]),
@@ -759,11 +759,13 @@ export class NewDocumentFastComponent implements OnInit {
     var currentPageStep = "step" + this.currentPage;
     document.getElementById(currentPageString).style.fontWeight = "normal";
     document.getElementById(currentPageStep).style.display = "none";
+    document.getElementById(currentPageString).style.color = "#000000";
 
     var newPageString = "page" + page;
     var newStepString = "step" + page;
     document.getElementById(newPageString).style.fontWeight = "bold";
     document.getElementById(newStepString).style.display = "block";
+    document.getElementById(newPageString).style.color = "#81D6FF";
     
     this.currentPage = page;
     this.progressBarValue = (100/this.numPages) * page;
@@ -964,6 +966,7 @@ export class NewDocumentFastComponent implements OnInit {
 
   check() {
     var complete = true;
+    var fieldsMissing = [];
     document.getElementById("incomplete").style.display="block";
 
     for (var propt in this.simple){
@@ -972,6 +975,7 @@ export class NewDocumentFastComponent implements OnInit {
             || propt == "typicalLearningTime" || propt == "relation"
             || propt == "favorites")){
             complete = false;
+            fieldsMissing.push(propt);
           }
       }
     }
@@ -981,6 +985,7 @@ export class NewDocumentFastComponent implements OnInit {
           this.simple["author"][i].institution.trim() == "" ||
           this.simple["author"][i].role.length == 0) {
         complete = false;
+        fieldsMissing.push("author");
       } 
     }
 
@@ -1003,9 +1008,18 @@ export class NewDocumentFastComponent implements OnInit {
         }
       }
     }
-      
+
+    for(var i = 0; i < fieldsMissing.length; i++){      
+      console.log(fieldsMissing);
+      let page = this.fieldPage(fieldsMissing[i]);
+      document.getElementById("page"+page).style.fontWeight = "bold";
+      document.getElementById("page"+page).style.color = "#ff0000";
+    }
+
     if(this.uploader2.queue.length == 0 && this.simple.status == "INCOMPLETE"){
       document.getElementById("uploadEmpty").style.display="block";
+      document.getElementById("page1").style.fontWeight = "bold";
+      document.getElementById("page1").style.color = "#ff0000";
       return;
     }
 
@@ -1021,11 +1035,27 @@ export class NewDocumentFastComponent implements OnInit {
 
     return colummns;
   }
+
+  fieldPage(field) {
+    switch(field) {
+      case "name":
+      case "language":
+      case "keywords":
+      case "description":
+      case "resources": return 3;
+      case "interactionNumber": return 4;
+      case "target":
+      case "age": 
+      case "knowledgeArea": return 5;
+      case "licence": return 6;
+      case "author": return 7;
+    }
+  }
 }
 
 @Component({
-  selector: 'dialog-overview-example-dialog',
-  templateUrl: 'dialog-overview-example-dialog.html',
+  selector: 'dialog-search-documents',
+  templateUrl: 'dialog-search-documents.html',
 })
 export class DialogOverviewExampleDialog {
   documentsTiny = [];

@@ -9,13 +9,13 @@
 </div>
 
 <div style="font-size:1.5em; margin-top: 1.5em; width:100%">
+    <div *ngIf="documentsTiny.length==0">
+        <p class="paragraph">Ainda não há objetos de aprendizagem para relacionamento.</p>
+    </div>
     <mat-grid-list cols=2 rowHeight=20em [gutterSize]="'10px'">
         <mat-grid-tile *ngFor="let document of documentsTiny">
   
             <app-document-tiny [documentsTiny]="document"></app-document-tiny>
         </mat-grid-tile>
-  
-  
     </mat-grid-list>
-  
-  </div>
+</div>

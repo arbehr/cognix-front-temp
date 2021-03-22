@@ -483,6 +483,10 @@ export class NewDocumentFastComponent implements OnInit {
         }
       } else {
         this.getDocument(event.source.value, false, true);
+        for(var i = 2; i <= this.numPages; i++){      
+          document.getElementById("page"+i).style.fontWeight = "normal";
+          document.getElementById("page"+i).style.color = "#000000";
+        }
       }
     }
   }
@@ -590,13 +594,6 @@ export class NewDocumentFastComponent implements OnInit {
 
     document.body.style.cursor="wait";
 
-    if(this.preName.trim() == this.simple.name.trim() ||
-       this.preDescription.trim() == this.simple.description.trim()) {
-        document.body.style.cursor="initial";
-        alert('Título e descrição do objeto não podem ser iguais ao do objeto relacionado.');
-              return;
-    }
-
     for (var propt in this.simple){
       if (Object.prototype.hasOwnProperty.call(this.simple, propt)) {
           if(this.simple[propt] == "" && !(propt == "id" || propt == "typicalLearningTime" ||
@@ -607,6 +604,13 @@ export class NewDocumentFastComponent implements OnInit {
           }
       }
     }
+
+    if(this.preName.trim() == this.simple.name.trim() ||
+      this.preDescription.trim() == this.simple.description.trim()) {
+      document.body.style.cursor="initial";
+      alert('Título e descrição do objeto não podem ser iguais ao do objeto relacionado.');
+            return;
+    } 
 
     for(var i = 0; i < this.simple["author"].length; i++) {
       if(this.simple["author"][i].name.trim() == "" || 
@@ -1014,7 +1018,6 @@ export class NewDocumentFastComponent implements OnInit {
     }
 
     for(var i = 0; i < fieldsMissing.length; i++){      
-      console.log(fieldsMissing);
       let page = this.fieldPage(fieldsMissing[i]);
       document.getElementById("page"+page).style.fontWeight = "bold";
       document.getElementById("page"+page).style.color = "#ff0000";

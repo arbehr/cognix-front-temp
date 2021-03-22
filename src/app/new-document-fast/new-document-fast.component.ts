@@ -592,6 +592,7 @@ export class NewDocumentFastComponent implements OnInit {
 
     if(this.preName.trim() == this.simple.name.trim() ||
        this.preDescription.trim() == this.simple.description.trim()) {
+        document.body.style.cursor="initial";
         alert('Título e descrição do objeto não podem ser iguais ao do objeto relacionado.');
               return;
     }
@@ -600,6 +601,7 @@ export class NewDocumentFastComponent implements OnInit {
       if (Object.prototype.hasOwnProperty.call(this.simple, propt)) {
           if(this.simple[propt] == "" && !(propt == "id" || propt == "typicalLearningTime" ||
             propt == "relation" || propt == "favorites")){
+              document.body.style.cursor="initial";
               alert('Preencha todos os campos necessários antes do envio.');
               return;
           }
@@ -610,6 +612,7 @@ export class NewDocumentFastComponent implements OnInit {
       if(this.simple["author"][i].name.trim() == "" || 
           this.simple["author"][i].institution.trim() == "" ||
           this.simple["author"][i].role.length == 0) {
+            document.body.style.cursor="initial";
             alert('Preencha todos os campos necessários antes do envio.');
             return;
       }
@@ -618,6 +621,7 @@ export class NewDocumentFastComponent implements OnInit {
     if(this.existRelation) {
       for(var i = 0; i < this.simple["relationWith"].length; i++) {
         if(this.simple["relationWith"][i].entry.trim() == "") {
+          document.body.style.cursor="initial";
           alert('Preencha todos os campos necessários antes do envio.');
           return;
         }

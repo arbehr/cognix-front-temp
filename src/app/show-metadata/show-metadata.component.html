@@ -2,19 +2,41 @@
 
     <p class="paragraph">Idioma: <span style="font-weight:normal">{{simple.language}}</span></p><br>
     <p class="paragraph">Descrição: <span style="font-weight:normal">{{simple.description}}</span></p><br>
-    <p class="paragraph">Palavras-chave: <span style="font-weight:normal">{{simple.keywords}}</span></p><br>
-    <p class="paragraph">Etapa(s) da educação: <span style="font-weight:normal">{{simple.age}}</span></p><br>
-    <p class="paragraph">Tipos de objeto / recurso: <span style="font-weight:normal">{{simple.resources}}</span></p><br>
-    <p class="paragraph">Utilizadores finais: <span style="font-weight:normal">{{simple.target}}</span></p><br>
-    <p class="paragraph">Área(s) do conhecimento: <span style="font-weight:normal">{{simple.knowledgeArea}}</span></p><br>
+    <p class="paragraph">Palavras-chave: </p>
+    <div *ngFor="let keyword of simple.keywords">
+        <span style="font-weight:normal">{{keyword}} </span>
+    </div>
+    <br>
+    <p class="paragraph">Etapa(s) da educação: </p>
+    <div *ngFor="let age of simple.age">
+        <span style="font-weight:normal">{{age}} </span>
+    </div>
+    <br>
+    <p class="paragraph">Tipos de objeto / recurso: </p>
+    <div *ngFor="let resource of simple.resources">
+        <span style="font-weight:normal">{{resource}} </span>
+    </div>
+    <br>
+
+    <p class="paragraph">Utilizadores finais:</p>
+    <div *ngFor="let target of simple.target">
+        <span style="font-weight:normal">{{target}} </span>
+    </div>
+    <br> 
+        
+    <p class="paragraph">Área(s) do conhecimento: </p>
+    <div *ngFor="let knowledgeArea of simple.knowledgeArea">
+        <span style="font-weight:normal">{{knowledgeArea}} </span>
+    </div>
+    <br> 
     <p class="paragraph">Tempo necessário para aprendizagem: <span style="font-weight:normal">{{simple.typicalLearningTime}}</span></p><br>
     <p class="paragraph">Nível de interação: <span style="font-weight:normal">{{simple.interaction}}</span></p><br>
     <p class="paragraph">Licença: <span style="font-weight:normal">{{simple.licence}}</span></p><br>
-    <p class="paragraph">Contribuintes: 
-        <div *ngFor="let author of simple.author" style="margin-left:13px; font-weight:normal">
-            <span style="font-weight:normal" *ngIf="author.name">{{author.name}} - {{author.institution}} - {{author.role}}</span>
-        </div>
-        <br>
+    <p class="paragraph">Contribuintes:</p>
+    <div *ngFor="let author of simple.author" style="margin-left:13px; font-weight:normal">
+        <span style="font-weight:normal" *ngIf="author.name">{{author.name}} - {{author.institution}} - {{author.role}}</span>
+    </div>
+    <br>
 
 
 

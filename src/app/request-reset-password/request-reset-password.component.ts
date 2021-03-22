@@ -25,11 +25,13 @@ export class RequestResetPasswordComponent implements OnInit {
   }
 
   RequestResetUser(form) {
-    console.log(form)
+    // console.log(form)
+    document.body.style.cursor="wait";
     if (form.valid) {
       this.IsvalidForm = true;
       this.rest.requestResetPassword(this.RequestResetForm.value).subscribe(
         response => {
+          document.body.style.cursor="initial";
           if (response == true) {
             alert("E-mail para redefinição de palavra-passe enviado com sucesso.");
             this.router.navigate(['/']);

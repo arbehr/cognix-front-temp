@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { LoginService } from '../login.service';
 import { RestService } from '../rest.service';
+import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
@@ -11,18 +12,23 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 export class HomeComponent implements OnInit {
   public loginForm: FormGroup;
 
-  constructor(private formBuilder: FormBuilder, public rest:RestService) { 
-    this.loginForm = this.formBuilder.group({
-      username: ['', Validators.required],
-      password: ['', Validators.required],
-     });    
+  constructor(private formBuilder: FormBuilder, 
+    public rest:RestService, 
+    private router: Router,
+    private route: ActivatedRoute) { 
+      this.loginForm = this.formBuilder.group({
+        username: ['', Validators.required],
+        password: ['', Validators.required],
+      });    
   }
 
   private Login: LoginService;
   private userEmail: string
   private documents: object;
   searchText = "";
-  documentAddRouter = ""
+  documentAddRouter = "";
+  page = 'none';
+  token = '';
 
   ngOnInit() {
     
@@ -30,6 +36,20 @@ export class HomeComponent implements OnInit {
       this.documents = data;
       console.log(this.documents);
     });
+
+    this.route.queryParams
+      .subscribe(params => {
+        this.page = params.page;
+        this.token = params.token;
+      }
+    );
+
+    if(this.page == "response-reset-password") {
+      let navigationExtras: NavigationExtras = {
+        queryParams: { 'token': this.token },
+      };     
+      this.router.navigate(['/response-reset-password'], navigationExtras);
+    }
     
     if(!localStorage.getItem('token')){
       this.loginForm.setValue({

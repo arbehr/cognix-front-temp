@@ -37,6 +37,7 @@ export class NewDocumentFastComponent implements OnInit {
   interactionNumber:number;
   typicalLearningTime:number;
   moreThanThreeHours:boolean;
+  doNotApply:boolean;
   hours:number;
   minutes:number;
   seconds:number;
@@ -170,6 +171,7 @@ export class NewDocumentFastComponent implements OnInit {
     this.numPages = 8;
     this.progressBarValue = 100/this.numPages;
     this.moreThanThreeHours = false;
+    this.doNotApply = false;
     this.typicalLearningTime = 0;
     this.keywords = [];
     this.preName = "";
@@ -401,6 +403,7 @@ export class NewDocumentFastComponent implements OnInit {
     if(durationTime == "PT3H15M0S") {
       this.moreThanThreeHours = true;
       this.typicalLearningTime = 0;
+      this.doNotApply = false;
     } else {
       this.moreThanThreeHours = false;
       let time = durationTime.split("H");
@@ -532,6 +535,7 @@ export class NewDocumentFastComponent implements OnInit {
     this.clearCheckBoxes(this.knowledgeArea, "knowledgeArea", 1);
     this.typicalLearningTime = 0;
     this.moreThanThreeHours = false;
+    this.doNotApply = false;
 
     let tokenInfo = this.rest.decodePayloadJWT();
     this.simple = {
@@ -571,9 +575,19 @@ export class NewDocumentFastComponent implements OnInit {
     }
   }
 
-  setTypicalLearningTime(event: MatCheckboxChange) {
-    this.moreThanThreeHours = event.checked;
-    this.typicalLearningTime = 0;
+  setTypicalLearningTime(checkboxName, event: MatCheckboxChange) {
+    switch(checkboxName) {
+      case "moreThanThreeHours": 
+        this.typicalLearningTime = 0;  
+        this.moreThanThreeHours = event.checked;
+        this.doNotApply = false;
+        break;
+      case "doNotApply": 
+        this.typicalLearningTime = 0;
+        this.moreThanThreeHours = false;
+        this.doNotApply = event.checked;
+        break;
+    }
   }
 
   save(){
@@ -675,8 +689,9 @@ export class NewDocumentFastComponent implements OnInit {
  
     this.addAuthor("","",["author"]); 
     this.addRelation("");
+    console.log(this.simple.status)
     this.simple.status = this.nextStatusScope(this.simple.status);
-    
+    console.log(this.simple.status)
     this.save();
 
     for(var i = 0; i < this.contribute.length; i++){
@@ -934,6 +949,8 @@ export class NewDocumentFastComponent implements OnInit {
 
       this.simple.typicalLearningTime = "PT" + this.hours + "H" + this.minutes + "M" 
         + this.seconds + "S";
+    } else {
+      this.simple.typicalLearningTime = "";
     }
 
     if(this.moreThanThreeHours){
@@ -949,7 +966,9 @@ export class NewDocumentFastComponent implements OnInit {
   }
 
   addKeyword(){
-    this.keywords.push(this.control.value);
+    if(this.keywords.indexOf(this.control.value) == -1) {
+      this.keywords.push(this.control.value);
+    }
   }
 
   removeKeyord(i: number){
@@ -1110,7 +1129,7 @@ export class DialogOverviewExampleDialog {
     var finalString = "q=*:*"
 
     if(this.searchText != ""){
-      finalString = "q=name:\""+ this.searchText + "\"";
+      finalString = "q=name:\""+ this.searchText + "*\"";
     }
     finalString += "&fq=status:REVIEWED";
 

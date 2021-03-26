@@ -344,13 +344,16 @@
     <br>
     <p class="paragraph">Tempo necessário (em minutos) para a realização da atividade:</p>
     <br><br>
-    <mat-slider thumbLabel [(ngModel)]="typicalLearningTime" id="typicalLearningTime" name="typicalLearningTime" [displayWith]=""
+    <mat-slider disabled="{{moreThanThreeHours || doNotApply}}" thumbLabel [(ngModel)]="typicalLearningTime" id="typicalLearningTime" name="typicalLearningTime" [displayWith]=""
       min="0" max="180" step="15" value="15"></mat-slider><span>(máximo 3 horas)</span>
     <br>
     <section>
-      <mat-checkbox style="font-size: large;" [checked]="moreThanThreeHours" (change)="setTypicalLearningTime($event)">Mais de 3 horas</mat-checkbox>
+      <mat-checkbox style="font-size: large;" [checked]="moreThanThreeHours" (change)="setTypicalLearningTime('moreThanThreeHours',$event)">Mais de 3 horas</mat-checkbox>
     </section>
     <br>
+    <section>
+      <mat-checkbox style="font-size: large;" [checked]="doNotApply" (change)="setTypicalLearningTime('doNotApply',$event)">Não se aplica</mat-checkbox>
+    </section>
     <br>
   </form>
 

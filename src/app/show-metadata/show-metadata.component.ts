@@ -33,7 +33,7 @@ export class ShowMetadataComponent implements OnInit {
   }
 
   translateRole(role) {
-    switch(role.trim()) {
+    switch(role.toString().trimLeft()) {
       case "author": return "Autor\\a";
       case "content production": return "Produção de conteúdo";
       case "lesson plan production": return "Produção do plano de aula";

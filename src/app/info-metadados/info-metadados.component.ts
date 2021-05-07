@@ -95,24 +95,16 @@ export class InfoMetadadosComponent implements OnInit {
         authors:this.documents[0].author,
         author:[]
       }
-      // console.log(this.simple.authors)
+
       for(var i = 0; i < this.simple.authors.length; i++){
-         var aut = this.simple.authors[i];
-         var aut_parts = this.simple.authors[i].split(",")       
-         var aut_name = aut_parts[0].split("=")[1];
-         var aut_institution = aut_parts[1].split("=")[1];
-         var aut_role = aut_parts[2].split("=")[1];
-         aut_role = aut_role.toString().replace('[', '');
-         aut_role = aut_role.toString().replace(']', '').replace('}', '');
-        //  console.log(aut_role)
-         for(var j=3; j < aut_parts.length; j++){
-          aut_role += ',' + aut_parts[j].toString().replace(']', '').replace('}', '').trimLeft()
-         }
-        //  console.log(aut_role)
+         var aut_parts = this.simple.authors[i].split("=") 
+         var aut_name = aut_parts[1].substring(0, aut_parts[1].lastIndexOf(","));
+         var aut_institution = aut_parts[2].substring(0, aut_parts[2].lastIndexOf(","));
+         var aut_role = aut_parts[3].toString().replace('[', '').replace(']', '').replace('}', '');
+
          if(aut_name.trim() != "") {
           this.simple.author.push({name:aut_name, institution:aut_institution , role:aut_role}); 
-         }
-         
+         }  
       }
     });
 

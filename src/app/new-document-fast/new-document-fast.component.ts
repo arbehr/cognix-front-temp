@@ -422,35 +422,24 @@ export class NewDocumentFastComponent implements OnInit {
   }
 
   updateAuthors(authors_list){
+    console.log(authors_list)
     let contributors = [];
     for(var i = 0; i < authors_list.length; i++) {
-        let aut = authors_list[i];
-        let aut_parts = aut.split("=")
-        let aut_name = aut_parts[1].split(",")[0];
-        let aut_institution = aut_parts[2].split(",")[0];
-        let aut_roles = [];
-        
-        if(aut_parts[3].includes(',')) {
-          // console.log(aut_parts[3])
-          let roles = aut_parts[3].split(",");
-          for(var j = 0; j < roles.length; j++) {
-            
-            if(roles[j].includes('[')) {
-              aut_roles.push(roles[j].substr(1, roles[j].length).trim())
-            } else if(roles[i].includes(']')) {
-              aut_roles.push(roles[j].substr(0, roles[j].length - 2).trim())
-            } else {
-              aut_roles.push(roles[j].trim());
-            }
-          }
+        // console.log(authors_list[i])
+        var aut_parts = authors_list[i].split("=") 
+        var aut_name = aut_parts[1].substring(0, aut_parts[1].lastIndexOf(","));
+        var aut_institution = aut_parts[2].substring(0, aut_parts[2].lastIndexOf(","));
+        var aut_role = aut_parts[3].toString().replace('[', '').replace(']', '').replace('}', '');
+
+        var aut_roles = [];
+        if(aut_role.indexOf(",") == -1) {
+          aut_roles.push(aut_role);
         } else {
-          aut_roles.push(aut_parts[3].substr(1, aut_parts[3].length - 3));
+          aut_roles = aut_role.split(", ");
         }
-        // console.log(aut_roles)
         if(aut_name.trim() != "") {
           contributors.push({name: aut_name, institution: aut_institution, role:aut_roles}); 
-        }
-        
+        }        
     }
     return contributors;
   }

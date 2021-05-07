@@ -102,9 +102,16 @@ export class InfoMetadadosComponent implements OnInit {
          var aut_institution = aut_parts[2].substring(0, aut_parts[2].lastIndexOf(","));
          var aut_role = aut_parts[3].toString().replace('[', '').replace(']', '').replace('}', '');
 
-         if(aut_name.trim() != "") {
-          this.simple.author.push({name:aut_name, institution:aut_institution , role:aut_role}); 
-         }  
+         var aut_roles = [];
+        if(aut_role.indexOf(",") == -1) {
+          aut_roles.push(aut_role);
+        } else {
+          aut_roles = aut_role.split(", ");
+        }
+
+        if(aut_name.trim() != "") {
+        this.simple.author.push({name:aut_name, institution:aut_institution , role:aut_roles}); 
+        }  
       }
     });
 

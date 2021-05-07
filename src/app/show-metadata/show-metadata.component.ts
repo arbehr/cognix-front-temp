@@ -16,23 +16,19 @@ export class ShowMetadataComponent implements OnInit {
 
   showTranslatedAuthorRole(roles) {
     var roles_translated = "";
-    if(roles.indexOf(",") == -1) {
-      roles_translated = this.translateRole(roles);
-    } else {
-      let role_parts = roles.split(",")
-      for(var i = 0; i < role_parts.length; i++) {
-        if (i > 0) {
-          roles_translated += ", " + this.translateRole(role_parts[i]);
-        } else {
-          roles_translated += this.translateRole(role_parts[i]);
-        }
+    // console.log(roles)
+    for(var i = 0; i < roles.length; i++) {
+      if (i > 0) {
+        roles_translated += ", " + this.translateRole(roles[i]);
+      } else {
+        roles_translated += this.translateRole(roles[i]);
       }
-    }
-    
+    }    
     return roles_translated;
   }
 
   translateRole(role) {
+    // console.log(role)
     switch(role.toString().trimLeft()) {
       case "author": return "Autor\\a";
       case "content production": return "Produção de conteúdo";

@@ -168,7 +168,7 @@
     <mat-form-field style="width:65%;padding-right: 1em;">
       <input matInput
           placeholder="Adicione outra palavra-chave"
-          [formControl]="control"
+          [formControl]="controlKeyword"
           [matAutocomplete]="auto">
     <mat-autocomplete #auto="matAutocomplete">
       <mat-option *ngFor="let key of filteredKeywords | async" [value]="key">
@@ -195,11 +195,11 @@
     </p>
     <br>
     <div>
-      <table mat-table [dataSource]="resources" class="mat-elevation-z8">
+      <table mat-table [dataSource]="resources_predefined" class="mat-elevation-z8">
 
         <ng-container matColumnDef="col_1">
           <td mat-cell *matCellDef="let element"> 
-            <mat-checkbox [checked]="element.col_1.isValid" (change)="element.col_1.isValid = ! element.col_1.isValid;addOtherResource(element.col_1.name,element.col_1.isValid);"></mat-checkbox>
+            <mat-checkbox [checked]="element.col_1.isValid" (change)="element.col_1.isValid = ! element.col_1.isValid;"></mat-checkbox>
             {{element.col_1.name}}
           </td>
         </ng-container>
@@ -235,15 +235,35 @@
         <!-- <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr> -->
         <tr mat-row *matRowDef="let row; columns: displayedTableColumms(5);"></tr>
       </table>
-       <table>
+       <!-- <table>
         <tr>
           <th>
             <mat-form-field style="width:100%;display:none" id="otherResourceForm">
-              <input matInput [(ngModel)]="otherResource" name="otherResource" placeholder="Resposta">
+              <input matInput [(ngModel)]="otherResource" name="otherResource" placeholder="Indique outros tipos, separados por vírgulas">
             </mat-form-field>
           </th>
         </tr>
       </table>
+      <button mat-raised-button (click)="addKeyword();">Adicione</button> -->
+      <br>
+      <mat-form-field style="width:65%;padding-right: 1em;">
+        <input matInput
+            placeholder="Adicione outro tipo"
+            [formControl]="controlType">
+    </mat-form-field>
+      <!-- <mat-form-field style="width:45%">
+        <input matInput [(ngModel)]="keywords" name="keyword" placeholder="Adicione outra palavra-chave">
+      </mat-form-field> -->
+      <button mat-raised-button (click)="addType();">Adicione</button>
+      <br>
+    <div *ngFor="let item of resources; let i = index">
+      <p style="font-size: large;">
+        <span>{{item}}</span>
+        <button mat-icon-button (click)="removeType(i)">
+          <mat-icon class="mat-24">delete</mat-icon>
+        </button>
+      </p>
+    </div>
       <br>
     </div>
     <br><br>
@@ -343,7 +363,9 @@
     </div>
     <br>
     <p class="paragraph">Tempo necessário (em minutos) para a realização da atividade:</p>
-    <br><br>
+    <br>
+    <span>Clique na linha:</span>
+    <br>
     <mat-slider disabled="{{moreThanThreeHours || doNotApply}}" thumbLabel [(ngModel)]="typicalLearningTime" id="typicalLearningTime" name="typicalLearningTime" [displayWith]=""
       min="0" max="180" step="15" value="15"></mat-slider><span>(máximo 3 horas)</span>
     <br>
@@ -411,7 +433,7 @@
 
     <p class="paragraph">Instituição:</p>
     <mat-form-field style="width:70%">
-      <input required matInput [(ngModel)]="author.institution" name="institution" placeholder="Resposta">
+      <input matInput [(ngModel)]="author.institution" name="institution" placeholder="Resposta">
       </mat-form-field>
     <br>
 

@@ -23,11 +23,14 @@ export class RestService {
   @Output() logged : EventEmitter<any> = new EventEmitter();
   @Output() email : EventEmitter<any> = new EventEmitter();
   @Output() name : EventEmitter<any> = new EventEmitter();
+  @Output() pendencies: EventEmitter<any> = new EventEmitter();
 
   isLogged: boolean;
+  hasPendencies: boolean;
 
   constructor(private http: HttpClient) { 
     this.isLogged = false;
+    this.hasPendencies = false;
   }
 
   private extractData(res: Response) {
@@ -62,6 +65,26 @@ export class RestService {
     );
   }
   
+  getSearchText(searchText): Observable<any> {
+    return this.http.post<any>(endpoint + '/search', "{\"searchText\":\"" + searchText + "\"}", this.getHttpOptionsWithToken()).pipe(
+      tap(() => console.log('getSearchText')),
+      catchError((err) => {
+        return throwError(err);    //Rethrow it back to component
+      })
+    );
+  }
+
+  saveSearchText(product): Observable<any> {
+    console.log(product)
+    return this.http.post<any>(endpointSOLR + '/solr/Search/update?commitWithin=1000&overwrite=true&wt=json', product, this.getHttpOptionsSolr()).pipe(
+      tap(() => console.log('saveSearchText')),
+      catchError((err) => {
+        return throwError(err);    //Rethrow it back to component
+      })
+    );
+  }
+
+
   addDocument(product, id, edit): Observable<any> {
     // console.log("Lets begin");
     // console.log(product);
@@ -82,10 +105,10 @@ export class RestService {
     );
   }
 
-  querySOLR(id): Observable<any> {
+  querySOLR(query): Observable<any> {
     // console.log("Lets begin");
     // console.log(endpointSOLR + '/solr/DocumentTinyDto/select?_=' + id);
-    return this.http.get(endpointSOLR + '/solr/DocumentTinyDto/select?' + id + "&rows=100&start=0", this.getHttpOptionsSolr()).pipe(
+    return this.http.get(endpointSOLR + '/solr/DocumentTinyDto/select?' + query + "&rows=100&start=0", this.getHttpOptionsSolr()).pipe(
       tap((product) => console.log("SolrQuery")),
       catchError(this.handleError<any>('SolrQuery'))
     );
@@ -143,9 +166,30 @@ export class RestService {
              if(emailField != "anonymous@uac.pt"){
               this.email.emit(emailField);
               this.name.emit(decodeURIComponent(escape(tokenInfo.name)))
-              // console.log(tokenInfo.name);
-              // console.log(this.userName)
-              // console.log(decodeURIComponent(escape(tokenInfo.name)))
+              let totalPendencies = 0;
+              //NOTE: It is expected user have one review role!
+              let roles = tokenInfo.roles.toString().split(",");
+              let matched_role = "";
+              for(var i=0; i < roles.length; i++) {
+                if(roles[i].includes("reviewer")){
+                  matched_role = roles[i].substring(0, roles[i].length -2).toUpperCase();
+                }
+              }
+
+              let queryPendencies = "q=(owner:\"" + emailField + "\" AND status:INCOMPLETE)";
+              if(matched_role != "") {
+                queryPendencies += " OR (status:NEEDS_" + matched_role;
+                queryPendencies += ") OR (reviewer:\"" + emailField + "\"";
+                queryPendencies += " AND status:UNDER_" + matched_role + ")&rows=0";
+              }
+
+              this.querySOLR(queryPendencies).subscribe((data: any) => {
+                if(data.response.numFound > 0) {
+                  this.hasPendencies = true;
+                  this.pendencies.emit(true);
+                  //console.log(data.response.numFound)
+                }
+              });
               this.logged.emit(true);
               this.isLogged = true;
              }

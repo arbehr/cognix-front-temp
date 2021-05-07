@@ -46,6 +46,7 @@ export class NewDocumentFastComponent implements OnInit {
   target:any;
   age:any;
   resources:any;
+  resources_predefined:any;
   knowledgeArea:any;
   contribute:{
     role: "",
@@ -76,7 +77,8 @@ export class NewDocumentFastComponent implements OnInit {
   public uploader: FileUploader = new FileUploader({url: endpoint + "/files/uploadFile", authToken: localStorage.getItem('token'), itemAlias: "file"});
   public uploader2: FileUploader = new FileUploader({url: endpoint + "/files/uploadFile", authToken: localStorage.getItem('token'), itemAlias: 'file'});
   
-  control = new FormControl();
+  controlKeyword = new FormControl();
+  controlType = new FormControl();
   keywords_suggestions: string[] = ['Algas', 'Alterações climáticas', 'Amostragens', 'Áreas protegidas', 'Artes', 'Aves',
     'Baixa profundidade / Subtidal', 'Biotecnologia marinha', 'Circulação oceânica', 'Correntes',
     'Ecossistemas marinhos', 'Embarcações', 'Energia', 'Entre marés / Interdital', 'Equipamentos marítimos',
@@ -93,8 +95,10 @@ export class NewDocumentFastComponent implements OnInit {
       if(this.route.snapshot.paramMap.get('id') != null) {
         this.rest.getDocumentFromID(parseInt(this.route.snapshot.paramMap.get('id'))).subscribe((data: any) => {
           Object.assign(this.OBAA,data);
-          this.fileId = endpoint  + "/files/" + data.files[0].id;
-          this.fileThumb = endpoint  + "/files/" + data.files[1].id;
+          if(data.files.length > 0) {
+            this.fileId = endpoint  + "/files/" + data.files[0].id;
+            this.fileThumb = endpoint  + "/files/" + data.files[1].id;
+          }
         },
         (error) => {                              
           document.body.style.cursor="initial";
@@ -174,6 +178,7 @@ export class NewDocumentFastComponent implements OnInit {
     this.doNotApply = false;
     this.typicalLearningTime = 0;
     this.keywords = [];
+    this.resources = [];
     this.preName = "";
     this.preDescription = "";
 
@@ -213,7 +218,7 @@ export class NewDocumentFastComponent implements OnInit {
          col_3: {name: "Poluição / Lixo / Ruído", isValid: false}},
     ]
 
-    this.resources = [
+    this.resources_predefined = [
       {col_1: {name: "Questionário", isValid: false}, 
        col_2: {name: "Problema", isValid: false},
        col_3: {name: "Prova", isValid: false},
@@ -239,11 +244,11 @@ export class NewDocumentFastComponent implements OnInit {
        col_3: {name: "", isValid: false},
        col_4: {name: "", isValid: false},
        col_5: {name: "", isValid: false}},
-      {col_1: {name: "Outro", isValid: false},
-       col_2: {name: "", isValid: false},
-       col_3: {name: "", isValid: false},
-       col_4: {name: "", isValid: false},
-       col_5: {name: "", isValid: false}}, 
+      // {col_1: {name: "Outro", isValid: false},
+      //  col_2: {name: "", isValid: false},
+      //  col_3: {name: "", isValid: false},
+      //  col_4: {name: "", isValid: false},
+      //  col_5: {name: "", isValid: false}}, 
     ]
 
     this.getDocument(this.route.snapshot.paramMap.get('id'), true, false);
@@ -277,7 +282,7 @@ export class NewDocumentFastComponent implements OnInit {
      this.depth = 0;
      this.path = [];
 
-     this.filteredKeywords = this.control.valueChanges.pipe(
+     this.filteredKeywords = this.controlKeyword.valueChanges.pipe(
       startWith(''),
       map(value => this._filter(value))
     );
@@ -313,7 +318,7 @@ export class NewDocumentFastComponent implements OnInit {
         // console.log(documents)
         
         this.otherResource = "";
-        (documents[0].resources) ? this.updateCheckBoxes(documents[0].resources, this.resources, "resources", 5) : "";
+        (documents[0].resources) ? this.updateCheckBoxes(documents[0].resources, this.resources_predefined, "resources", 5) : "";
         (documents[0].target) ? this.updateCheckBoxes(documents[0].target, this.target, "target", 2) : "";
         (documents[0].keywords) ? this.updateCheckBoxes(documents[0].keywords, this.keywords_predefined, "keywords", 3) : "";
         (documents[0].age) ? this.updateCheckBoxes(documents[0].age, this.age, "age", 1) : "";
@@ -466,9 +471,12 @@ export class NewDocumentFastComponent implements OnInit {
           }
           break;
         case "resources":
-          fieldsList[fieldsList.length-1]["col_1"].isValid = true;
-          this.otherResource = fields[fields.length-1];
-          document.getElementById("otherResourceForm").style.display = "block";
+          // fieldsList[fieldsList.length-1]["col_1"].isValid = true;
+          // this.otherResource = fields[fields.length-1];
+          // document.getElementById("otherResourceForm").style.display = "block";
+          for(var i = checkedFields; i < fields.length; i++){
+            this.resources.push(fields[i]);
+          }
           break;
       }      
     }
@@ -528,7 +536,8 @@ export class NewDocumentFastComponent implements OnInit {
   clearFormValues() {
     this.otherResource = "";
     this.keywords = [];
-    this.clearCheckBoxes(this.resources, "resources", 5);
+    this.resources = [];
+    this.clearCheckBoxes(this.resources_predefined, "resources", 5);
     this.clearCheckBoxes(this.target, "target", 2);
     this.clearCheckBoxes(this.keywords_predefined, "keywords", 3);
     this.clearCheckBoxes(this.age, "age", 1);
@@ -647,7 +656,7 @@ export class NewDocumentFastComponent implements OnInit {
 
     for(var i = 0; i < this.simple["author"].length; i++) {
       if(this.simple["author"][i].name.trim() == "" || 
-          this.simple["author"][i].institution.trim() == "" ||
+          //this.simple["author"][i].institution.trim() == "" ||
           this.simple["author"][i].role.length == 0) {
             document.body.style.cursor="initial";
             alert('Preencha todos os campos necessários antes do envio.');
@@ -899,13 +908,19 @@ export class NewDocumentFastComponent implements OnInit {
       }
     }
 
-    for(var i = 0; i < this.resources.length; i++){
-      for(var recIndex = 1; recIndex < this.resources.length; recIndex++){
-        if(this.resources[i]["col_" + recIndex].isValid){
-          this.simple.resources.push(this.resources[i]["col_" + recIndex].name);
+    
+
+    for(var i = 0; i < this.resources_predefined.length; i++){
+      for(var recIndex = 1; recIndex < this.resources_predefined.length; recIndex++){
+        if(this.resources_predefined[i]["col_" + recIndex].isValid){
+          this.simple.resources.push(this.resources_predefined[i]["col_" + recIndex].name);
         }
       }
     }
+
+    for(var i = 0; i < this.resources.length; i++){      
+      this.simple.resources.push(this.resources[i]);
+  }
 
     for(var i = 0; i < this.simple.author.length; i++){
       for(var recIndex = 0; recIndex < this.simple.author[i].role.length; recIndex++){
@@ -965,9 +980,19 @@ export class NewDocumentFastComponent implements OnInit {
     this.check();
   }
 
+  addType() {
+    if(this.resources.indexOf(this.controlType.value) == -1) {
+      this.resources.push(this.controlType.value);
+    }
+  }
+
+  removeType(i: number){
+    this.resources.splice(i,1);
+  }
+
   addKeyword(){
-    if(this.keywords.indexOf(this.control.value) == -1) {
-      this.keywords.push(this.control.value);
+    if(this.keywords.indexOf(this.controlKeyword.value) == -1) {
+      this.keywords.push(this.controlKeyword.value);
     }
   }
 
@@ -1005,16 +1030,6 @@ export class NewDocumentFastComponent implements OnInit {
     this.simple.relationWith.splice(i,1);
   }
 
-  addOtherResource(value:string, isValid:boolean){
-    if(value == "Outro" && isValid){
-      document.getElementById("otherResourceForm").style.display="";
-    } else {
-      document.getElementById("otherResourceForm").style.display="none";
-      this.otherResource="";
-    }
-    
-  }
-
   check() {
     var complete = true;
     var fieldsMissing = [];
@@ -1033,7 +1048,7 @@ export class NewDocumentFastComponent implements OnInit {
 
     for(var i = 0; i < this.simple["author"].length; i++) {
       if(this.simple["author"][i].name.trim() == "" || 
-          this.simple["author"][i].institution.trim() == "" ||
+          //this.simple["author"][i].institution.trim() == "" ||
           this.simple["author"][i].role.length == 0) {
         complete = false;
         fieldsMissing.push("author");

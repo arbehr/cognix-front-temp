@@ -15,9 +15,10 @@ export class ShowMetadataComponent implements OnInit {
   }
 
   showTranslatedAuthorRole(roles) {
+    // console.log(roles)
     var roles_translated = "";
-    roles = roles.toString().replace('[', '');
-    roles = roles.toString().replace(']', '');
+    // roles = roles.toString().replace('[', '');
+    // roles = roles.toString().replace(']', '');
     var role_parts = roles.split(",")
     for(var i = 0; i < role_parts.length; i++) {
 

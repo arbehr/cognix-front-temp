@@ -86,7 +86,7 @@
           <td *ngIf="document.status.includes('UNDER')">
             <p style="margin-bottom: 0em;font-size: 15px;">
               <!-- <mat-checkbox (change)="document.isValid = ! document.isValid"> -->
-                <a [routerLink]="['/documents/' + document.id + '/edit/?reviewer_role=' + this.reviewerMainRole]" routerLinkActive="router-link-active">
+                <a [routerLink]="['/documents/' + document.id + '/edit/?workflow_step=' + this.reviewerMainRole]" routerLinkActive="router-link-active">
                   <strong>{{document.title}}</strong>
                 </a> 
               <!-- </mat-checkbox> -->

@@ -95,7 +95,10 @@ export class NewDocumentFastComponent implements OnInit {
       if(this.route.snapshot.paramMap.get('id') != null) {
         this.rest.getDocumentFromID(parseInt(this.route.snapshot.paramMap.get('id'))).subscribe((data: any) => {
           Object.assign(this.OBAA,data);
-          if(data.files.length > 0) {
+          if(data.files.length == 1) {
+            this.fileId = endpoint  + "/files/" + data.files[0].id; 
+          }
+          if(data.files.length > 1) {
             this.fileId = endpoint  + "/files/" + data.files[0].id;
             this.fileThumb = endpoint  + "/files/" + data.files[1].id;
           }
@@ -108,10 +111,10 @@ export class NewDocumentFastComponent implements OnInit {
         // this.OBAA.id = parseInt(this.route.snapshot.paramMap.get('id'));
         // console.log(this.route.snapshot.paramMap.get('id'))
         this.edit = "/edit";
-        if(this.route.snapshot.paramMap.get('reviewer_role') != null) {
-          this.edit += "/?reviewer_role=" + this.reviewerMainRole;
+        if(this.route.snapshot.paramMap.get('workflow_step') != null) {
+          this.edit += "/?workflow_step=" + this.reviewerMainRole;
         } else {
-          this.edit += "/?reviewer_role=none";
+          this.edit += "/?workflow_step=author";
         }
       } else {
         this.rest.getID().subscribe((data: {}) => {
@@ -682,10 +685,10 @@ export class NewDocumentFastComponent implements OnInit {
       this.OBAA.id = parseInt(this.route.snapshot.paramMap.get('id'));
       console.log(this.route.snapshot.paramMap.get('id'))
       this.edit = "/edit";
-      if(this.route.snapshot.paramMap.get('reviewer_role') != null) {
-        this.edit += "/?reviewer_role=" + this.reviewerMainRole;
+      if(this.route.snapshot.paramMap.get('workflow_step') != null) {
+        this.edit += "/?workflow_step=" + this.reviewerMainRole;
       } else {
-        this.edit += "/?reviewer_role=none";
+        this.edit += "/?workflow_step=author";
       }
     }
 

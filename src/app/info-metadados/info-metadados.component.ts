@@ -19,7 +19,7 @@ export class InfoMetadadosComponent implements OnInit {
   id = "init";
   documents:any;
   simple:any;
-  simples:any;
+  // simples:any;
 
   thumb: string;
   fileId: string;
@@ -73,8 +73,8 @@ export class InfoMetadadosComponent implements OnInit {
     
     this.rest.querySOLR(finalString).subscribe((data: any) => {
       this.documents = data.response.docs;
-      console.log(this.documents);
-      this.simples = this.documents[0];
+      // console.log(this.documents);
+      // this.simples = this.documents[0];
       this.simple = {
 
         name:this.documents[0].name,
@@ -95,16 +95,20 @@ export class InfoMetadadosComponent implements OnInit {
         authors:this.documents[0].author,
         author:[]
       }
-      //console.log(this.simple.authors);
+      // console.log(this.simple.authors);
       for(var i = 0; i < this.simple.authors.length -1; i++){
          var aut = this.simple.authors[i];
-         var aut_parts = aut.split(",")
+         var aut_parts = this.simple.authors[i].split(",")       
          var aut_name = aut_parts[0].split("=")[1];
          var aut_institution = aut_parts[1].split("=")[1];
          var aut_role = aut_parts[2].split("=")[1];
-         var aut_role_fixed = aut_role.substr(0, aut_role.length - 1);
-
-         this.simple.author.push({name:aut_name, institution:aut_institution , role:aut_role_fixed}); 
+         aut_role = aut_role.toString().replace('[', '');
+         aut_role = aut_role.toString().replace(']', '').replace('}', '');
+         for(var i=3; i < aut_parts.length; i++){
+          aut_role += ',' + aut_parts[i].toString().replace(']', '').replace('}', '').trimLeft()
+         }
+         console.log(aut_role)
+         this.simple.author.push({name:aut_name, institution:aut_institution , role:aut_role}); 
       }
     });
 

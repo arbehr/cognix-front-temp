@@ -95,8 +95,8 @@ export class InfoMetadadosComponent implements OnInit {
         authors:this.documents[0].author,
         author:[]
       }
-      // console.log(this.simple.authors);
-      for(var i = 0; i < this.simple.authors.length -1; i++){
+      // console.log(this.simple.authors)
+      for(var i = 0; i < this.simple.authors.length; i++){
          var aut = this.simple.authors[i];
          var aut_parts = this.simple.authors[i].split(",")       
          var aut_name = aut_parts[0].split("=")[1];
@@ -104,11 +104,15 @@ export class InfoMetadadosComponent implements OnInit {
          var aut_role = aut_parts[2].split("=")[1];
          aut_role = aut_role.toString().replace('[', '');
          aut_role = aut_role.toString().replace(']', '').replace('}', '');
-         for(var i=3; i < aut_parts.length; i++){
-          aut_role += ',' + aut_parts[i].toString().replace(']', '').replace('}', '').trimLeft()
+        //  console.log(aut_role)
+         for(var j=3; j < aut_parts.length; j++){
+          aut_role += ',' + aut_parts[j].toString().replace(']', '').replace('}', '').trimLeft()
          }
-         console.log(aut_role)
-         this.simple.author.push({name:aut_name, institution:aut_institution , role:aut_role}); 
+        //  console.log(aut_role)
+         if(aut_name.trim() != "") {
+          this.simple.author.push({name:aut_name, institution:aut_institution , role:aut_role}); 
+         }
+         
       }
     });
 

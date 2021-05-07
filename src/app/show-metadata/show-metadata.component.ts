@@ -15,25 +15,25 @@ export class ShowMetadataComponent implements OnInit {
   }
 
   showTranslatedAuthorRole(roles) {
-    // console.log(roles)
     var roles_translated = "";
-    // roles = roles.toString().replace('[', '');
-    // roles = roles.toString().replace(']', '');
-    var role_parts = roles.split(",")
-    for(var i = 0; i < role_parts.length; i++) {
-
-      if (i > 0) {
-        roles_translated += ", " + this.translateRole(role_parts[i]);
-      } else {
-        roles_translated += this.translateRole(role_parts[i]);
+    if(roles.indexOf(",") == -1) {
+      roles_translated = this.translateRole(roles);
+    } else {
+      let role_parts = roles.split(",")
+      for(var i = 0; i < role_parts.length; i++) {
+        if (i > 0) {
+          roles_translated += ", " + this.translateRole(role_parts[i]);
+        } else {
+          roles_translated += this.translateRole(role_parts[i]);
+        }
       }
-      
     }
+    
     return roles_translated;
   }
 
   translateRole(role) {
-    switch(role) {
+    switch(role.trim()) {
       case "author": return "Autor\\a";
       case "content production": return "Produção de conteúdo";
       case "lesson plan production": return "Produção do plano de aula";

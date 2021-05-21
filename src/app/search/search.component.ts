@@ -131,9 +131,9 @@ export class SearchComponent implements OnInit {
   }
 
   async search(){
-    this.rest.getSearchText(this.searchText).subscribe((data: any) => {
-      console.log(data);
-    });
+    //this.rest.getSearchText(this.searchText).subscribe((data: any) => {
+    //  console.log(data);
+    //});
 
     await this.getIPAddress();
     let tokenInfo = this.rest.decodePayloadJWT();

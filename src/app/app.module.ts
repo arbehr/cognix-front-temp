@@ -51,6 +51,8 @@ import { MatTableModule } from '@angular/material/table';
 import { RequestResetPasswordComponent } from './request-reset-password/request-reset-password.component';
 import { ResponseResetPasswordComponent } from './response-reset-password/response-reset-password.component';
 
+import { MatTooltipModule } from '@angular/material/tooltip';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -89,7 +91,8 @@ import { ResponseResetPasswordComponent } from './response-reset-password/respon
     MatFormFieldModule,
     RecaptchaModule,
     RecaptchaFormsModule,
-    MatTableModule
+    MatTableModule,
+    MatTooltipModule,
   ],
   providers: [LoginService, ],
   entryComponents: [ DialogOverviewExampleDialog],

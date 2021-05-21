@@ -12,7 +12,7 @@ import { endpoint, RestService } from '../rest.service';
 })
 
 export class DocumentsComponent implements OnInit {
-  @Input() document: {id: any, title:string, favorites: string[]};
+  @Input() document: {id: any, title: string, completeTitle: string, favorites: string[]};
   thumb: String;
   isLogged: boolean;
   like: boolean;
@@ -27,8 +27,10 @@ export class DocumentsComponent implements OnInit {
     this.showShareButtons = false;
     
     this.thumb = endpoint  + "/files/" + this.document.id + "/thumbnail";
+    this.document.completeTitle = this.document.title;
     if(this.document.title.length > 27)
-      this.document.title = this.document.title.substr(0,23) + "..."
+      this.document.title = this.document.title.substr(0,23) + "...";
+      
     
     let tokenInfo = this.rest.decodePayloadJWT();
     for(var i = 0; i < this.document.favorites.length; i++) {

@@ -65,7 +65,16 @@ export class InfoMetadadosComponent implements OnInit {
     
     this.rest.getDocumentFromID(this.id).subscribe((data: any) => {
       Object.assign(this.info,data);
-      this.fileId = data.files[0].id;
+      // this.fileId = data.files[0].id;
+      let maxIdFile = 0;
+      for(let i = data.files.length-1; i >= 0 ; i--){
+        if(data.files[i].name != "thumbnail") {
+          if(data.files[i].id > maxIdFile) {
+            this.fileId = data.files[i].id;
+            maxIdFile = data.files[i].id;
+          }
+        }
+      }
       this.thumb = endpoint  + "/files/" + this.id + "/thumbnail";
     });
 
@@ -95,6 +104,8 @@ export class InfoMetadadosComponent implements OnInit {
         authors:this.documents[0].author,
         author:[]
       }
+
+      // console.log(this.rest.getAnnotatedText(this.documents[0].description))
 
       for(var i = 0; i < this.simple.authors.length; i++){
          var aut_parts = this.simple.authors[i].split("=") 

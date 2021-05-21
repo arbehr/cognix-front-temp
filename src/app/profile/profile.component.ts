@@ -17,6 +17,7 @@ export class ProfileComponent implements OnInit {
   hideRevisionsDiv: boolean;
   hideIncompletesDiv: boolean;
   reviewerMainRole: string;
+  roleText: string;
 
   ngOnInit() {
     this.documentsToReview = [];
@@ -60,8 +61,8 @@ export class ProfileComponent implements OnInit {
     for(let role of roles) {
       // console.log(role);
       switch(role) {
-        case "tech_reviewer": return "tech_reviewer";
-        case "pedag_reviewer": return "pedag_reviewer";
+        case "tech_reviewer": this.roleText = "tecnológica"; return "tech_reviewer";
+        case "pedag_reviewer": this.roleText = "pedagógica"; return "pedag_reviewer";
       }
     }
     return "undefined";
@@ -132,6 +133,13 @@ export class ProfileComponent implements OnInit {
       }
     }
     document.body.style.cursor="initial";
+  }
+
+  backDocumentInWorkflow(i:number, backWorkflowStep:string, currentWorkFlowStep: string) {
+    this.documentsToReview[i].status = this.documentsToReview[i].status.replace(currentWorkFlowStep, backWorkflowStep);
+    this.rest.addDocumentSOLR(this.buildJson(this.documentsToReview[i].id, this.documentsToReview[i].status)).subscribe((data: {}) => {
+      console.log(data);
+    });
   }
 
   buildJson(id:string, status:string)  {

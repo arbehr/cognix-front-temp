@@ -35,9 +35,9 @@
     </table>
   </div>
 </div>
-<div *ngIf="isReviewer" class="center-div-step2">
+<div *ngIf="isReviewer && this.documentsToReview.length > 0" class="center-div-step2">
   <h1 style="text-align: center;">
-    <strong>Revisão de objetos de aprendizagem (OAs)</strong>
+    <strong>Revisão {{roleText}} de objetos de aprendizagem (OAs)</strong>
     <button *ngIf="hideRevisionsDiv" mat-icon-button (click)="showRevisions()">
       <mat-icon class="mat-24">add_circle</mat-icon>
     </button>
@@ -55,8 +55,9 @@
           <th></th>
           <th>Título</th>
           <th>Depositante</th>
+          <th></th>
         </tr>
-        <tr *ngFor="let document of documentsToReview">
+        <tr *ngFor="let document of documentsToReview; let i = index">
           <td *ngIf="document.status.includes('NEEDS')">
               <mat-checkbox (change)="document.isValid = ! document.isValid">
               </mat-checkbox>
@@ -68,6 +69,7 @@
             </p>
           </td>
           <td *ngIf="document.status.includes('NEEDS')">{{document.owner}}</td>
+          <td *ngIf="document.status.includes('NEEDS')"><button mat-raised-button (click)="backDocumentInWorkflow(i, 'INCOMPLETE', document.status)">Retornar etapa anterior</button></td>
         </tr>
       </table>
       <br>
@@ -81,8 +83,9 @@
         <tr>
           <th>Título</th>
           <th>Depositante</th>
+          <th></th>
         </tr>
-        <tr *ngFor="let document of documentsToReview">
+        <tr *ngFor="let document of documentsToReview; let i = index">
           <td *ngIf="document.status.includes('UNDER')">
             <p style="margin-bottom: 0em;font-size: 15px;">
               <!-- <mat-checkbox (change)="document.isValid = ! document.isValid"> -->
@@ -93,10 +96,10 @@
             </p>
           </td>
           <td *ngIf="document.status.includes('UNDER')">{{document.owner}}</td>
+          <td *ngIf="document.status.includes('UNDER')"><button mat-raised-button (click)="backDocumentInWorkflow(i, 'NEEDS', 'UNDER')">Devolver a lista</button></td>
         </tr>
       </table>
       <br>
-      <!-- <button mat-raised-button (click)="reviewDocuments()">Revise</button> -->
     </div>
   </div>
 </div>

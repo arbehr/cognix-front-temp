@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { parameters } from './searchParameters'
 import { RestService } from '../rest.service';
 import { ActivatedRoute } from "@angular/router";
-
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-search',
@@ -21,12 +21,17 @@ export class SearchComponent implements OnInit {
   initSearch = "";
   breakpoint : number;
   documents = [];
-
-  constructor(private route: ActivatedRoute, public rest:RestService) { 
+  ipAddress: string;
+  
+  constructor(
+    private route: ActivatedRoute, 
+    public rest:RestService,
+    private http:HttpClient) { 
 
   }
 
   ngOnInit() {
+    this.ipAddress="";
     this.initSearch = this.route.snapshot.paramMap.get('search');
     if(this.initSearch != null)
       this.searchText=this.initSearch;
@@ -119,18 +124,43 @@ export class SearchComponent implements OnInit {
 
   }
 
-  search(){
-    
-    // console.log(this.searchText);
+  async getIPAddress(){
+    let response = await this.http.get("https://ipapi.co/ip/", {responseType: 'text'}).toPromise();
+    this.ipAddress = response;
+    // console.log(this.ipAddress)
+  }
+
+  async search(){
+    this.rest.getSearchText(this.searchText).subscribe((data: any) => {
+      console.log(data);
+    });
+
+    await this.getIPAddress();
+    let tokenInfo = this.rest.decodePayloadJWT();
+
+    let search = {
+      search_query: this.searchText,
+      user:tokenInfo.sub,
+      ip:this.ipAddress,
+    };
+
+    this.rest.saveSearchText(JSON.stringify([search])).subscribe((data: any) => {
+      console.log(data);
+    });
+   
     this.documents = [];
     var finalString = "q=*:*&fq=status:REVIEWED"
 
+    // TODO: optimize search
     if(this.searchText != ""){
-      finalString = "q=name:\""+ this.searchText + "\"" + 
-        " OR keywords:\"" + this.searchText + "\"" + 
+      finalString = "q=name:"+ this.searchText.substr(0,1).toUpperCase() + this.searchText.substr(1) + "\*" +
+        " OR name:"+ this.searchText.toLocaleLowerCase() + "\*" + 
+        " OR keywords:" + this.searchText + "\~" + 
+        " OR description:\*" + this.searchText.substr(0,1).toUpperCase() + this.searchText.substr(1) + "\*" + 
+        " OR description:"+ this.searchText.toLocaleLowerCase() + "\*" + 
         "&fq=status:REVIEWED";
     }
-
+    console.log(finalString)
     this.rest.querySOLR(finalString).subscribe((data: any) => {
       var rec = data.response.docs;
       // console.log(rec);

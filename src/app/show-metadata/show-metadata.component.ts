@@ -38,6 +38,7 @@ export class ShowMetadataComponent implements OnInit {
       case "pedagogical reviewer": return "Revisor\\a pedagógico";
       case "content reviewer about the sea": return "Revisor\\a do conteúdo";
       case "programmer": return "Programador\\a";
+      case "consultant": return "Consultor\\a";
       case "other": return "Outra";
       default: return "tradução não encontrada";
     }

@@ -27,7 +27,7 @@ export interface DialogData {
 })
 
 export class NewDocumentFastComponent implements OnInit {
-
+  public async_titles;
   searchOptions: any;
   finalSearch: string;
   finalparam: string;
@@ -38,6 +38,8 @@ export class NewDocumentFastComponent implements OnInit {
   typicalLearningTime:number;
   moreThanThreeHours:boolean;
   doNotApply:boolean;
+  fortyFiveMin:boolean;
+  NinetyMin:boolean;
   hours:number;
   minutes:number;
   seconds:number;
@@ -91,17 +93,22 @@ export class NewDocumentFastComponent implements OnInit {
   constructor(public rest:RestService, private router:Router, 
     private route: ActivatedRoute, private dialog: MatDialog) { 
       this.edit = "";
+      this.async_titles = [];
       
       if(this.route.snapshot.paramMap.get('id') != null) {
         this.rest.getDocumentFromID(parseInt(this.route.snapshot.paramMap.get('id'))).subscribe((data: any) => {
           Object.assign(this.OBAA,data);
-          if(data.files.length == 1) {
-            this.fileId = endpoint  + "/files/" + data.files[0].id; 
+          //get last updated files
+          let maxIdFile = 0;
+          for(let i = data.files.length-1; i >= 0 ; i--){
+            if(data.files[i].name != "thumbnail") {
+              if(data.files[i].id > maxIdFile) {
+                this.fileId = endpoint  + "/files/" + data.files[i].id; 
+                maxIdFile = data.files[i].id;
+              } 
+            }
           }
-          if(data.files.length > 1) {
-            this.fileId = endpoint  + "/files/" + data.files[0].id;
-            this.fileThumb = endpoint  + "/files/" + data.files[1].id;
-          }
+          this.fileThumb = endpoint  + "/files/" + this.route.snapshot.paramMap.get('id') + "/thumbnail";
         },
         (error) => {                              
           document.body.style.cursor="initial";
@@ -179,6 +186,8 @@ export class NewDocumentFastComponent implements OnInit {
     this.progressBarValue = 100/this.numPages;
     this.moreThanThreeHours = false;
     this.doNotApply = false;
+    this.fortyFiveMin = false;
+    this.NinetyMin=false;
     this.typicalLearningTime = 0;
     this.keywords = [];
     this.resources = [];
@@ -186,7 +195,7 @@ export class NewDocumentFastComponent implements OnInit {
     this.preDescription = "";
 
     this.age = [
-      {col_1: {name: "Ensino pré-escolar", isValid: false}}, 
+      {col_1: {name: "Educação pré-escolar", isValid: false}}, 
       {col_1: {name: "Básico 1º ciclo", isValid: false}}, 
       {col_1: {name: "Básico 2º ciclo", isValid: false}},
       {col_1: {name: "Básico 3º ciclo", isValid: false}},
@@ -274,6 +283,7 @@ export class NewDocumentFastComponent implements OnInit {
       if(this.uploader.queue.length > 0) {
         this.uploader.uploadAll();
       }else {
+        
         this.router.navigate(['/']);
         document.body.style.cursor="initial";
         }
@@ -380,27 +390,51 @@ export class NewDocumentFastComponent implements OnInit {
     }
   }
 
-  updateRelations(associatedRelations){
-    // console.log(associatedRelations);
-    let relation_ret = [];
-    if(associatedRelations.length > 1) {
-      // document.getElementById("relationDiv").style.display = "block";
-      for(var i = 0; i < associatedRelations.length-1; i++) {
-        let relations = associatedRelations[i];
-        let rel_parts = relations.split(",")
-        let rel_entry = rel_parts[0].split("=")[1];
-        let rel_kind = rel_parts[1].split("=")[1];
-        let rel_kind_fixed = rel_kind.substr(0, rel_kind.length - 1);
+  async getDocumentTitle(rel_entry,i,z){
+    if (this.async_titles[i][z]) return;
+    let response = await this.rest.querySOLR("q=id:" + rel_entry).toPromise();
+    // console.log(response.response.docs[0].name);
+    this.async_titles[i][z] = response.response.docs[0].name;
+  }
 
-        if(rel_kind_fixed.trim() != ""){
-          relation_ret.push({kind: rel_kind_fixed, entry: rel_entry});
-          this.documentsTiny[i] = rel_entry;
-          if(rel_entry.trim() != "") {
+  updateRelations(associatedRelations){
+    let relation_ret = [];
+    this.documentsTiny = new Array(associatedRelations.length);
+    this.async_titles = new Array(associatedRelations.length);  
+    
+    if(associatedRelations.length > 1) {
+      for(var i = 0; i < associatedRelations.length; i++) {
+        let relations = associatedRelations[i];
+        
+        let rel_parts = relations.split("=");
+        let rel_entries = rel_parts[1].substring(0, rel_parts[1].lastIndexOf(","));
+        let rel_kind = rel_parts[2].toString().replace('}', '')
+        
+        if(rel_kind.trim() != "" || rel_entries.trim() != ""){
+          var rel = {
+            kind: rel_kind,
+            entry:rel_entries,
+          };
+          this.simple.relationWith.push(rel);
+          relation_ret.push(rel)
+          var entries = [];
+          
+          if(rel_entries.indexOf(",") != -1) {
+            entries = rel_entries.split(",");
+          } else if (rel_entries.trim() != ""){
+            entries.push(rel_entries);
+          }
+
+          this.documentsTiny[i] = [];
+          this.async_titles[i] = [];
+          for (let z = 0; z < entries.length; z++) {
+            // console.log(entries[z])
+            this.documentsTiny[i].push({id: entries[z], title: ""})
+            this.getDocumentTitle(entries[z], i, z);
             this.existRelation = true;
-          }         
+          }       
         } else {
-          relation_ret.push({kind: "", entry: ""});
-              this.documentsTiny[i] = "";
+          this.documentsTiny.pop()
         }
       }
     } 
@@ -418,11 +452,12 @@ export class NewDocumentFastComponent implements OnInit {
       let hours = time[0].replace("PT","") * 60;
       let minutes = time[1].replace("M0S","") * 1;  
       this.typicalLearningTime = hours + minutes;
+      this.typicalLearningTime === 90 ? this.NinetyMin = true : this.NinetyMin = false;
+      this.typicalLearningTime === 45 ? this.fortyFiveMin = true : this.fortyFiveMin = false; 
     }
   }
 
   updateAuthors(authors_list){
-    console.log(authors_list)
     let contributors = [];
     for(var i = 0; i < authors_list.length; i++) {
         // console.log(authors_list[i])
@@ -437,7 +472,7 @@ export class NewDocumentFastComponent implements OnInit {
         } else {
           aut_roles = aut_role.split(", ");
         }
-        if(aut_name.trim() != "") {
+        if(aut_name.trim() != "" || i == 0) {
           contributors.push({name: aut_name, institution: aut_institution, role:aut_roles}); 
         }        
     }
@@ -540,6 +575,8 @@ export class NewDocumentFastComponent implements OnInit {
     this.typicalLearningTime = 0;
     this.moreThanThreeHours = false;
     this.doNotApply = false;
+    this.fortyFiveMin = false;
+    this.NinetyMin = false;
 
     let tokenInfo = this.rest.decodePayloadJWT();
     this.simple = {
@@ -568,10 +605,8 @@ export class NewDocumentFastComponent implements OnInit {
 
   showRelationDiv(event: MatRadioChange) {
     if(+event.value) {
-      document.getElementById("relationDiv").style.display = "block";
       this.existRelation = true;
     } else {
-      document.getElementById("relationDiv").style.display = "none";
       this.existRelation = false;
       if(this.preFillValue != "" && confirm("Você deseja apagar todos os dados pré-preenchidos?")) {
         this.clearFormValues();
@@ -581,22 +616,47 @@ export class NewDocumentFastComponent implements OnInit {
 
   setTypicalLearningTime(checkboxName, event: MatCheckboxChange) {
     switch(checkboxName) {
+      case "fortyFiveMin":
+        this.fortyFiveMin = event.checked;
+        this.typicalLearningTime = 45;  
+        this.moreThanThreeHours = false;
+        this.doNotApply = false;
+        this.NinetyMin = false;
+        break;
+      case "NinetyMin":
+        this.NinetyMin = event.checked;
+        this.typicalLearningTime = 90; 
+        this.fortyFiveMin = false; 
+        this.moreThanThreeHours = false;
+        this.doNotApply = false;
+        break;      
       case "moreThanThreeHours": 
         this.typicalLearningTime = 0;  
         this.moreThanThreeHours = event.checked;
         this.doNotApply = false;
+        this.fortyFiveMin = false; 
+        this.NinetyMin = false;
         break;
       case "doNotApply": 
         this.typicalLearningTime = 0;
         this.moreThanThreeHours = false;
         this.doNotApply = event.checked;
+        this.fortyFiveMin = false; 
+        this.NinetyMin = false;
         break;
+      default:
+        checkboxName === 90 ? this.NinetyMin = true : this.NinetyMin = false;
+        checkboxName === 45 ? this.fortyFiveMin = true : this.fortyFiveMin = false; 
+        this.moreThanThreeHours = false;
+        this.doNotApply = false;
+        break;      
     }
   }
 
   save(){
     document.body.style.cursor="wait";
     let removeExtraAuthor = false;
+    let removeExtraRelation = false;
 
     this.updateSimple();
 
@@ -607,6 +667,7 @@ export class NewDocumentFastComponent implements OnInit {
     
     if(this.simple.relationWith.length == 1) {
       this.addRelation("");
+      removeExtraRelation = true;
     }    
 
     this.simple.id = this.OBAA.id;  
@@ -623,6 +684,9 @@ export class NewDocumentFastComponent implements OnInit {
   ); 
     if(removeExtraAuthor) {
       this.simple.author.pop();
+    }
+    if(removeExtraRelation) {
+      this.simple.relationWith.pop();
     }
     document.body.style.cursor="initial";
   }
@@ -719,6 +783,8 @@ export class NewDocumentFastComponent implements OnInit {
     
     for(var i = 0; i < this.relation.length; i++){
       if(this.relation[i].kind != "") {
+        this.relation[i].resource.identifier[0].entry =  "http://re-mar.uac.pt/repositorio/documents/" + 
+          this.relation[i].resource.identifier[0].entry;
         this.OBAA.metadata.relations.push(this.relation[i]);
       }
     }
@@ -732,16 +798,10 @@ export class NewDocumentFastComponent implements OnInit {
     // console.log(this.simple);
 
     this.rest.addDocument(JSON.stringify(this.OBAA), this.OBAA.id, this.edit).subscribe((data: {}) => {
-      // console.log(data);
-      // console.log(this.simple);
-      
-      // this.rest.addDocumentSOLR(JSON.stringify([this.simple])).subscribe((data: {}) => {
-      //   // console.log(data);
-        
-
-      //   this.uploader2.uploadAll();
-      // });
       this.uploader2.uploadAll();
+      if(this.fileId != ""){
+        this.uploader.uploadAll();
+      }
       alert("Objeto adicionado com sucesso! Aguarde pela revisão!");
     });
 
@@ -933,13 +993,15 @@ export class NewDocumentFastComponent implements OnInit {
           
           // console.log(this.documentsTiny[i][j].id)
         }
+        // console.log(entries)
         // this.documentsTiny[i].toString().split(',');
         for(var k = 0; k < entries.length; k++){
           this.relation.push({kind:this.simple.relationWith[i].kind, 
             resource:{identifier:[{catalog: "URI" , 
             entry: entries[k]}]}});
-          this.simple.relationWith[i].entry = entries[k];
+          
         }
+        this.simple.relationWith[i].entry = entries.toString();
       //TODO: group identifiers to the same kind
       }  else {
         this.relation.push({kind:this.simple.relationWith[i].kind, 
@@ -1076,7 +1138,7 @@ export class NewDocumentFastComponent implements OnInit {
       document.getElementById("page"+page).style.color = "#ff0000";
     }
 
-    if(this.uploader2.queue.length == 0 && this.simple.status == "INCOMPLETE"){
+    if(this.uploader2.queue.length == 0 && this.simple.status == "INCOMPLETE" && this.fileId == ""){
       document.getElementById("uploadEmpty").style.display="block";
       document.getElementById("page1").style.fontWeight = "bold";
       document.getElementById("page1").style.color = "#ff0000";

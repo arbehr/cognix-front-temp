@@ -32,7 +32,7 @@
 <div class="center-div-step2" id="step2" style="display:none">
   <h3 style="text-align: center;"><strong>Relações entre objetos de aprendizagem</strong></h3> <br><br>
 
-  <p class="paragraph">O objeto / recurso usou como base outro objeto de aprendizagem já existente nesse repositório?</p><br>
+  <p class="paragraph">O objeto / recurso usou como base outro objeto de aprendizagem já existente neste repositório?</p><br>
   <mat-radio-group name="loRelation">
     <p style="font-size: large;">
       <mat-radio-button [checked]="existRelation" value="1" (change)="showRelationDiv($event)">Sim</mat-radio-button>
@@ -41,10 +41,10 @@
       <mat-radio-button [checked]="!existRelation" value="0" (change)="showRelationDiv($event)">Não</mat-radio-button>
     </p>
   </mat-radio-group>
-  <div id="relationDiv" style="display:none">
+  <div *ngIf="existRelation" id="relationDiv">
     <div *ngFor="let relation of simple.relationWith; let i = index">
       <p class="paragraph"><span>De que forma?</span>
-        <button *ngIf="simple.relationWith.length > 1" mat-icon-button (click)="removeRelation(i)">
+        <button *ngIf="simple.relationWith.length > 1" mat-icon-button matTooltip="Remover" (click)="removeRelation(i)">
             <mat-icon class="mat-24">clear</mat-icon>
         </button>
       </p>
@@ -69,9 +69,10 @@
       <table cellpadding="10">
         <tr *ngFor="let docTiny of documentsTiny[i]; let k = index">
           <td>{{docTiny.id}}</td>
-          <td>{{docTiny.title}}</td>
+          <td *ngIf="docTiny.title">{{docTiny.title}}</td>
+          <td *ngIf="!docTiny.title">{{async_titles[i][k]}}</td>
           <td>
-            <button mat-icon-button (click)="removeDocTiny(i,k)">
+            <button mat-icon-button matTooltip="Remover" (click)="removeDocTiny(i,k)">
             <mat-icon class="mat-24">delete</mat-icon>
             </button>
           </td>
@@ -98,8 +99,8 @@
       <mat-option (onSelectionChange)="changePreFillValue($event)" [value]="0">Nenhum</mat-option>
       <mat-optgroup *ngFor="let group of documentsTiny; let i = index;">
         <button mat-raised-button color="primary">Relação #{{i+1}}</button>
-        <mat-option (onSelectionChange)="changePreFillValue($event)" *ngFor="let docTiny of group" [value]="docTiny.id">
-          {{docTiny.id}} - {{docTiny.title}}
+        <mat-option (onSelectionChange)="changePreFillValue($event)" *ngFor="let docTiny of group; let k = index;" [value]="docTiny.id">
+          {{docTiny.id}} - {{(docTiny.title) ? docTiny.title : async_titles[i][k]}}
         </mat-option>
       </mat-optgroup>
     </mat-select>
@@ -184,7 +185,7 @@
     <div *ngFor="let item of keywords; let i = index">
       <p style="font-size: large;">
         <span>{{item}}</span>
-        <button mat-icon-button (click)="removeKeyord(i)">
+        <button mat-icon-button matTooltip="Remover" (click)="removeKeyord(i)">
           <mat-icon class="mat-24">delete</mat-icon>
         </button>
       </p>
@@ -259,7 +260,7 @@
     <div *ngFor="let item of resources; let i = index">
       <p style="font-size: large;">
         <span>{{item}}</span>
-        <button mat-icon-button (click)="removeType(i)">
+        <button mat-icon-button matTooltip="Remover" (click)="removeType(i)">
           <mat-icon class="mat-24">delete</mat-icon>
         </button>
       </p>
@@ -362,12 +363,20 @@
       <br>
     </div>
     <br>
-    <p class="paragraph">Tempo necessário (em minutos) para a realização da atividade:</p>
+    <p class="paragraph">Tempo necessário (em minutos) para a realização da atividade: *</p>
     <br>
     <span>Clique na linha:</span>
     <br>
     <mat-slider disabled="{{moreThanThreeHours || doNotApply}}" thumbLabel [(ngModel)]="typicalLearningTime" id="typicalLearningTime" name="typicalLearningTime" [displayWith]=""
-      min="0" max="180" step="15" value="15"></mat-slider><span>(máximo 3 horas)</span>
+    (input)="setTypicalLearningTime($event.value,$event)" min="0" max="180" step="15" value="15"></mat-slider><span>(máximo 3 horas)</span>
+    <br>
+    <section>
+      <mat-checkbox style="font-size: large;" [checked]="fortyFiveMin" (change)="setTypicalLearningTime('fortyFiveMin',$event)">45 minutos</mat-checkbox>
+    </section>
+    <br>
+    <section>
+      <mat-checkbox style="font-size: large;" [checked]="NinetyMin" (change)="setTypicalLearningTime('NinetyMin',$event)">90 minutos</mat-checkbox>
+    </section>
     <br>
     <section>
       <mat-checkbox style="font-size: large;" [checked]="moreThanThreeHours" (change)="setTypicalLearningTime('moreThanThreeHours',$event)">Mais de 3 horas</mat-checkbox>
@@ -393,9 +402,9 @@
     <p class="paragraph">Licença pretendida: *</p><br>
     <mat-radio-group [(ngModel)]="simple.licence" name="licence" id="licence">
       <div style="font-size: large;display: inline-block;">
-        <mat-radio-button value="CC BY-SA">
+        <mat-radio-button value="https://creativecommons.org/licenses/by-sa/4.0/">
         </mat-radio-button>
-        <a rel="license" target="_blank" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Licença Creative Commons" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" /></a>
+        <a rel="license" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/"><img alt="Licença Creative Commons" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" /></a>
         <span>
           É permitida a utilização para qualquer fim, mesmo que comercial.
         </span>
@@ -403,9 +412,9 @@
       <br>
       <br>
       <div style="font-size: large;display: inline-block;">
-        <mat-radio-button value="CC BY-NC-SA">
+        <mat-radio-button value="https://creativecommons.org/licenses/by-nc-sa/4.0/">
         </mat-radio-button>  
-        <a rel="license" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Licença Creative Commons" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a>
+        <a rel="license" target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Licença Creative Commons" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a>
         <span> 
           Não é permitida a utilização para fins comerciais.
         </span> 
@@ -422,7 +431,7 @@
   <p class="paragraph">Quem contribuiu para a criação do objeto?</p><br>
   <div *ngFor="let author of simple.author">
     <p class="paragraph"><span>Nome completo:</span>
-      <button *ngIf="simple.author.length > 1" mat-icon-button (click)="removeAuthor(i)">
+      <button *ngIf="simple.author.length > 1" mat-icon-button matTooltip="Remover" (click)="removeAuthor(i)">
           <mat-icon class="mat-24">clear</mat-icon>
       </button>
     </p>
@@ -452,6 +461,7 @@
         <mat-option value="pedagogical reviewer"> Revisor\a pedagógico</mat-option>
         <mat-option value="content reviewer about the sea"> Revisor\a do conteúdo</mat-option>
         <mat-option value="programmer"> Programador\a </mat-option>
+        <mat-option value="consultant"> Consultor\a </mat-option>
         <mat-option value="other"> Outra </mat-option>
       </mat-select>
     </mat-form-field> <br><br>

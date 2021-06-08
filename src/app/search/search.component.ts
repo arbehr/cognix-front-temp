@@ -153,7 +153,7 @@ export class SearchComponent implements OnInit {
 
     // TODO: optimize search
     if(this.searchText != ""){
-      finalString = "q=name:"+ this.searchText.substr(0,1).toUpperCase() + this.searchText.substr(1) + "\*" +
+      finalString = "q=name:\*" + this.searchText.substr(0,1).toUpperCase() + this.searchText.substr(1) + "\*" +
         " OR name:"+ this.searchText.toLocaleLowerCase() + "\*" + 
         " OR keywords:" + this.searchText + "\~" + 
         " OR description:\*" + this.searchText.substr(0,1).toUpperCase() + this.searchText.substr(1) + "\*" + 

@@ -51,7 +51,7 @@ export class HomeComponent implements OnInit {
       this.router.navigate(['/response-reset-password'], navigationExtras);
     }
     
-    if(!localStorage.getItem('token')){
+    if(!localStorage.getItem('token') || this.tokenExpired(localStorage.getItem('token_expiration'))){
       this.loginForm.setValue({
         username: "anonymous@uac.pt", 
         password: "anonymous"
@@ -74,7 +74,10 @@ export class HomeComponent implements OnInit {
     }
   }
 
-
+  private tokenExpired(token: string) {
+    const expiry = (JSON.parse(atob(token.split('.')[1]))).exp;
+    return (Math.floor((new Date).getTime() / 1000)) >= expiry;
+  }
 
 }
 

@@ -74,9 +74,8 @@ export class HomeComponent implements OnInit {
     }
   }
 
-  private tokenExpired(token: string) {
-    const expiry = (JSON.parse(atob(token.split('.')[1]))).exp;
-    return (Math.floor((new Date).getTime() / 1000)) >= expiry;
+  private tokenExpired(expiry: string) {
+    return (Math.floor((new Date).getTime() / 1000)) >= +expiry;
   }
 
 }

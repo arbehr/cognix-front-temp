@@ -89,4 +89,9 @@ table td {
     word-wrap: break-word;         /* All browsers since IE 5.5+ */
     overflow-wrap: break-word;     /* Renamed property in CSS3 draft spec */
 }
+
+.mat-expansion-panel {
+    width: 70%;
+    margin-left: 15%;
+}
   

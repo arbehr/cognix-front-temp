@@ -4,29 +4,73 @@
 
 <div class="center-div" id="step1">
   <h3 style="text-align: center;"><strong>Arquivo(s)</strong></h3> <br><br>
-  <div id="uploadFileDiv">
-    <p class="paragraph">Adicione o arquivo do seu objeto / recurso</p><br>
+  
+  <mat-accordion>
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Se tem um objeto físico para submeter
+        </mat-panel-title>
+        <mat-panel-description>
+          (plano de aula, livro, jogo, questionário, protocolo para saída de campo, exercícios, 
+          infografia, prova, experiência laboratorial, guião, texto dramático ou narrativo) por 
+          favor deposite-o e preencha a informação complementar que se segue:
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <div id="uploadFileDiv">
+        <p class="paragraph">Adicione o arquivo do seu objeto / recurso</p><br>
+        
+        <input #fileInput style="height: 30px" type="file" name="file" id="uploadFile" (click)="uploader2.clearQueue()" ng2FileSelect [uploader]="uploader2" />
+        <br>
+        <p>* O arquivo pode ser composto por vários ficheiros de forma compactada.</p>
+      
+        <br>
+        <p *ngIf="fileId" class="paragraph">Objeto de aprendizagem:</p>
+        <br *ngIf="fileId">
+        <a *ngIf="fileId" href="{{fileId}}">Arquivo enviado</a>
+        <br *ngIf="fileId"><br>
+        <div>
+          <button mat-icon-button color="primary" style="right:10%;" (click)="openPedagogicalTemplateDialog(true)">
+            <mat-icon>add_circle_outline</mat-icon>
+            Adicionar informação complementar
+          </button>
+        </div>
+      </div>
+    </mat-expansion-panel>
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Se não tem um objeto físico para submeter
+        </mat-panel-title>
+        <mat-panel-description>
+          (link, documentário em vídeo, simulação, página web, aula gravada ou filmada) por favor 
+          e preencha a informação complementar que se segue:
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <button mat-icon-button color="primary" style="right:10%;" (click)="uploader2.clearQueue();fileInput.value='';openPedagogicalTemplateDialog(false)">
+        <mat-icon>add_circle_outline</mat-icon>
+        Adicionar informação complementar
+      </button>
+    </mat-expansion-panel>
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Adicione uma imagem de rosto para o seu objeto / recurso
+        </mat-panel-title>
+        <mat-panel-description>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <div id="uploadPhotoDiv">
+        <p class="paragraph">Adicione uma imagem de rosto para o seu objeto / recurso</p><br>
+        <input style="height: 30px" type="file" name="photo" id="photoUpload" (click)="uploader.clearQueue()" ng2FileSelect [uploader]="uploader" />
+      </div>
+      <br>
+      <p *ngIf="fileThumb" class="paragraph">Imagem de rosto:</p>
+      <br>
+      <a *ngIf="fileThumb" href="{{fileThumb}}">Arquivo enviado</a>
+    </mat-expansion-panel>
     
-    <input style="height: 30px" type="file" name="file" id="uploadFile" (click)="uploader2.clearQueue()" ng2FileSelect [uploader]="uploader2" />
-    <br>
-    <p>* O arquivo pode ser composto por vários ficheiros de forma compactada.</p>
-  </div>
-  
-  <br>
-  <p *ngIf="fileId" class="paragraph">Objeto de aprendizagem:</p>
-  <br>
-  <a *ngIf="fileId" href="{{fileId}}">Arquivo enviado</a>
-  
-  <br><br>
-  <div id="uploadPhotoDiv">
-    <p class="paragraph">Adicione uma imagem de rosto para o seu objeto / recurso</p><br>
-    <input style="height: 30px" type="file" name="photo" id="photoUpload" (click)="uploader.clearQueue()" ng2FileSelect [uploader]="uploader" />
-  </div>
-  <br>
-  <p *ngIf="fileThumb" class="paragraph">Imagem de rosto:</p>
-  <br>
-  <a *ngIf="fileThumb" href="{{fileThumb}}">Arquivo enviado</a>
-
+  </mat-accordion>
 </div>
 
 <div class="center-div-step2" id="step2" style="display:none">
@@ -133,8 +177,15 @@
       <input required matInput [(ngModel)]="simple.description" name="description" placeholder="ex.: Livro eletrónico com uma aventura no mar">
     </mat-form-field>
     <br><br>
-
-    <p class="paragraph">Palavras-chave: *</p>
+    
+    <p class="paragraph">Palavras-chave: *
+      <button mat-icon-button matTooltip="Sugerir palavras-chave a partir do título e descrição" (click)="getSuggestions()">
+        <mat-icon class="mat-24">assignment icon</mat-icon>
+      </button>
+      <button mat-icon-button matTooltip="Remover todas sugestões" (click)="removeSuggestions()">
+        <mat-icon class="mat-24">delete</mat-icon>
+      </button>
+    </p>
     <br>
     <div>
       <table mat-table [dataSource]="keywords_predefined" class="mat-elevation-z8">
@@ -479,7 +530,7 @@
 
   <app-show-metadata [simple]="simple"></app-show-metadata>
   <div style="text-align: center">
-    <button (click)="finish()" mat-raised-button color="primary">Encerrar</button>
+    <button id="finishbutton" (click)="finish()" mat-raised-button color="primary">Encerrar</button>
 
 
   </div> <br><br>

@@ -3,18 +3,23 @@ import { OBAA, OBAACreator } from '../metadata';
 import { emptyMockOBAA, emptyMockOBAACreator } from '../mock-data';
 
 import { RestService, endpoint } from '../rest.service';
-import {  FileUploader, FileSelectDirective } from 'ng2-file-upload';
+import { FileUploader, FileSelectDirective } from 'ng2-file-upload';
 import { ActivatedRoute, Router } from "@angular/router"
 import { parameters } from '../search/searchParameters';
-import {MatStepperModule} from '@angular/material/stepper'; 
+import { MatStepperModule } from '@angular/material/stepper'; 
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { MatRadioButton, MatRadioChange } from '@angular/material/radio';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ThrowStmt } from '@angular/compiler';
 import { toJSDate } from '@ng-bootstrap/ng-bootstrap/datepicker/ngb-calendar';
-import {FormControl} from '@angular/forms';
-import {Observable} from 'rxjs';
-import {map, startWith} from 'rxjs/operators';
+import { FormControl } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
+import { PedagogicalTemplateComponent } from '../pedagogical-template/pedagogical-template.component';
+import { HttpClient } from '@angular/common/http';
+
+import { jsPDF } from 'jspdf';
+import { read } from 'fs';
 
 export interface DialogData {
   documentsTiny: string;
@@ -74,6 +79,7 @@ export class NewDocumentFastComponent implements OnInit {
   existRelation: boolean;
   preFillValue: string;
   reviewerMainRole: string;
+  withFile: boolean;
 
   OBAA: OBAACreator;
   public uploader: FileUploader = new FileUploader({url: endpoint + "/files/uploadFile", authToken: localStorage.getItem('token'), itemAlias: "file"});
@@ -89,11 +95,15 @@ export class NewDocumentFastComponent implements OnInit {
     'Praias arenosas', 'Produtividade', 'Química da água do mar', 'Sustentabilidade', 'Tartarugas', 'Teias tróficas',
     'Tubarões', 'Turismo, Desporto, Lazer', 'Zona costeira', 'Recursos marinhos / Pescas'];
   filteredKeywords: Observable<string[]>;
+  panelOpenState = false;
+  keywords_suggestions_from_dbpedia: string[][];
 
   constructor(public rest:RestService, private router:Router, 
-    private route: ActivatedRoute, private dialog: MatDialog) { 
+    private route: ActivatedRoute, private dialog: MatDialog,
+    private http:HttpClient) { 
       this.edit = "";
       this.async_titles = [];
+      this.withFile = true;
       
       if(this.route.snapshot.paramMap.get('id') != null) {
         this.rest.getDocumentFromID(parseInt(this.route.snapshot.paramMap.get('id'))).subscribe((data: any) => {
@@ -143,7 +153,7 @@ export class NewDocumentFastComponent implements OnInit {
         form.append("docId", this.OBAA.id);
         form.append("filename", "Material");
       };
-    
+    this.keywords_suggestions_from_dbpedia = [];
     this.fileId = "";
     this.fileThumb = "";
     this.existRelation = false;
@@ -174,7 +184,13 @@ export class NewDocumentFastComponent implements OnInit {
       favorites:["admin"],
       free:"yes",
       status:"INCOMPLETE",
-      id:0
+      id:0,
+      curriculumAreas: [],
+      duration: "",
+      learningObjectives: "",
+      linkOfLo: "",
+      mainStrategies: "",
+      relevantInfo: "",
     };
   }
 
@@ -348,19 +364,19 @@ export class NewDocumentFastComponent implements OnInit {
           interaction: documents[0].interaction,
           interactionNumber: documents[0].interactionNumber,
           licence: documents[0].licence,
-          // target:  documents[0].target,
-          // age:  documents[0].age,
-          // knowledgeArea:  documents[0].knowledgeArea,
-          // resources:  documents[0].resources[0],
-          // typicalLearningTime: documents[0].typicalLearningTime,
           owner: (withRelations) ? documents[0].owner : tokenInfo.sub,
           favorites: (withRelations) ? documents[0].favorites : [], 
           free: documents[0].free,
           relationWith: (withRelations) ? this.updateRelations(documents[0].relationWith) : this.simple.relationWith,
-          //authors: documents[0].author,
           author: this.updateAuthors(documents[0].author),
           status: (withRelations) ? documents[0].status : "INCOMPLETE",
-          reviewer: tokenInfo.sub
+          reviewer: tokenInfo.sub,
+          curriculumAreas: documents[0].curriculumAreas,
+          duration: documents[0].duration,
+          learningObjectives: documents[0].learningObjectives,
+          linkOfLo: documents[0].linkOfLo,
+          mainStrategies: documents[0].mainStrategies,
+          relevantInfo: documents[0].relevantInfo,
         }
         if(checkNameAndDescription) {
           this.preName = documents[0].name;
@@ -512,9 +528,106 @@ export class NewDocumentFastComponent implements OnInit {
     }
   }
 
-  // clearRelationSelection(): void {
-  //   this.documentsTiny = [];
-  // }
+  async setSuggestions(ret_keywords) {
+    console.log(ret_keywords.length)
+    console.log(ret_keywords)
+    for(let i=0; i < ret_keywords.length; i++){
+      console.log(ret_keywords[i])
+      this.keywords.push(ret_keywords[i]);
+    }
+  }
+
+  getAnnotatedTextFromDbpediaSpotlight(text : string) {
+    if(!text || text.trim() == "") {
+      return;
+    }
+    //let keywords = [];
+    //text = "Biodiversidade e Música que reflete aspetos do ciclo de vida do cagarro. Um cagarro juvenil (DJ Cagarro), ao sair do ninho pela primeira vez, enfrenta uma série de perigos, um dos quais as luzes de um camião que o desorientam, necessitando, assim, que alguém o salve.";
+    this.http.get('https://api.dbpedia-spotlight.org/pt/annotate?text=' + text + '&confidence=0.2', {responseType: 'json'}).toPromise().then(data => {
+      //console.log(`promise result: ${data}`);
+      if(data["Resources"]) {
+        for(let i=0; i < data["Resources"].length; i++) {
+          let new_key = data["Resources"][i]["@surfaceForm"].substr(0,1).toUpperCase() + 
+              data["Resources"][i]["@surfaceForm"].substr(1);
+          
+            let isPredefined = false;
+            for(let k=0; k < this.keywords_predefined.length; k++) {
+              if(this.keywords_predefined[k].col_1.name == new_key) {
+                this.keywords_predefined[k].col_1.isValid = true;
+                isPredefined = true;
+              }
+              if(this.keywords_predefined[k].col_2.name == new_key) {
+                this.keywords_predefined[k].col_2.isValid = true;
+                isPredefined = true;
+              }
+              if(this.keywords_predefined[k].col_3.name == new_key) {
+                this.keywords_predefined[k].col_3.isValid = true;
+                isPredefined = true;
+              }
+            }
+            if(!isPredefined && this.keywords.indexOf(new_key) == -1) {
+              this.keywords.push(new_key);
+            }
+            this.keywords_suggestions_from_dbpedia.push(new_key)  
+        }
+      }
+    });
+  }
+
+  getSuggestions() {  
+    this.getAnnotatedTextFromDbpediaSpotlight(this.simple.title);
+    this.getAnnotatedTextFromDbpediaSpotlight(this.simple.description);
+  }
+
+  removeSuggestions() {
+    for(let i = 0; i < this.keywords_suggestions_from_dbpedia.length; i++) {
+      let index = this.keywords.indexOf(this.keywords_suggestions_from_dbpedia[i]);
+      if (index > -1) {
+        this.keywords.splice(this.keywords.indexOf(this.keywords_suggestions_from_dbpedia[i]),1);
+      }
+      for(let k=0; k < this.keywords_predefined.length; k++) {
+        if(this.keywords_predefined[k].col_1.name == this.keywords_suggestions_from_dbpedia[i]) {
+          this.keywords_predefined[k].col_1.isValid = false;
+        }
+        if(this.keywords_predefined[k].col_2.name == this.keywords_suggestions_from_dbpedia[i]) {
+          this.keywords_predefined[k].col_2.isValid = false;
+        }
+        if(this.keywords_predefined[k].col_3.name == this.keywords_suggestions_from_dbpedia[i]) {
+          this.keywords_predefined[k].col_3.isValid = false;
+        }
+      }     
+    }
+  }
+
+  resetTemplateFields(withFile: boolean) {
+    if(withFile) {
+      this.simple.duration = "";
+      this.simple.relevantInfo = "";
+    }
+    if(!withFile) {
+      this.simple.mainStrategies = "";
+    }
+  }
+
+  openPedagogicalTemplateDialog(withFile: boolean) : void {
+    this.withFile = withFile;
+    this.resetTemplateFields(withFile);
+    let dialogRef = this.dialog.open(PedagogicalTemplateComponent, {
+      width: '800px',  height: '600px',
+      data: [this.simple, withFile, false]
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if(result){
+        this.simple.curriculumAreas = result.curriculumAreas;
+        this.simple.duration = result.duration;
+        this.simple.learningObjectives = result.learningObjectives;
+        this.simple.linkOfLo = result.linkOfLo;
+        this.simple.mainStrategies = result.mainStrategies;
+        this.simple.relevantInfo = result.relevantInfo;
+      }
+    });
+  }
 
   openRelationDialog(index: number): void {
     let dialogRef = this.dialog.open(DialogOverviewExampleDialog, {
@@ -1091,14 +1204,28 @@ export class NewDocumentFastComponent implements OnInit {
     var complete = true;
     var fieldsMissing = [];
     document.getElementById("incomplete").style.display="block";
+    document.getElementById("finishbutton").style.display="none";
 
+    // TODO: analisar melhor como controlar campos do template!
     for (var propt in this.simple){
       if (Object.prototype.hasOwnProperty.call(this.simple, propt)) {
           if(this.simple[propt] == "" && !(propt == "id" 
             || propt == "typicalLearningTime" || propt == "relation"
-            || propt == "favorites")){
+            || propt == "favorites" || propt == "duration"
+            || propt == "relevantInfo" || propt == "mainStrategies")){
             complete = false;
             fieldsMissing.push(propt);
+          }
+          // Aditional info check
+          if(this.simple[propt] == "" && !this.withFile && (propt == "duration"
+            || propt == "relevantInfo")) {
+              complete = false;
+              fieldsMissing.push(propt);
+          }
+          if(this.simple[propt] == "" && this.withFile && (propt == "linkOfLo"
+            || propt == "mainStrategies")) {
+              complete = false;
+              fieldsMissing.push(propt);
           }
       }
     }
@@ -1131,21 +1258,25 @@ export class NewDocumentFastComponent implements OnInit {
         }
       }
     }
-
+    
     for(var i = 0; i < fieldsMissing.length; i++){      
       let page = this.fieldPage(fieldsMissing[i]);
       document.getElementById("page"+page).style.fontWeight = "bold";
       document.getElementById("page"+page).style.color = "#ff0000";
     }
 
-    if(this.uploader2.queue.length == 0 && this.simple.status == "INCOMPLETE" && this.fileId == ""){
-      document.getElementById("uploadEmpty").style.display="block";
-      document.getElementById("page1").style.fontWeight = "bold";
-      document.getElementById("page1").style.color = "#ff0000";
-      return;
+    if(this.uploader2.queue.length == 0 && this.withFile &&
+      this.simple.status == "INCOMPLETE" && this.fileId == ""){
+        document.getElementById("uploadEmpty").style.display="block";
+        document.getElementById("page1").style.fontWeight = "bold";
+        document.getElementById("page1").style.color = "#ff0000";
+        return;
     }
 
     document.getElementById("uploadEmpty").style.display="none";
+    if(complete) {
+      document.getElementById("finishbutton").style.display="";
+    }    
   }
 
   displayedTableColumms(size: number) {
@@ -1160,6 +1291,12 @@ export class NewDocumentFastComponent implements OnInit {
 
   fieldPage(field) {
     switch(field) {
+      case "curriculumAreas":
+      case "duration":
+      case "learningObjectives":
+      case "linkOfLo":
+      case "mainStrategies":
+      case "relevantInfo": return 1;
       case "name":
       case "language":
       case "keywords":

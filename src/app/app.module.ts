@@ -53,6 +53,10 @@ import { ResponseResetPasswordComponent } from './response-reset-password/respon
 
 import { MatTooltipModule } from '@angular/material/tooltip';
 
+import { MatExpansionModule } from '@angular/material/expansion';
+import { TextareaAutoresizeDirective } from './textarea-autoresize.directive';
+import { PedagogicalTemplateComponent } from './pedagogical-template/pedagogical-template.component';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -73,7 +77,9 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     DialogOverviewExampleDialog,
     DocumentTinyComponent,
     RequestResetPasswordComponent,
-    ResponseResetPasswordComponent
+    ResponseResetPasswordComponent,
+    TextareaAutoresizeDirective,
+    PedagogicalTemplateComponent,
   ],
   imports: [
     BrowserModule,
@@ -93,6 +99,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     RecaptchaFormsModule,
     MatTableModule,
     MatTooltipModule,
+    MatExpansionModule,
   ],
   providers: [LoginService, ],
   entryComponents: [ DialogOverviewExampleDialog],

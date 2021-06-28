@@ -3,7 +3,9 @@ import { Metadata, OBAA } from '../metadata';
 import { Mock, emptyMockOBAA } from '../mock-data';
 import { RestService, endpoint } from '../rest.service';
 import { ActivatedRoute } from "@angular/router";
-import {DomSanitizer} from '@angular/platform-browser';
+import { DomSanitizer } from '@angular/platform-browser';
+import { PedagogicalTemplateComponent } from '../pedagogical-template/pedagogical-template.component';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-info-metadados',
@@ -25,7 +27,8 @@ export class InfoMetadadosComponent implements OnInit {
   fileId: string;
 
 
-  constructor(private route: ActivatedRoute, private rest: RestService, private sanitizer:DomSanitizer) { }
+  constructor(private route: ActivatedRoute, private rest: RestService, 
+    private sanitizer:DomSanitizer, private dialog: MatDialog) { }
 
 
   ngOnInit() {
@@ -57,7 +60,13 @@ export class InfoMetadadosComponent implements OnInit {
       resources: [],
       owner:"admin",
       favorites:"",
-      id:0
+      id:0,
+      curriculumAreas: [],
+      duration: "",
+      learningObjectives: "",
+      linkOfLo: "",
+      mainStrategies: "",
+      relevantInfo: "",
     };
 
     this.info = emptyMockOBAA;
@@ -102,7 +111,13 @@ export class InfoMetadadosComponent implements OnInit {
         favorites:this.documents[0].favorites,
         free:this.documents[0].free,
         authors:this.documents[0].author,
-        author:[]
+        author:[],
+        curriculumAreas: this.documents[0].curriculumAreas,
+        duration: this.documents[0].duration,
+        learningObjectives: this.documents[0].learningObjectives,
+        linkOfLo: this.documents[0].linkOfLo,
+        mainStrategies: this.documents[0].mainStrategies,
+        relevantInfo: this.documents[0].relevantInfo,
       }
 
       // console.log(this.rest.getAnnotatedText(this.documents[0].description))
@@ -125,9 +140,13 @@ export class InfoMetadadosComponent implements OnInit {
         }  
       }
     });
+  }
 
-    
-
+  openPedagogicalTemplateDialog() : void {
+  let dialogRef = this.dialog.open(PedagogicalTemplateComponent, {
+      width: '800px',  height: '600px',
+      data: [this.simple, (this.fileId) ? true : false, true]
+    });
   }
 
   sanitize(){

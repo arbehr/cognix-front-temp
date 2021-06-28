@@ -18,9 +18,6 @@ import { map, startWith } from 'rxjs/operators';
 import { PedagogicalTemplateComponent } from '../pedagogical-template/pedagogical-template.component';
 import { HttpClient } from '@angular/common/http';
 
-import { jsPDF } from 'jspdf';
-import { read } from 'fs';
-
 export interface DialogData {
   documentsTiny: string;
 }

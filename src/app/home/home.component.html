@@ -28,5 +28,36 @@
                 </div>
             </a>
         </div>
+        <br>
+        <br>
+        <a [routerLink]="['/search/']  " routerLinkActive="router-link-active"><h3>Ver todos os objetos de aprendizagem</h3></a>
+        <div class="bd-example" style="width: 30%;margin: auto">
+            <h3>Sumissões recentes:</h3>
+            <div id="carouselExampleCaptions" class="carousel slide" data-ride="carousel">
+              <ol class="carousel-indicators">
+                <li *ngFor="let doc of documents; let i = index" data-target="#carouselExampleCaptions" data-slide-to="{{i}}" [ngClass]="{'active': i === 0 }"></li>
+              </ol>
+              <div class="carousel-inner">
+                <div class="carousel-item" *ngFor="let doc of documents; let i = index" [ngClass]="{'active': i === 0 }" >
+                    <img src="{{url + '/files/' + doc.id + '/thumbnail'}}" class="d-block w-100" style="max-height:400px" alt="...">
+                    <div class="carousel-caption d-none d-md-block">
+                        <a [routerLink]="['/documents/' + doc.id]" routerLinkActive="router-link-active">
+                            <h5 style="background-color: gray;color:white">{{doc.title}}</h5>
+                        </a> 
+                        <!-- <p>Nulla vitae elit libero, a pharetra augue mollis interdum.</p> -->
+                    </div>
+                </div>
+              </div>
+
+              <a class="carousel-control-prev" href="#carouselExampleCaptions" role="button" data-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="sr-only">Previous</span>
+              </a>
+              <a class="carousel-control-next" href="#carouselExampleCaptions" role="button" data-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="sr-only">Next</span>
+              </a>
+            </div>
+          </div>
     </div>
 </div>

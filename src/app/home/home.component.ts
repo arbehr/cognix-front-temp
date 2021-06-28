@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { LoginService } from '../login.service';
-import { RestService } from '../rest.service';
+import { RestService, endpoint } from '../rest.service';
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
@@ -10,6 +10,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
+  
   public loginForm: FormGroup;
 
   constructor(private formBuilder: FormBuilder, 
@@ -24,16 +25,22 @@ export class HomeComponent implements OnInit {
 
   private Login: LoginService;
   private userEmail: string
-  private documents: object;
+  documents: any;
   searchText = "";
   documentAddRouter = "";
   page = 'none';
   token = '';
+  url = endpoint;
 
   ngOnInit() {
-    
-    this.rest.getDocument().subscribe((data: {}) => {
-      this.documents = data;
+    this.documents = [];
+    this.rest.querySOLR("q=*:*&fq=status:REVIEWED&rows=5&sort=id desc").subscribe((data: any) => {
+      var rec = data.response.docs;
+      // console.log(rec);
+      for (var x in rec){
+        // console.log(x);
+        this.documents.push({id:rec[x].id, title:rec[x].name, favorites:rec[x].favorites});
+      }
       console.log(this.documents);
     });
 

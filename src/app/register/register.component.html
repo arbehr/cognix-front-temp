@@ -24,7 +24,9 @@
     <button mat-icon-button matSuffix (click)="hideConfirm = !hideConfirm" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hideConfirm">
       <mat-icon>{{hideConfirm ? 'visibility_off' : 'visibility'}}</mat-icon>
       </button>
-  </mat-form-field>
+  </mat-form-field><br><br>
+  
+  <mat-checkbox  formControlName='receiveEmail' (change)="allowEmail = !allowEmail;">Desejo receber e-mails com novidades do repositório.</mat-checkbox>
   <br><br>
   <re-captcha style="text-align: center; display: inline-block;"
   equired 

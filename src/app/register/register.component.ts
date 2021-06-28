@@ -15,6 +15,7 @@ export class RegisterComponent implements OnInit {
 
     hide = true;
     hideConfirm = true;
+    allowEmail = false;
 
     constructor(private formBuilder: FormBuilder, private router: Router, private restApi: RestService) {
         this.signUpForm = this.formBuilder.group({
@@ -23,6 +24,7 @@ export class RegisterComponent implements OnInit {
             password: ['', Validators.required],
             confirmPassword: ['', Validators.required],
             captcha: ['', Validators.required],
+            receiveEmail: [this.allowEmail],
         });
     }
 
@@ -43,6 +45,7 @@ export class RegisterComponent implements OnInit {
                 alert("As palavras-passe devem ser iguais.");
                 return;
             }
+
             let seq = this.restApi.postSignup(this.signUpForm.value);
 
             seq.subscribe((response) => {
@@ -51,7 +54,7 @@ export class RegisterComponent implements OnInit {
                     alert("Utilizador criado com sucesso")
                     this.router.navigate(['/']);
                 }else if (response=='e'){
-                    alert("Erro ao cadastrar utilizador. Envie mensagem de contacto.");
+                    alert("Erro ao registar utilizador. Envie mensagem de contacto.");
                 } else {
                     alert(response);
                 }

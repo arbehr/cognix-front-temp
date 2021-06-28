@@ -24,13 +24,27 @@
     #page1, #next {
         margin-left: 5% !important;
     }
+    #panelWithFile, #panelWithoutFile {
+        display: none !important;
+    }
+    #infoButton, #infoButton2 {
+        right: 30% !important;
+    }
 }
+
 
 @media (max-width: 600px){
     #page1, #next {
         margin-left: 5% !important;
     }
+    #panelWithFile, #panelWithoutFile {
+        display: none !important;
+    }
+    #infoButton, #infoButton2 {
+        right: 30% !important;
+    }
 }
+
 
 .pagination{
     width: 100%;

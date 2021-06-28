@@ -11,7 +11,7 @@
         <mat-panel-title>
           Se tem um objeto físico para submeter
         </mat-panel-title>
-        <mat-panel-description>
+        <mat-panel-description id="panelWithFile">
           (plano de aula, livro, jogo, questionário, protocolo para saída de campo, exercícios, 
           infografia, prova, experiência laboratorial, guião, texto dramático ou narrativo) por 
           favor deposite-o e preencha a informação complementar que se segue:
@@ -30,7 +30,7 @@
         <a *ngIf="fileId" href="{{fileId}}">Arquivo enviado</a>
         <br *ngIf="fileId"><br>
         <div>
-          <button mat-icon-button color="primary" style="right:10%;" (click)="openPedagogicalTemplateDialog(true)">
+          <button mat-icon-button color="primary" style="right:10%;" id="infoButton" (click)="openPedagogicalTemplateDialog(true)">
             <mat-icon>add_circle_outline</mat-icon>
             Adicionar informação complementar
           </button>
@@ -42,12 +42,12 @@
         <mat-panel-title>
           Se não tem um objeto físico para submeter
         </mat-panel-title>
-        <mat-panel-description>
+        <mat-panel-description id="panelWithoutFile">
           (link, documentário em vídeo, simulação, página web, aula gravada ou filmada) por favor 
           e preencha a informação complementar que se segue:
         </mat-panel-description>
       </mat-expansion-panel-header>
-      <button mat-icon-button color="primary" style="right:10%;" (click)="uploader2.clearQueue();fileInput.value='';openPedagogicalTemplateDialog(false)">
+      <button mat-icon-button color="primary" style="right:10%;" id="infoButton2" (click)="uploader2.clearQueue();fileInput.value='';openPedagogicalTemplateDialog(false)">
         <mat-icon>add_circle_outline</mat-icon>
         Adicionar informação complementar
       </button>

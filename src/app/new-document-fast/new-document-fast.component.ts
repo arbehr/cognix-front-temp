@@ -807,9 +807,22 @@ export class NewDocumentFastComponent implements OnInit {
 
     for (var propt in this.simple){
       if (Object.prototype.hasOwnProperty.call(this.simple, propt)) {
-          if(this.simple[propt] == "" && !(propt == "id" || propt == "typicalLearningTime" ||
-            propt == "relation" || propt == "favorites")){
+          if(this.simple[propt] == "" && !(propt == "id" 
+            || propt == "typicalLearningTime" || propt == "relation"
+            || propt == "favorites" || propt == "duration"
+            || propt == "relevantInfo" || propt == "mainStrategies")){
               document.body.style.cursor="initial";
+              alert('Preencha todos os campos necessários antes do envio.');
+              return;
+          }
+          // Aditional info check
+          if(this.simple[propt] == "" && !this.withFile && (propt == "duration"
+            || propt == "relevantInfo")) {
+              alert('Preencha todos os campos necessários antes do envio.');
+              return;
+          }
+          if(this.simple[propt] == "" && this.withFile && (propt == "linkOfLo"
+            || propt == "mainStrategies")) {
               alert('Preencha todos os campos necessários antes do envio.');
               return;
           }
@@ -1085,7 +1098,7 @@ export class NewDocumentFastComponent implements OnInit {
 
     for(var i = 0; i < this.resources.length; i++){      
       this.simple.resources.push(this.resources[i]);
-  }
+    }
 
     for(var i = 0; i < this.simple.author.length; i++){
       for(var recIndex = 0; recIndex < this.simple.author[i].role.length; recIndex++){

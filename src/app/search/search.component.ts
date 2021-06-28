@@ -154,13 +154,15 @@ export class SearchComponent implements OnInit {
     // TODO: optimize search
     if(this.searchText != ""){
       finalString = "q=name:\*" + this.searchText.substr(0,1).toUpperCase() + this.searchText.substr(1) + "\*" +
-        " OR name:"+ this.searchText.toLocaleLowerCase() + "\*" + 
-        " OR keywords:" + this.searchText + "\~" + 
+        " OR name:\*"+ this.searchText.toLocaleLowerCase() + "\*" + 
+        " OR keywords:" + this.searchText + "\~" +
+        " OR keywords:\*" + this.searchText.substr(0,1).toUpperCase() + this.searchText.substr(1) + "\*" +
+        " OR keywords:\*"+ this.searchText.toLocaleLowerCase() + "\*" + 
         " OR description:\*" + this.searchText.substr(0,1).toUpperCase() + this.searchText.substr(1) + "\*" + 
-        " OR description:"+ this.searchText.toLocaleLowerCase() + "\*" + 
+        " OR description:\*"+ this.searchText.toLocaleLowerCase() + "\*" + 
         "&fq=status:REVIEWED";
     }
-    console.log(finalString)
+    // console.log(finalString)
     this.rest.querySOLR(finalString).subscribe((data: any) => {
       var rec = data.response.docs;
       // console.log(rec);
@@ -168,7 +170,7 @@ export class SearchComponent implements OnInit {
         // console.log(x);
         this.documents.push({id:rec[x].id, title:rec[x].name, favorites:rec[x].favorites});
       }
-      console.log(this.documents);
+      // console.log(this.documents);
     });
 
   }

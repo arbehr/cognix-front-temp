@@ -40,7 +40,7 @@
         <a *ngIf="simple.licence && simple.licence.includes('by-sa')" rel="license" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/"><img alt="Licença Creative Commons" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" /></a>
         <a *ngIf="simple.licence && simple.licence.includes('by-nc-sa')" rel="license" target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Licença Creative Commons" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a>
     </p><br>
-    <p class="paragraph">Contribuintes:</p>
+    <p class="paragraph">Contribuições:</p>
     <div *ngFor="let author of simple.author" style="margin-left:13px; font-weight:normal">
         <span style="font-weight:normal" *ngIf="author.name">{{author.name}} - {{author.institution}} - {{showTranslatedAuthorRole(author.role)}}</span>
     </div>

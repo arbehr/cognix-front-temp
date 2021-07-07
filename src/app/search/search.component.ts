@@ -3,6 +3,7 @@ import { parameters } from './searchParameters'
 import { RestService } from '../rest.service';
 import { ActivatedRoute } from "@angular/router";
 import { HttpClient } from '@angular/common/http';
+import {FormControl} from '@angular/forms';
 
 @Component({
   selector: 'app-search',
@@ -22,7 +23,18 @@ export class SearchComponent implements OnInit {
   breakpoint : number;
   documents = [];
   ipAddress: string;
-  
+  learningCycles = new FormControl();
+  learningCyclesList: string[] = ["Educação pré-escolar", "Básico 1º ciclo", "Básico 2º ciclo", "Básico 3º ciclo",
+    "Ensino secundário", "Ensino superior", "Ensino profissional"];
+  knowledgeAreas = new FormControl();
+  knowledgeAreasList: string[] = ["Ciências exatas", "Ciências humanas", 
+    "Ciências naturais", "Ciências tecnológicas"];
+  curricularAreas = new FormControl();
+  curricularAreasList: string[] = ["Matemática", "Português", "Estudo do Meio", "Expressões (Plástica, Musical, Dramática/Teatro)",
+    "Educação Física", "Cidadania", "Ciências Naturais", "Inglês", "TIC", "História", "Educação Visual",
+    "Educação Tecnológica", "Educação Musical", "Biologia", "Geografia", "Físico-Química"]
+  filterQuery = "";
+
   constructor(
     private route: ActivatedRoute, 
     public rest:RestService,
@@ -130,6 +142,32 @@ export class SearchComponent implements OnInit {
     // console.log(this.ipAddress)
   }
 
+  getSolrStringFromFormValues(fieldName: string, fieldValues: string[]) {
+    this.filterQuery += fieldName + ":(";
+    for(let i = 0; i < fieldValues.length; i++) {
+      this.filterQuery += "\"" + fieldValues[i] + "\"" + " OR "
+    }
+    this.filterQuery = this.filterQuery.substring(0, this.filterQuery.length-4);
+    this.filterQuery += ")"
+    this.filterQuery += " AND "
+  }
+
+  getFilterQuery() {
+    this.filterQuery = "";
+    if(this.learningCycles.value) {
+      this.getSolrStringFromFormValues("age",this.learningCycles.value)
+    }
+    if(this.knowledgeAreas.value) {
+      this.getSolrStringFromFormValues("knowledgeArea",this.knowledgeAreas.value)
+    }
+    if(this.curricularAreas.value) {
+      this.getSolrStringFromFormValues("curriculumAreas",this.curricularAreas.value)
+    }
+    this.filterQuery = this.filterQuery.substring(0, this.filterQuery.length-4);
+    
+    this.search();
+  }
+
   async search(){
     //this.rest.getSearchText(this.searchText).subscribe((data: any) => {
     //  console.log(data);
@@ -161,6 +199,9 @@ export class SearchComponent implements OnInit {
         " OR description:\*" + this.searchText.substr(0,1).toUpperCase() + this.searchText.substr(1) + "\*" + 
         " OR description:\*"+ this.searchText.toLocaleLowerCase() + "\*" + 
         "&fq=status:REVIEWED";
+    }
+    if(this.filterQuery) {
+      finalString += "&fq=" + this.filterQuery;
     }
     // console.log(finalString)
     this.rest.querySOLR(finalString).subscribe((data: any) => {

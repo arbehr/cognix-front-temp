@@ -24,7 +24,27 @@
 
     </div>
 
-
+    <div>
+      <mat-form-field>
+        <mat-select [formControl]="learningCycles" name="learningCycle" placeholder="Ciclo de ensino" multiple>
+          <mat-option *ngFor="let learningCycle of learningCyclesList" [value]="learningCycle">{{learningCycle}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      &nbsp;
+      <mat-form-field>
+        <mat-select [formControl]="knowledgeAreas" name="knowledgeArea" placeholder="Área temática" multiple>
+          <mat-option *ngFor="let knowledgeArea of knowledgeAreasList" [value]="knowledgeArea">{{knowledgeArea}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      &nbsp;
+      <mat-form-field>
+        <mat-select [formControl]="curricularAreas" name="curricularArea" placeholder="Área curricular" multiple>
+          <mat-option *ngFor="let curricularArea of curricularAreasList" [value]="curricularArea">{{curricularArea}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      &nbsp;
+      <button id="filterbutton" (click)="getFilterQuery()" mat-raised-button color="primary">Filtrar</button>
+    </div>
     <!--<div>
       <div class="search-buttons">
         <div style="float:left;" class="search-title">

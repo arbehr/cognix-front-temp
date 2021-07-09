@@ -32,7 +32,7 @@
         <div>
           <button mat-icon-button color="primary" style="right:10%;" id="infoButton" (click)="openPedagogicalTemplateDialog(true)">
             <mat-icon>add_circle_outline</mat-icon>
-            Adicionar informação complementar
+            Adicionar informação de cariz pedagógico
           </button>
         </div>
       </div>
@@ -49,7 +49,7 @@
       </mat-expansion-panel-header>
       <button mat-icon-button color="primary" style="right:10%;" id="infoButton2" (click)="uploader2.clearQueue();fileInput.value='';openPedagogicalTemplateDialog(false)">
         <mat-icon>add_circle_outline</mat-icon>
-        Adicionar informação complementar
+        Adicionar informação de cariz pedagógico
       </button>
     </mat-expansion-panel>
     <mat-expansion-panel>
@@ -480,7 +480,7 @@
   <h3 style="text-align: center;"><strong>Contribuições</strong></h3> <br><br>
 
   <p class="paragraph">Quem contribuiu para a criação do objeto?</p><br>
-  <div *ngFor="let author of simple.author">
+  <div *ngFor="let author of simple.author; let i = index">
     <p class="paragraph"><span>Nome completo:</span>
       <button *ngIf="simple.author.length > 1" mat-icon-button matTooltip="Remover" (click)="removeAuthor(i)">
           <mat-icon class="mat-24">clear</mat-icon>

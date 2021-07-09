@@ -11,7 +11,9 @@
 
         </mat-form-field>
       </span>
-
+      <button *ngIf = "isLogged" mat-icon-button matTooltip="Pesquisar somente em vossos favoritos" matSuffix (click)="searchFavorites = !searchFavorites;">
+        <mat-icon style="position: absolute; bottom: 70%; font-size: 40px;">{{searchFavorites ? 'favorite' : 'favorite_border'}}</mat-icon>
+      </button>
       <a style="cursor:pointer" (click)="search()">
         <div class="dot">
 
@@ -94,7 +96,7 @@
       </div>
        -->
 
-<div class="grey-division-text"><strong>Todos</strong></div>
+<div class="grey-division-text"><strong>Resultados</strong></div>
 
 
 <div style="margin-left: 2em; font-size:1.5em; margin-top: 1.5em; width:90%">

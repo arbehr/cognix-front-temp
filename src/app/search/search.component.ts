@@ -34,6 +34,8 @@ export class SearchComponent implements OnInit {
     "Educação Física", "Cidadania", "Ciências Naturais", "Inglês", "TIC", "História", "Educação Visual",
     "Educação Tecnológica", "Educação Musical", "Biologia", "Geografia", "Físico-Química"]
   filterQuery = "";
+  searchFavorites = false;
+  isLogged: boolean;
 
   constructor(
     private route: ActivatedRoute, 
@@ -43,6 +45,8 @@ export class SearchComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.rest.logged.subscribe(logged => this.isLogged = logged)
+    this.isLogged = this.rest.isLogged;
     this.ipAddress="";
     this.initSearch = this.route.snapshot.paramMap.get('search');
     if(this.initSearch != null)
@@ -202,6 +206,10 @@ export class SearchComponent implements OnInit {
     }
     if(this.filterQuery) {
       finalString += "&fq=" + this.filterQuery;
+    }
+    if(this.searchFavorites) {
+      let tokenInfo = this.rest.decodePayloadJWT();
+      finalString += "&fq=favorites:" + tokenInfo.sub;
     }
     // console.log(finalString)
     this.rest.querySOLR(finalString).subscribe((data: any) => {

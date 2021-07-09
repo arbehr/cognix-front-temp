@@ -55,8 +55,8 @@ export class SearchComponent implements OnInit {
     this.path = [];
     if(this.initSearch != ""){
       this.search();
-      
     }
+    this.filterQuery = "";
     if (window.innerWidth >= 1500) {
       this.breakpoint = 4
     } else {
@@ -154,24 +154,24 @@ export class SearchComponent implements OnInit {
 
   getFilterQuery() {
     this.filterQuery = "";
-    if(this.learningCycles.value) {
+    if(this.learningCycles.value && this.learningCycles.value.length > 0) {
       this.getSolrStringFromFormValues("age",this.learningCycles.value)
     }
-    if(this.knowledgeAreas.value) {
+    if(this.knowledgeAreas.value && this.knowledgeAreas.value.length > 0) {
       this.getSolrStringFromFormValues("knowledgeArea",this.knowledgeAreas.value)
     }
-    if(this.curricularAreas.value) {
+    if(this.curricularAreas.value && this.curricularAreas.value.length > 0) {
       this.getSolrStringFromFormValues("curriculumAreas",this.curricularAreas.value)
     }
     this.filterQuery = this.filterQuery.substring(0, this.filterQuery.length-4);
-    
-    this.search();
   }
 
   async search(){
     //this.rest.getSearchText(this.searchText).subscribe((data: any) => {
     //  console.log(data);
     //});
+
+    this.getFilterQuery();
 
     await this.getIPAddress();
     let tokenInfo = this.rest.decodePayloadJWT();

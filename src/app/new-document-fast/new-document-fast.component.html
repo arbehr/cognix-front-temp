@@ -71,6 +71,8 @@
     </mat-expansion-panel>
     
   </mat-accordion>
+  <br>
+  <br>
 </div>
 
 <div class="center-div-step2" id="step2" style="display:none">
@@ -547,7 +549,7 @@
 </div>
 
 <div style="text-align: center">
-  <button *ngIf="currentPage < numPages && currentPage > 1" (click)="save()" mat-raised-button color="primary">Salvar</button>
+  <button *ngIf="currentPage < numPages" (click)="save()" mat-raised-button color="primary">Salvar</button>
 </div>
 
 <div class="pagination" style="margin-top:4em;">

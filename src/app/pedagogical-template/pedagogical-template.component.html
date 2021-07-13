@@ -3,7 +3,7 @@
     <!-- Modal content-->
     <div>
       <div class="modal-header">
-        <h4 class="modal-title">Informação complementar</h4>
+        <h4 class="modal-title">Informação pedagógica</h4>
         <button type="button" #closebutton id="closebutton" class="close" (click)="onClose()" data-dismiss="modal">&times;</button>
       </div>
       <div class="modal-body">       
@@ -37,7 +37,7 @@
             <textarea [(ngModel)]="template.learningObjectives" #learningObjectives [disabled]="isReadOnly" style="overflow:hidden" matInput autocomplete="off" appTextareaAutoresize></textarea>
         </mat-form-field>
         <br>
-
+        <!-- <div id="blankPaggination" style="display:none;height:400px; width:100%; clear:both;"></div> -->
         <mat-label *ngIf="withFile">Principais estratégias: (enumere as estratégias fundamentais para a utilização
             do objeto de aprendizagem ou qualquer outra informação que considere relevante, por exemplo,
             tipo de livro ou questionário)
@@ -58,12 +58,12 @@
         </mat-form-field>
         <br>
         
-        <mat-label *ngIf="!withFile">Duração (se aplicável):</mat-label>
+        <!-- <mat-label *ngIf="!withFile">Duração (se aplicável):</mat-label>
         <br>
         <mat-form-field *ngIf="!withFile" class="example-full-width" style="width:100%">
             <input [(ngModel)]="template.duration" [disabled]="isReadOnly" matInput placeholder="" value="">
         </mat-form-field>
-        <br>
+        <br> -->
 
         <mat-label *ngIf="!withFile">Informação relevante a destacar:</mat-label>
         <br><br>

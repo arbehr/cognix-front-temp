@@ -13,11 +13,11 @@ import { stringify } from '@angular/compiler/src/util';
 })
 export class PedagogicalTemplateComponent implements OnInit {
 
-  @ViewChild('pdfTable', {static: false}) pdfTable: ElementRef;
   @ViewChild('curriculumAreasLine') inputCurriculumAreas;
   @ViewChild('learningObjectives') inputLearningObjectives;
   @ViewChild('mainStrategies') inputMainStrategies;
   @ViewChild('relevantInfo') inputRelevantInfo;
+  @ViewChild('linkOfLo') linkOfLo;
 
   curriculumAreas: any;
   withFile: boolean;
@@ -118,29 +118,169 @@ export class PedagogicalTemplateComponent implements OnInit {
   }
 
   async onDownload() {
+    let titleFontSize = 18;
+    let textFontSize = 14;
+    let textPageSize = 550;
+    let xPos = 50;
+    let yPos = 50;
     this.hideButtons();
-    let hidedAllCheckboxes = this.hideNotSelectedCheckBoxes();
-    this.copyTextAreaToDiv();
-    const DATA = this.pdfTable.nativeElement;
+
     const doc: jsPDF = new jsPDF("p", "pt", "a4");
+    doc.setFont("Helvetica");
+    doc.setFontSize(titleFontSize);
+    doc.text("Informação pedagógica", xPos, yPos);
+    yPos +=5;
+    doc.line(xPos, yPos, textPageSize, yPos);
+    yPos += 3 * textFontSize;
+
+    doc.setFontSize(textFontSize);
+    let curriculumAreasText = "Área(s) Curricular(es): (identifique a ou as àreas " +
+      "curriculares que podem ser potenciadas, numa perspectiva integradora, com a utilização do " +
+      "objeto de aprendizagem)";
+    let splittedText = doc.splitTextToSize(curriculumAreasText, textPageSize)  
+    doc.text(splittedText, xPos, yPos);
+
+    yPos += splittedText.length * textFontSize;
+    yPos += 2 * textFontSize;
     
-    await doc.html(DATA, {
-       callback: (doc) => {
-         doc.output("dataurlnewwindow");
-       }
-    });
+    for(let i = 0; i < this.curriculumAreas.length; i++) {
+      if(this.curriculumAreas[i][0].isValid && this.curriculumAreas[i][0].name != "Outra:") {
+        doc.text(this.curriculumAreas[i][0].name, xPos + 20, yPos)
+        yPos += 2 * textFontSize;
+      }
+    }
+    if(this.existOtherCurriculumArea) {
+      doc.text(this.template.otherCurriculumArea, xPos + 20, yPos);
+      yPos += 2 * textFontSize;
+    }
 
-    this.showCheckBoxes(hidedAllCheckboxes);
+    yPos += 2 * textFontSize;
+    doc.text("Objetivos de Aprendizagem:", xPos, yPos);
+    yPos += 2 * textFontSize;
+    
+    let learningObjectivesTextFromInput = this.inputLearningObjectives.nativeElement.value;
+    splittedText = doc.splitTextToSize(learningObjectivesTextFromInput, textPageSize-50)  
+
+    if(yPos + splittedText.length * textFontSize + 2 * textFontSize > 
+        doc.internal.pageSize.height - 50) {
+      yPos = 50;
+      doc.addPage();
+    } 
+
+    doc.text(splittedText, xPos, yPos);
+    yPos += splittedText.length * textFontSize;
+    yPos += 2 * textFontSize;
+
+    if(this.withFile) {
+      let mainStrategiesText = "Principais estratégias: (enumere as estratégias fundamentais " + 
+        "para a utilização do objeto de aprendizagem ou qualquer outra informação que considere " + 
+        "relevante, por exemplo, tipo de livro ou questionário)";
+      splittedText = doc.splitTextToSize(mainStrategiesText, textPageSize -50)  
+  
+      if(yPos + splittedText.length * textFontSize + 2 * textFontSize > 
+          doc.internal.pageSize.height - 50) {
+        yPos = 50;
+        doc.addPage();
+      } 
+      
+      doc.text(splittedText, xPos, yPos);
+      yPos += splittedText.length * textFontSize;
+      yPos += 2 * textFontSize;
+
+      let mainStrategiesTextFromInput = this.inputMainStrategies.nativeElement.value;
+      splittedText = doc.splitTextToSize(mainStrategiesTextFromInput, textPageSize -50)  
+      
+      if(yPos + splittedText.length * textFontSize + 2 * textFontSize > 
+          doc.internal.pageSize.height - 50) {
+        yPos = 50;
+        doc.addPage();
+      }  
+
+      doc.text(splittedText, xPos, yPos);
+      yPos += splittedText.length * textFontSize;
+      yPos += 2 * textFontSize;
+
+      let linkOfLoText = "Link de acesso ao OA se aplicável:";
+      if(yPos + 1 * textFontSize + 2 * textFontSize > 
+        doc.internal.pageSize.height - 50) {
+        yPos = 50;
+        doc.addPage();
+      } 
+      
+      doc.text(linkOfLoText, xPos, yPos);
+      yPos += 1 * textFontSize;
+      yPos += 2 * textFontSize;
+
+      let linkOfLoTextFromInput = this.linkOfLo.nativeElement.value;
+      splittedText = doc.splitTextToSize(linkOfLoTextFromInput, textPageSize -50)  
+      
+      if(yPos + splittedText.length * textFontSize + 2 * textFontSize > 
+          doc.internal.pageSize.height - 50) {
+        yPos = 50;
+        doc.addPage();
+      }
+      
+      doc.text(splittedText, xPos, yPos);
+      yPos += splittedText.length * textFontSize;
+      yPos += 2 * textFontSize;
+
+    } else {
+      let linkOfLoText = "Link de acesso:";
+      if(yPos + 1 * textFontSize + 2 * textFontSize > 
+        doc.internal.pageSize.height - 50) {
+        yPos = 50;
+        doc.addPage();
+      } 
+      
+      doc.text(linkOfLoText, xPos, yPos);
+      yPos += 1 * textFontSize;
+      yPos += 2 * textFontSize;
+
+      let linkOfLoTextFromInput = this.linkOfLo.nativeElement.value;
+      splittedText = doc.splitTextToSize(linkOfLoTextFromInput, textPageSize -50)  
+      
+      if(yPos + splittedText.length * textFontSize + 2 * textFontSize > 
+          doc.internal.pageSize.height - 50) {
+        yPos = 50;
+        doc.addPage();
+      }
+      
+      doc.text(splittedText, xPos, yPos);
+      yPos += splittedText.length * textFontSize;
+      yPos += 2 * textFontSize;
+
+      let relevantInfoText = "Informação relevante a destacar:";
+      
+      if(yPos + 1 * textFontSize + 2 * textFontSize > 
+        doc.internal.pageSize.height - 50) {
+        yPos = 50;
+        doc.addPage();
+      } 
+      
+      doc.text(relevantInfoText, xPos, yPos);
+      yPos += 1 * textFontSize;
+      yPos += 2 * textFontSize;
+
+      let relevantInfoTextFromInput = this.inputRelevantInfo.nativeElement.value;
+      splittedText = doc.splitTextToSize(relevantInfoTextFromInput, textPageSize -50)  
+      
+      if(yPos + splittedText.length * textFontSize + 2 * textFontSize > 
+          doc.internal.pageSize.height - 50) {
+        yPos = 50;
+        doc.addPage();
+      }  
+
+      doc.text(splittedText, xPos, yPos);
+      yPos += splittedText.length * textFontSize;
+      yPos += 2 * textFontSize;
+
+    }
+
+    // console.log(yPos)
+
+    doc.save("Informação pegagógica.pdf");
+
     this.showButtons();
-  }
-
-  showCheckBoxes(hidedAllCheckboxes) {
-    const checkbox = Array.from(document.getElementsByClassName('mat-checkbox-inner-container'));
-    let i = 0;
-    checkbox.forEach((element) => {
-      element.innerHTML = hidedAllCheckboxes[i];
-      i++;
-    });
   }
 
   showButtons() {
@@ -157,62 +297,6 @@ export class PedagogicalTemplateComponent implements OnInit {
       document.getElementById("savebutton").style.display="none";
     }
     document.getElementById("downloadbutton").style.display="none";
-  }
-
-  hideInputs() {
-    this.inputLearningObjectives.nativeElement.style.display="none";
-    if(document.getElementById("mainStrategies") != undefined) {
-      this.inputMainStrategies.nativeElement.style.display="none";
-    }
-    if(document.getElementById("relevantInfo") != undefined) {
-      this.inputRelevantInfo.nativeElement.style.display="none";
-    }
-  }
-
-  copyTextAreaToDiv() {
-    let inputValues = [];
-    this.inputCurriculumAreas.nativeElement.style.display="block";
-    inputValues.push(this.inputLearningObjectives.nativeElement.value);
-    if(document.getElementById("mainStrategies") != undefined) {
-      inputValues.push(this.inputMainStrategies.nativeElement.value);
-    }    
-    if(document.getElementById("relevantInfo") != undefined) {
-      inputValues.push(this.inputRelevantInfo.nativeElement.value);
-    }    
-    
-    this.hideInputs();
-
-    const printLearningObjectives = Array.from(document.getElementsByClassName('printToDiv'));
-    let i = 0;
-    printLearningObjectives.forEach((element) => {
-      if(i < inputValues.length) {
-        element.innerHTML = inputValues[i];
-      }
-      i++;
-    });
-  }
-
-  hideNotSelectedCheckBoxes() {
-    
-    //NOTE: checkboxes and textareas are not displaying well with jspdf
-    const checkbox = Array.from(document.getElementsByClassName('mat-checkbox-inner-container'));
-    let hidedAllCheckboxes = [];
-    checkbox.forEach((element) => {
-      hidedAllCheckboxes.push(element.innerHTML);
-      element.innerHTML = '<div></div>';
-    });
-
-    for(let i = 0; i < this.curriculumAreas.length; i++){
-      if(!this.curriculumAreas[i][0].isValid){       
-        document.getElementById("curriculumAreasLine"+i).style.display="none";
-      } 
-      if(this.curriculumAreas[i][0].name == "Outra:" && this.template.otherCurriculumArea.trim() == "") {
-        document.getElementById("curriculumAreasLine"+i).style.display="none";
-        this.existOtherCurriculumArea = false;
-      } 
-    }
-
-    return hidedAllCheckboxes;
   }
 
   public onClose() {

@@ -1,80 +1,73 @@
 <div id="pdfTable" #pdfTable>
-    
     <!-- Modal content-->
     <div>
-      <div class="modal-header">
-        <h4 class="modal-title">Informação pedagógica</h4>
-        <button type="button" #closebutton id="closebutton" class="close" (click)="onClose()" data-dismiss="modal">&times;</button>
-      </div>
-      <div class="modal-body">       
-
-        <mat-label>Área(s) Curricular(es): (identifique a ou as àreas 
-            curriculares que podem ser potenciadas, numa perspectiva integradora, 
-            com a utilização do objeto de aprendizagem)</mat-label>
-        <br>
-        <br>
-        <table cellpadding="10">
-            <tr *ngFor="let list of curriculumAreas; let i = index" id="curriculumAreasLine{{i}}">
-                <th *ngFor="let item of list">
-                <p style="margin-bottom: 0em;font-weight: normal;">
-                    <mat-checkbox [checked]="item.isValid" [disabled]="isReadOnly" (change)="item.isValid = ! item.isValid; addOtherCurriculumArea(item.name,item.isValid);"></mat-checkbox>&nbsp;<mat-label>{{item.name}}</mat-label>
-                    <!-- <mat-form-field class="example-full-width" style="width:30%"> -->
-                        <input *ngIf="existOtherCurriculumArea && i == curriculumAreas.length-1" [disabled]="isReadOnly" [(ngModel)]="template.otherCurriculumArea"  matInput type="text" style="border-bottom: 1px solid #f1f1f1;padding-left:10%;">
-                    <!-- </mat-form-field> -->
-                </p>
-                </th>
-            </tr>
-        </table>
-        <mat-form-field style="width:100%">
-            <textarea #curriculumAreasLine matInput style="display:none"></textarea>
-        </mat-form-field>
-        <br>
-
-        <mat-label>Objetivos de Aprendizagem:</mat-label>
-        <br><br>
-        <div class="printToDiv"></div>
-        <mat-form-field style="width:100%">
-            <textarea [(ngModel)]="template.learningObjectives" #learningObjectives [disabled]="isReadOnly" style="overflow:hidden" matInput autocomplete="off" appTextareaAutoresize></textarea>
-        </mat-form-field>
-        <br>
-        <!-- <div id="blankPaggination" style="display:none;height:400px; width:100%; clear:both;"></div> -->
-        <mat-label *ngIf="withFile">Principais estratégias: (enumere as estratégias fundamentais para a utilização
-            do objeto de aprendizagem ou qualquer outra informação que considere relevante, por exemplo,
-            tipo de livro ou questionário)
-        </mat-label>
-        <br><br>
-        <div class="printToDiv"></div>
-        <mat-form-field *ngIf="withFile" class="example-full-width" style="width:100%">
-            <textarea [disabled]="isReadOnly" [(ngModel)]="template.mainStrategies" #mainStrategies rows="5" style="overflow:hidden" matInput autocomplete="off" appTextareaAutoresize></textarea>
-        </mat-form-field>
-        
-        
-        <br>
-        <mat-label *ngIf="withFile">Link de acesso ao OA se aplicável:</mat-label>
-        <mat-label *ngIf="!withFile">Link de acesso:</mat-label>
-        <br>
-        <mat-form-field class="example-full-width" style="width:100%">
-            <input [(ngModel)]="template.linkOfLo" [disabled]="isReadOnly" id="linkOfLo" matInput placeholder="" value="">
-        </mat-form-field>
-        <br>
-        
-        <!-- <mat-label *ngIf="!withFile">Duração (se aplicável):</mat-label>
-        <br>
-        <mat-form-field *ngIf="!withFile" class="example-full-width" style="width:100%">
-            <input [(ngModel)]="template.duration" [disabled]="isReadOnly" matInput placeholder="" value="">
-        </mat-form-field>
-        <br> -->
-
-        <mat-label *ngIf="!withFile">Informação relevante a destacar:</mat-label>
-        <br><br>
-        <div class="printToDiv"></div>
-        <mat-form-field *ngIf="!withFile" class="example-full-width" style="width:100%">
-            <textarea [(ngModel)]="template.relevantInfo" #relevantInfo [disabled]="isReadOnly" style="overflow:hidden" matInput autocomplete="off" appTextareaAutoresize></textarea>
-        </mat-form-field>
+        <div class="modal-header">
+            <h4 class="modal-title">Informação pedagógica</h4>
+            <button type="button" #closebutton id="closebutton" class="close" (click)="onClose()" data-dismiss="modal">&times;</button>
+        </div>
+        <div>       
+            <div class="modal-body">
+                <mat-label>Área(s) Curricular(es): (identifique a ou as àreas 
+                    curriculares que podem ser potenciadas, numa perspectiva integradora, 
+                    com a utilização do objeto de aprendizagem)</mat-label>
+                <br>
+                <br>
+                <table cellpadding="10">
+                    <tr *ngFor="let list of curriculumAreas; let i = index" id="curriculumAreasLine{{i}}">
+                        <th *ngFor="let item of list">
+                        <p style="margin-bottom: 0em;font-weight: normal;">
+                            <mat-checkbox [checked]="item.isValid" [disabled]="isReadOnly" (change)="item.isValid = ! item.isValid; addOtherCurriculumArea(item.name,item.isValid);"></mat-checkbox>&nbsp;<mat-label>{{item.name}}</mat-label>
+                            <!-- <mat-form-field class="example-full-width" style="width:30%"> -->
+                                <input *ngIf="existOtherCurriculumArea && i == curriculumAreas.length-1" [disabled]="isReadOnly" [(ngModel)]="template.otherCurriculumArea"  matInput type="text" style="border-bottom: 1px solid #f1f1f1;padding-left:10%;">
+                            <!-- </mat-form-field> -->
+                        </p>
+                        </th>
+                    </tr>
+                </table>
+                <mat-form-field style="width:100%">
+                    <textarea #curriculumAreasLine matInput style="display:none"></textarea>
+                </mat-form-field>
+                <br>
+            </div>
+            <div class="modal-body">
+                <mat-label>Objetivos de Aprendizagem:</mat-label>
+                <br><br>
+                <mat-form-field style="width:100%">
+                    <textarea [(ngModel)]="template.learningObjectives" #learningObjectives [disabled]="isReadOnly" style="overflow:hidden" matInput autocomplete="off" appTextareaAutoresize></textarea>
+                </mat-form-field>
+                <br>
+            </div>
+            <div *ngIf="withFile" class="modal-body">
+                <mat-label >Principais estratégias: (enumere as estratégias fundamentais para a utilização
+                    do objeto de aprendizagem ou qualquer outra informação que considere relevante, por exemplo,
+                    tipo de livro ou questionário)
+                </mat-label>
+                <br><br>
+                <mat-form-field class="example-full-width" style="width:100%">
+                    <textarea [disabled]="isReadOnly" [(ngModel)]="template.mainStrategies" #mainStrategies rows="5" style="overflow:hidden" matInput autocomplete="off" appTextareaAutoresize></textarea>
+                </mat-form-field>
+                <br>    
+            </div>
+            <div class="modal-body">
+                <mat-label *ngIf="withFile">Link de acesso ao OA se aplicável:</mat-label>
+                <mat-label *ngIf="!withFile">Link de acesso:</mat-label>
+                <br>
+                <mat-form-field class="example-full-width" style="width:100%">
+                    <input [(ngModel)]="template.linkOfLo" [disabled]="isReadOnly" #linkOfLo id="linkOfLo" matInput placeholder="" value="">
+                </mat-form-field>
+                <br>
+            </div>
+            <div *ngIf="!withFile" class="modal-body">
+                <mat-label >Informação relevante a destacar:</mat-label>
+                <br><br>
+                <mat-form-field class="example-full-width" style="width:100%">
+                    <textarea [(ngModel)]="template.relevantInfo" #relevantInfo [disabled]="isReadOnly" style="overflow:hidden" matInput autocomplete="off" appTextareaAutoresize></textarea>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button *ngIf="!isReadOnly" type="button" class="btn btn-danger" id="savebutton"  (click)="onSave()">Guardar</button>
+            <button type="button" class="btn btn-danger" id="downloadbutton"  (click)="onDownload()">Download</button>
+        </div> 
     </div>
-    <div class="modal-footer">
-      <button *ngIf="!isReadOnly" type="button" class="btn btn-danger" id="savebutton"  (click)="onSave()">Guardar</button>
-      <button *ngIf="isReadOnly" type="button" class="btn btn-danger" id="downloadbutton"  (click)="onDownload()">Download</button>
-     </div> 
-  </div>
 </div>

@@ -183,7 +183,6 @@ export class NewDocumentFastComponent implements OnInit {
       status:"INCOMPLETE",
       id:0,
       curriculumAreas: [],
-      duration: "",
       learningObjectives: "",
       linkOfLo: "",
       mainStrategies: "",
@@ -369,7 +368,6 @@ export class NewDocumentFastComponent implements OnInit {
           status: (withRelations) ? documents[0].status : "INCOMPLETE",
           reviewer: tokenInfo.sub,
           curriculumAreas: documents[0].curriculumAreas,
-          duration: documents[0].duration,
           learningObjectives: documents[0].learningObjectives,
           linkOfLo: documents[0].linkOfLo,
           mainStrategies: documents[0].mainStrategies,
@@ -597,13 +595,7 @@ export class NewDocumentFastComponent implements OnInit {
   }
 
   resetTemplateFields(withFile: boolean) {
-    if(withFile) {
-      this.simple.duration = "";
-      this.simple.relevantInfo = "";
-    }
-    if(!withFile) {
-      this.simple.mainStrategies = "";
-    }
+    (withFile) ? this.simple.relevantInfo = "" : this.simple.mainStrategies = "";
   }
 
   openPedagogicalTemplateDialog(withFile: boolean) : void {
@@ -617,7 +609,6 @@ export class NewDocumentFastComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if(result){
         this.simple.curriculumAreas = result.curriculumAreas;
-        this.simple.duration = result.duration;
         this.simple.learningObjectives = result.learningObjectives;
         this.simple.linkOfLo = result.linkOfLo;
         this.simple.mainStrategies = result.mainStrategies;
@@ -809,15 +800,14 @@ export class NewDocumentFastComponent implements OnInit {
       if (Object.prototype.hasOwnProperty.call(this.simple, propt)) {
           if(this.simple[propt] == "" && !(propt == "id" 
             || propt == "typicalLearningTime" || propt == "relation"
-            || propt == "favorites" || propt == "duration"
-            || propt == "relevantInfo" || propt == "mainStrategies")){
+            || propt == "favorites" || propt == "relevantInfo" 
+            || propt == "mainStrategies")){
               document.body.style.cursor="initial";
               alert('Preencha todos os campos necessários antes do envio.');
               return;
           }
           // Aditional info check
-          if(this.simple[propt] == "" && !this.withFile && (propt == "duration"
-            || propt == "relevantInfo")) {
+          if(this.simple[propt] == "" && !this.withFile && (propt == "relevantInfo")) {
               alert('Preencha todos os campos necessários antes do envio.');
               return;
           }
@@ -1221,14 +1211,13 @@ export class NewDocumentFastComponent implements OnInit {
       if (Object.prototype.hasOwnProperty.call(this.simple, propt)) {
           if(this.simple[propt] == "" && !(propt == "id" 
             || propt == "typicalLearningTime" || propt == "relation"
-            || propt == "favorites" || propt == "duration"
-            || propt == "relevantInfo" || propt == "mainStrategies")){
+            || propt == "favorites" || propt == "relevantInfo" 
+            || propt == "mainStrategies")){
             complete = false;
             fieldsMissing.push(propt);
           }
           // Aditional info check
-          if(this.simple[propt] == "" && !this.withFile && (propt == "duration"
-            || propt == "relevantInfo")) {
+          if(this.simple[propt] == "" && !this.withFile && (propt == "relevantInfo")) {
               complete = false;
               fieldsMissing.push(propt);
           }
@@ -1302,7 +1291,6 @@ export class NewDocumentFastComponent implements OnInit {
   fieldPage(field) {
     switch(field) {
       case "curriculumAreas":
-      case "duration":
       case "learningObjectives":
       case "linkOfLo":
       case "mainStrategies":

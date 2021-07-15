@@ -67,7 +67,7 @@
         </div>
         <div class="modal-footer">
             <button *ngIf="!isReadOnly" type="button" class="btn btn-danger" id="savebutton"  (click)="onSave()">Guardar</button>
-            <button type="button" class="btn btn-danger" id="downloadbutton"  (click)="onDownload()">Download</button>
+            <button *ngIf="isReadOnly" type="button" class="btn btn-danger" id="downloadbutton"  (click)="onDownload()">Download</button>
         </div> 
     </div>
 </div>
